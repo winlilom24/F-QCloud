@@ -1,4 +1,7 @@
 <?php
-echo 'Hello world!';
-echo 'hello bà già';
-echo ' Hello ní ';
+require "View/BanUI.php";
+
+$banUI = new BanUI();
+$banUI->showTable();
+
+echo "<hr>";

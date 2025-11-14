@@ -1,40 +1,38 @@
 <?php
+// classes/Database.php
 class Database {
-    private $conn;
+    private static $conn = null;
     private $config;
 
-    // Nhận đường dẫn file config khi khởi tạo
-    public function __construct($configPath) {
-        $this->config = include($configPath);
+    private function __construct() {
+        $this->config = include('Resources/config.php');
     }
 
-    // Kết nối tới CSDL
-    public function connect() {
-        $this->conn = null;
-        try {
-            // Tạo kết nối 
-            $this->conn = new mysqli(
-                $this->config['host'],
-                $this->config['username'],
-                $this->config['password'],
-                $this->config['db_name']
+    // Chỉ cho phép gọi từ lớp khác
+    public static function connect() {
+        if (self::$conn === null) {
+            $db = new self(); // Tạo tạm để đọc config
+            self::$conn = new mysqli(
+                $db->config['host'],
+                $db->config['username'],
+                $db->config['password'],
+                $db->config['db_name']
             );
 
-            // Kiểm tra lỗi kết nối
-            if ($this->conn->connect_error) {
-                throw new Exception("Lỗi kết nối: " . $this->conn->connect_error);
+            if (self::$conn->connect_error) {
+                die("Lỗi kết nối CSDL: " . self::$conn->connect_error);
             }
-        } catch (Exception $e) {
-            echo "❌ " . $e->getMessage();
-        }
 
-        return $this->conn;
+            self::$conn->set_charset("utf8mb4");
+        }
+        return self::$conn;
     }
 
-    // Đóng kết nối
-    public function close() {
-        if ($this->conn) {
-            $this->conn->close();
+    // (Tùy chọn) Đóng kết nối khi cần
+    public static function close() {
+        if (self::$conn) {
+            self::$conn->close();
+            self::$conn = null;
         }
     }
 }
