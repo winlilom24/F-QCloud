@@ -9,6 +9,7 @@ class QLNVController {
         $this->userModel = new User();
     }
 
+    //lay (ten,sdt,email)
     public function getNhanVienCuaQuanLy($id_quan_ly) {
         return $this->userModel->getByQuanLy($id_quan_ly);
     }
