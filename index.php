@@ -21,3 +21,9 @@ echo "<hr>";
 require 'View/OrderUI.php';
 $orderUI = new OrderUI();
 $orderUI->hienThiChiTiet();
+
+echo "<hr>";
+
+require 'View/LoginUI.php';
+$loginUI = new LoginUI();
+$loginUI->dangNhap();
