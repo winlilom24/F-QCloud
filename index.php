@@ -15,3 +15,9 @@ echo "<hr>";
 require 'View/QuanLyUI.php';
 $quanLyUI = new QuanLyUI();
 $quanLyUI->hienThiDanhSachNhanVien();
+
+echo "<hr>";
+
+require 'View/OrderUI.php';
+$orderUI = new OrderUI();
+$orderUI->hienThiChiTiet();
