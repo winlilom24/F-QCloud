@@ -9,12 +9,8 @@ class LoginController {
         $this->model = new TaiKhoan();
     }
 
-    public function getCredentials($user_id) {
-        return $this->model->getCredentials($user_id);
-    }
-
     // SỬA: Dùng $this->model + truyền tham số
-    public function check($tai_khoan, $mat_khau) {
+    public function check($tai_khoan, $mat_khau) {        
         return $this->model->dangNhap($tai_khoan, $mat_khau);
     }
 }

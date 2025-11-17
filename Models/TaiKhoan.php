@@ -9,38 +9,45 @@ class TaiKhoan {
         $this->conn = Database::connect();
     }
 
-    // CHỈ LẤY TÀI KHOẢN + MẬT KHẨU THEO user_id
-    public function getCredentials($user_id) {
-        $id = (int)$user_id;
-
-        $query = "SELECT tai_khoan, mat_khau 
-                  FROM taikhoan 
-                  WHERE user_id = ?";
-
-        $stmt = $this->conn->prepare($query);
-        $stmt->bind_param("i", $id);
-        $stmt->execute();
-        $result = $stmt->get_result();
-
-        return $result->fetch_assoc(); // ['tai_khoan' => '...', 'mat_khau' => '...']
-    }
-
 // KIỂM TRA ĐĂNG NHẬP: tai_khoan + mat_khau
     public function dangNhap($tai_khoan, $mat_khau_nhap) {
-        $query = "SELECT *
-                  FROM taikhoan 
-                  WHERE tai_khoan = ? and mat_khau= ?";
+        // 1. TÌM USER THEO TÀI KHOẢN
+        $query = "SELECT tk.user_id, tk.mat_khau, u.ten, u.role, u.ten_quan
+                  FROM taikhoan tk
+                  JOIN user u ON tk.user_id = u.user_id
+                  WHERE tk.tai_khoan = ?";
 
         $stmt = $this->conn->prepare($query);
-        $stmt->bind_param("ss", $tai_khoan, $mat_khau_nhap);
+        $stmt->bind_param("s", $tai_khoan);
         $stmt->execute();
         $result = $stmt->get_result();
 
         if ($result->num_rows === 0) {
-            return false;
-        } 
-        return true;
+            return false; // Không tồn tại tài khoản
+        }
 
+        $row = $result->fetch_assoc();
+
+        // 2. KIỂM TRA MẬT KHẨU (DÙNG BĂM)
+        if (!password_verify($mat_khau_nhap, $row['mat_khau'])) {
+            return false; // Mật khẩu sai
+        }
+
+        $user_id = $row['user_id'];
+
+        // 3. LƯU VÀO PHP SESSION
+        session_start();
+        $_SESSION['user_id']     = $user_id;
+        $_SESSION['ten']         = $row['ten'];
+        $_SESSION['role']        = $row['role'];
+        $_SESSION['ten_quan']    = $row['ten_quan'];
+
+        // 4. LƯU VÀO BẢNG hethongsession
+        $session_id = $this->sessionModel->luuSession($user_id);
+        $_SESSION['session_id'] = $session_id;
+
+        // 5. TRẢ VỀ TRUE CHO CONTROLLER
+        return true;
     }
 }
 ?>
