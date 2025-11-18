@@ -3,10 +3,6 @@ require "Repository/Database.php";
 class Ban{
     private $conn;
 
-    private $id_ban;
-    private $suc_chua;
-    private $trang_thai;
-
     public function __construct(){
         $this->conn = Database::connect();
     }
