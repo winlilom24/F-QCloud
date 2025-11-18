@@ -2,7 +2,7 @@
 // controllers/LogoutController.php
 require_once "Models/HeThongSession.php"; // Dùng để destroySession
 
-class LogoutController {
+class HeThongController {
     private $sessionModel;
 
     public function __construct() {
