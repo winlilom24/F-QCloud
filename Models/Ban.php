@@ -1,16 +1,16 @@
 <?php
 require "Repository/Database.php";
-class Ban{
+
+class Ban {
     private $conn;
 
-    public function __construct(){
+    public function __construct() {
         $this->conn = Database::connect();
     }
 
-    public function getAll(){
+    public function getAll() {
         $query = "SELECT id_ban, suc_chua, trang_thai FROM ban ORDER BY id_ban";
         $result = $this->conn->query($query);
-
         $bans = [];
         while ($row = $result->fetch_assoc()) {
             $bans[] = $row;
@@ -18,4 +18,65 @@ class Ban{
         return $bans;
     }
 
+    // SỬA: Thiếu prepare + bind + return
+    public function getBan($id) {
+        $id = (int)$id;
+        $query = "SELECT id_ban, suc_chua, trang_thai FROM ban WHERE id_ban = ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_assoc(); // trả về 1 bàn hoặc null
+    }
+
+    public function create($suc_chua) {
+        $suc_chua = (int)$suc_chua;
+        if ($suc_chua < 1) {
+            return ['success' => false, 'message' => 'Sức chứa không hợp lệ!'];
+        }
+
+        $query = "INSERT INTO ban (suc_chua, trang_thai) VALUES (?, 'Trống')";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bind_param("i", $suc_chua);
+
+        if ($stmt->execute()) {
+            return ['success' => true, 'message' => 'Thêm bàn thành công!'];
+        } else {
+            return ['success' => false, 'message' => 'Thêm bàn thất bại!'];
+        }
+    }
+
+    public function edit($id_ban, $suc_chua) {
+        $id_ban = (int)$id_ban;
+        $suc_chua = (int)$suc_chua;
+
+        if ($id_ban <= 0 || $suc_chua < 1) {
+            return ['success' => false, 'message' => 'Dữ liệu không hợp lệ!'];
+        }
+
+        $query = "UPDATE ban SET suc_chua = ? WHERE id_ban = ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bind_param("ii", $suc_chua, $id_ban);
+
+        if ($stmt->execute()) {
+            return $stmt->affected_rows > 0
+                ? ['success' => true, 'message' => 'Cập nhật thành công!']
+                : ['success' => false, 'message' => 'Không có thay đổi!'];
+        }
+        return ['success' => false, 'message' => 'Cập nhật thất bại!'];
+    }
+
+    public function delete($id_ban) {
+        $id_ban = (int)$id_ban;
+        $query = "DELETE FROM ban WHERE id_ban = ? AND trang_thai = 'Trống'";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bind_param("i", $id_ban);
+
+        if ($stmt->execute()) {
+            return $stmt->affected_rows > 0
+                ? ['success' => true, 'message' => 'Xóa bàn thành công!']
+                : ['success' => false, 'message' => 'Không thể xóa (bàn đang có khách)!'];
+        }
+        return ['success' => false, 'message' => 'Lỗi xóa bàn!'];
+    }
 }
