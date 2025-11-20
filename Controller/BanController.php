@@ -30,4 +30,5 @@ class BanController {
     public function delete($id_ban) {
         return $this->banModel->delete($id_ban);
     }
+    
 }

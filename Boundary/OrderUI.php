@@ -3,15 +3,17 @@
 require_once "Controller/OrderController.php";
 
 class OrderUI {
-    private $controller;
+    private $orderController;
+    private $banController;
 
     public function __construct() {
-        $this->controller = new OrderController();
+        $this->orderController = new OrderController();
+        $this->banController = new BanController();
     }
 
     public function hienThiChiTiet() {
         $id_order = '1';
-        $data = $this->controller->getChiTiet($id_order);
+        $data = $this->orderController->getChiTiet($id_order);
 
         if (!$data) {
             echo '<div>Không tìm thấy đơn hàng!</div>';
@@ -86,5 +88,53 @@ class OrderUI {
             </div>
         </div>';
     }
+
+
+        // Bước 2: Form chọn món
+    public function orderForm($id_ban) {
+        $monan = $this->banController->getMonAn();
+        $id_nhan_vien = $_SESSION['user_id'] ?? 2; // nhân viên đang đăng nhập
+
+        echo '<div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4>Đặt món - Bàn ' . $id_ban . '</h4>
+                </div>
+                <div class="card-body">
+                <form method="post">
+                    <input type="hidden" name="action" value="confirm">
+                    <input type="hidden" name="id_ban" value="' . $id_ban . '">
+                    <input type="hidden" name="id_nhan_vien" value="' . $id_nhan_vien . '">
+
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Món ăn</th>
+                                <th>Giá</th>
+                                <th>Số lượng</th>
+                            </tr>
+                        </thead>
+                        <tbody>';
+        foreach ($monan as $m) {
+            $gia = number_format($m['gia_tien'], 0, ',', '.') . '₫';
+            echo '<tr>
+                    <td><strong>' . htmlspecialchars($m['ten_mon']) . '</strong></td>
+                    <td>' . $gia . '</td>
+                    <td>
+                        <input type="number" name="mon[' . $m['id_mon'] . ']" 
+                               min="0" value="0" class="form-control" style="width: 100px;">
+                    </td>
+                  </tr>';
+        }
+        echo '      </tbody>
+                    </table>
+                    <div class="text-end">
+                        <a href="order.php" class="btn btn-secondary">Hủy</a>
+                        <button type="submit" class="btn btn-success btn-lg">Xác nhận đặt món</button>
+                    </div>
+                </form>
+                </div>
+              </div>';
+    }
+
 }
 ?>
