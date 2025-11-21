@@ -9,12 +9,6 @@ class HeThongSession {
         $this->conn = Database::connect();
     }
 
-    /**
-     * LƯU SESSION KHI ĐĂNG NHẬP
-     * @param int $user_id
-     * @return int session_id (ID vừa tạo)
-     */
-
     public function luuSession($user_id) {
         $user_id = (int)$user_id;
 
@@ -28,11 +22,6 @@ class HeThongSession {
         return $this->conn->insert_id; // Trả về ID session
     }
 
-    /**
-     * CẬP NHẬT LOGOUT
-     * @param int $user_id
-     * @return bool
-     */
     public function destroySession($user_id) {
         $user_id = (int)$user_id;
 

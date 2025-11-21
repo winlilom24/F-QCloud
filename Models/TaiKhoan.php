@@ -23,13 +23,15 @@ class TaiKhoan {
         $result = $stmt->get_result();
 
         if ($result->num_rows === 0) {
-            return false; // Không tồn tại tài khoản
+            $message = 'Tài khoản không tồn tại!'
+            return $message; // Không tồn tại tài khoản
         }
 
         $row = $result->fetch_assoc();
 
         // 2. KIỂM TRA MẬT KHẨU (DÙNG BĂM)
         if (!password_verify($mat_khau_nhap, $row['mat_khau'])) {
+            $message = 'Sai mật khẩu!'
             return false; // Mật khẩu sai
         }
 
@@ -47,7 +49,7 @@ class TaiKhoan {
         $_SESSION['session_id'] = $session_id;
 
         // 5. TRẢ VỀ TRUE CHO CONTROLLER
-        return true;
+        return 'success';
     }
 }
 ?>
