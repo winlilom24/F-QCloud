@@ -9,9 +9,15 @@ class LoginController {
         $this->model = new TaiKhoan();
     }
 
-    // SỬA: Dùng $this->model + truyền tham số
+    
     public function check($tai_khoan, $mat_khau) {        
-        return $this->model->dangNhap($tai_khoan, $mat_khau);
+        $message = $this->model->dangNhap($tai_khoan, $mat_khau);
+        if ($message === 'success') {
+            return "Đăng nhập thành công";             //sau này chuyển sang trang chính
+        } else {
+            return $message;
+            //quay lại trang đăng nhập với get = $message
+        }
     }
 }
 ?>
