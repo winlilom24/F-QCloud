@@ -10,7 +10,7 @@ class TaiKhoan {
     }
 
 // KIỂM TRA ĐĂNG NHẬP: tai_khoan + mat_khau
-    public function dangNhap($tai_khoan, $mat_khau_nhap) {
+    public function dangNhap($tai_khoan, $mat_khau_nhap, , $ten_quan) {
         // 1. TÌM USER THEO TÀI KHOẢN
         $query = "SELECT tk.user_id, tk.mat_khau, u.ten, u.role, u.ten_quan
                   FROM taikhoan tk
@@ -32,12 +32,18 @@ class TaiKhoan {
         // 2. KIỂM TRA MẬT KHẨU (DÙNG BĂM)
         if (!password_verify($mat_khau_nhap, $row['mat_khau'])) {
             $message = 'Sai mật khẩu!'
-            return ['success' => true, 'message' => $message];
+            return ['success' => false, 'message' => $message];
+        }
+
+        //3. KIỂM TRA TÊN QUÁN
+        if ($ten_quan === $row['ten_quan']) {
+            $message = 'Sai ten quán'
+            return ['success' => false, 'message' => $message];
         }
 
         $user_id = $row['user_id'];
 
-        // 3. LƯU VÀO PHP SESSION
+        // 4. LƯU VÀO PHP SESSION
         session_start();
         $_SESSION['user_id']     = $user_id;
         $_SESSION['ten']         = $row['ten'];

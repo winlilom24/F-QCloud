@@ -10,8 +10,8 @@ class LoginController {
     }
 
     
-    public function check($tai_khoan, $mat_khau) {        
-        $$result = $this->model->dangNhap($tai_khoan, $mat_khau);
+    public function check($tai_khoan, $mat_khau,, $ten_quan) {        
+        $$result = $this->model->dangNhap($tai_khoan, $mat_khau,, $ten_quan);
         if ($$result['message'] === 'success') {
             if($_SESSION['role'] == 'Quản lý'){
 
