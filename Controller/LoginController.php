@@ -11,12 +11,16 @@ class LoginController {
 
     
     public function check($tai_khoan, $mat_khau) {        
-        $message = $this->model->dangNhap($tai_khoan, $mat_khau);
-        if ($message === 'success') {
-            return "Đăng nhập thành công";             //sau này chuyển sang trang chính
+        $$result = $this->model->dangNhap($tai_khoan, $mat_khau);
+        if ($$result['message'] === 'success') {
+            if($_SESSION['role'] == 'Quản lý'){
+
+            } else {
+
+            }
         } else {
-            return $message;
-            //quay lại trang đăng nhập với get = $message
+            return $$result;
+            //quay lại trang đăng nhập với get = $$result
         }
     }
 }

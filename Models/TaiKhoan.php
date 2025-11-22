@@ -24,7 +24,7 @@ class TaiKhoan {
 
         if ($result->num_rows === 0) {
             $message = 'Tài khoản không tồn tại!'
-            return $message; // Không tồn tại tài khoản
+            return ['success' => true, 'message' => $message];
         }
 
         $row = $result->fetch_assoc();
@@ -32,7 +32,7 @@ class TaiKhoan {
         // 2. KIỂM TRA MẬT KHẨU (DÙNG BĂM)
         if (!password_verify($mat_khau_nhap, $row['mat_khau'])) {
             $message = 'Sai mật khẩu!'
-            return false; // Mật khẩu sai
+            return ['success' => true, 'message' => $message];
         }
 
         $user_id = $row['user_id'];
@@ -49,7 +49,7 @@ class TaiKhoan {
         $_SESSION['session_id'] = $session_id;
 
         // 5. TRẢ VỀ TRUE CHO CONTROLLER
-        return 'success';
+        return ['success' => true, 'message' => 'Quản lý đăng nhập thành công'];
     }
 }
 ?>
