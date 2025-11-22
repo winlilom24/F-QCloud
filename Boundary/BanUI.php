@@ -73,4 +73,16 @@ class BanUI {
                 <button type="submit" name="action" value="update" class="btn btn-success">Cập nhật</button>
               </form>';
     }
+
+    public function addTable(){
+        return $this->banController->addTable();
+    }
+
+    public function editTable(){
+        return $this->banController->editTable();
+    }
+
+    public function delete($id){
+        return $this->banController->delete($id);
+    }
 }

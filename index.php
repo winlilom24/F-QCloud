@@ -7,21 +7,21 @@ $ui = new BanUI();  // Tạo đối tượng UI
 // ==================== XỬ LÝ HÀNH ĐỘNG ====================
 // Thêm bàn
 if (isset($_POST['action']) && $_POST['action'] === 'add') {
-    $result = $ui->banController->addTable();
+    $result = $ui->addTable();
     $_SESSION['msg'] = $result['message'];
     header("Location: index.php"); exit;
 }
 
 // Sửa bàn
 if (isset($_POST['action']) && $_POST['action'] === 'update') {
-    $result = $ui->banController->editTable();
+    $result = $ui->editTable();
     $_SESSION['msg'] = $result['message'];
     header("Location: index.php"); exit;
 }
 
 // Xóa bàn
 if (isset($_GET['action']) && $_GET['action'] === 'delete' && !empty($_GET['id'])) {
-    $result = $ui->banController->delete($_GET['id']);
+    $result = $ui->delete($_GET['id']);
     $_SESSION['msg'] = $result['message'];
     header("Location: index.php"); exit;
 }
