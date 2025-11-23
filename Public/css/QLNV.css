@@ -1,0 +1,277 @@
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f6f9;
+    color: #333;
+}
+
+/* ======= LAYOUT CHUNG ======= */
+.wrapper {
+    display: flex;
+    height: 100vh;
+}
+
+/* ======= SIDEBAR ======= */
+.sidebar {
+    width: 250px;
+    background: #fff;
+    border-right: 1px solid #e5e5e5;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+    padding: 25px 20px;
+}
+
+.sidebar .logo {
+    font-size: 22px;
+    font-weight: bold;
+    color: #007bff;
+    text-align: left;
+    margin-bottom: 40px;
+}
+
+.sidebar .logo i {
+    margin-right: 8px;
+}
+
+.menu {
+    list-style: none;
+}
+
+.menu li {
+    margin-bottom: 8px;
+}
+
+.menu a {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    border-radius: 10px;
+    font-size: 15px;
+    color: #444;
+    text-decoration: none;
+    transition: 0.25s;
+}
+
+.menu a i {
+    width: 25px;
+    margin-right: 10px;
+    font-size: 17px;
+}
+
+.menu a:hover,
+.menu li.active a {
+    background-color: #e8f1ff;
+    color: #007bff;
+}
+
+/* ======= MAIN CONTENT ======= */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ======= HEADER ======= */
+.header {
+    height: 75px;
+    background: #fff;
+    border-bottom: 1px solid #e5e5e5;
+    padding: 0 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header h2 {
+    font-size: 22px;
+    font-weight: 600;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+.btn-primary {
+    background: #007bff;
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 8px;
+    border: none;
+    font-size: 14px;
+    cursor: pointer;
+    transition: 0.25s;
+}
+
+.btn-primary i {
+    margin-right: 5px;
+}
+
+.btn-primary:hover {
+    background: #005fcc;
+}
+
+.admin-box {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.admin-box i.fa-bell {
+    font-size: 20px;
+    color: #666;
+    cursor: pointer;
+}
+
+.admin-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.admin-info .admin-name {
+    font-weight: 600;
+}
+
+.admin-info i.fa-circle-user {
+    font-size: 30px;
+    color: #007bff;
+}
+
+/* ======= BẢNG NHÂN VIÊN ======= */
+.table-wrapper {
+    padding: 25px 30px;
+    overflow-y: auto;
+}
+
+.employee-table {
+    width: 100%;
+    border-radius: 12px;
+    background: #fff;
+    border-collapse: collapse;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+    overflow: hidden;
+}
+
+.employee-table thead tr {
+    background: #f7f9fc;
+}
+
+.employee-table th {
+    padding: 15px;
+    font-size: 14px;
+    color: #555;
+    font-weight: 600;
+    border-bottom: 1px solid #e4e7eb;
+}
+
+.employee-table td {
+    padding: 14px;
+    font-size: 14px;
+    color: #444;
+    border-bottom: 1px solid #f1f1f1;
+}
+
+.employee-table tbody tr:hover {
+    background: #f8fbff;
+}
+
+/* ===== AVATAR USERS ===== */
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: #007bff;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 17px;
+}
+
+.user-text strong {
+    font-size: 15px;
+}
+
+.user-text span {
+    font-size: 12px;
+    color: #666;
+}
+
+/* Icon trong bảng */
+.employee-table td i {
+    margin-right: 6px;
+    color: #007bff;
+}
+
+/* Badge vai trò */
+.role-badge {
+    background: #e8f1ff;
+    color: #007bff;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+/* Nút thao tác */
+.btn-action {
+    padding: 8px;
+    margin: 0 5px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: 0.25s;
+}
+
+.btn-action i {
+    font-size: 17px;
+}
+
+.btn-action.edit {
+    color: #28a745;
+}
+
+.btn-action.delete {
+    color: #dc3545;
+}
+
+.btn-action:hover {
+    background: #f2f4f7;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 900px) {
+    .wrapper {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        box-shadow: none;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .header {
+        flex-direction: column;
+        gap: 10px;
+        height: auto;
+        padding: 15px;
+    }
+
+    .table-wrapper {
+        padding: 15px;
+    }
+}
