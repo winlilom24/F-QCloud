@@ -1,6 +1,6 @@
 <?php
-// ui/QuanLyUI.php
-require_once "Controller/QLNVController.php";
+// Boundary/QuanLyUI.php
+require_once __DIR__ . '/../Controller/QLNVController.php';
 
 class QuanLyUI {
     private $controller;
@@ -9,81 +9,87 @@ class QuanLyUI {
         $this->controller = new QLNVController();
     }
 
-    public function hienThiDanhSachNhanVien() {
+    public function hienThiDanhSach() {
         $id_quan_ly = $_SESSION['user_id'] ?? 1;
-        $nhanvien = $this->controller->getNhanVienCuaQuanLy($id_quan_ly);
-
-        if (empty($nhanvien)) {
-            echo '<div class="alert alert-info">Chưa có nhân viên nào trực thuộc.</div>';
-            return;
-        }
-
-        echo '<table class="table table-bordered table-hover">
-                <thead class="table-primary text-center">
+        $nhanVien = $this->controller->getNhanVienCuaQuanLy($id_quan_ly);
+        ?>
+        <div class="table-wrapper">
+            <table class="employee-table">
+                <thead>
                     <tr>
-                        <th>ID</th><th>Họ tên</th><th>SĐT</th><th>Email</th><th>Hành động</th>
+                        <th>Tên nhân viên</th><th>Email</th><th>Số điện thoại</th><th>Tên quán</th><th>Vai trò</th><th>Thao tác</th>
                     </tr>
                 </thead>
-                <tbody>';
+                <tbody>
+                    <?php if (empty($nhanVien)): ?>
+                        <tr>
+                            <td colspan="6" style="text-align:center; padding:70px; color:#999;">
+                                <i class="fa-solid fa-users-slash" style="font-size:60px; opacity:0.4;"></i><br><br>
+                                <strong>Chưa có nhân viên nào</strong><br>
+                                <small>Nhấn nút "Thêm nhân viên" để bắt đầu</small>
+                            </td>
+                        </tr>
+                    <?php else: foreach ($nhanVien as $nv): ?>
+                        <tr>
+                            <td>
+                                <div class="user-info">
+                                    <div class="avatar"><?= strtoupper(mb_substr($nv['ten'], 0, 2)) ?></div>
+                                    <div class="user-text">
+                                        <strong><?= htmlspecialchars($nv['ten']) ?></strong>
+                                        <span>ID: <?= $nv['user_id'] ?></span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><i class="fa-regular fa-envelope"></i> <?= htmlspecialchars($nv['email'] ?? 'Chưa có') ?></td>
+                            <td><i class="fa-solid fa-phone"></i> <?= htmlspecialchars($nv['sdt'] ?? 'Chưa có') ?></td>
+                            <td>Quán chính</td>
+                            <td><span class="role-badge">Nhân viên</span></td>
+                            <td>
+                                <a class="btn-action edit" href="javascript:void(0)"
+                                   onclick="openEditModal(
+                                       <?= $nv['user_id'] ?>,
+                                       '<?= htmlspecialchars(addslashes($nv['ten']), ENT_QUOTES) ?>',
+                                       '<?= htmlspecialchars(addslashes($nv['sdt'] ?? ''), ENT_QUOTES) ?>',
+                                       '<?= htmlspecialchars(addslashes($nv['email'] ?? ''), ENT_QUOTES) ?>'
+                                   )" title="Sửa">
+                                    <i class="fa-solid fa-pen"></i>
+                                </a>
 
-        foreach ($nhanvien as $nv) {
-            echo '<tr>
-                    <td class="text-center">' . $nv['user_id'] . '</td>
-                    <td>' . htmlspecialchars($nv['ten']) . '</td>
-                    <td>' . htmlspecialchars($nv['sdt'] ?? '-') . '</td>
-                    <td>' . htmlspecialchars($nv['email'] ?? '-') . '</td>
-                    <td class="text-center">
-                        <a href="?action=edit&id=' . $nv['user_id'] . '" class="btn btn-warning btn-sm">Sửa</a>
-                        <a href="?action=delete&id=' . $nv['user_id'] . '" 
-                           onclick="return confirm(\'Xóa nhân viên này?\')" 
-                           class="btn btn-danger btn-sm">Xóa</a>
-                    </td>
-                  </tr>';
-        }
-        echo '</tbody></table>';
+                                <a class="btn-action delete" href="javascript:void(0)"
+                                   onclick="confirmDelete(<?= $nv['user_id'] ?>, '<?= htmlspecialchars(addslashes($nv['ten']), ENT_QUOTES) ?>')"
+                                   title="Xóa">
+                                    <i class="fa-solid fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    <?php endforeach; endif; ?>
+                </tbody>
+            </table>
+        </div>
+        <?php
     }
 
-    public function showAddForm() {
-        $id_quan_ly = $_SESSION['user_id'] ?? 1;
-        echo '<div class="card">
-                <div class="card-header bg-success text-white"><h4>Thêm nhân viên mới</h4></div>
-                <div class="card-body">
-                <form method="post">
-                    <input type="hidden" name="action" value="add">
-                    <input type="hidden" name="id_quan_ly" value="' . $id_quan_ly . '">
-                    <div class="mb-3"><label>Họ tên</label><input name="ten" class="form-control" required></div>
-                    <div class="mb-3"><label>SĐT</label><input name="sdt" class="form-control" required></div>
-                    <div class="mb-3"><label>Email</label><input type="email" name="email" class="form-control"></div>
-                    <div class="mb-3"><label>Tài khoản đăng nhập</label><input name="tai_khoan" class="form-control" required></div>
-                    <div class="mb-3"><label>Mật khẩu</label><input type="password" name="mat_khau" class="form-control" required minlength="6"></div>
-                    <button type="submit" class="btn btn-success">Thêm nhân viên</button>
-                    <a href="quanly-nhanvien.php" class="btn btn-secondary">Hủy</a>
-                </form>
-                </div>
-              </div>';
+    public function xuLyThemNhanVien() {
+        $data = [
+            'ten'        => $_POST['ten'],
+            'sdt'        => $_POST['sdt'],
+            'email'      => $_POST['email'] ?? null,
+            'tai_khoan'  => $_POST['tai_khoan'],
+            'mat_khau'   => $_POST['mat_khau'],
+            'id_quan_ly' => $_SESSION['user_id'] ?? 1
+        ];
+        return $this->controller->themNhanVien($data);
     }
 
-    public function showEditForm($user_id) {
-        $nv = $this->controller->getById($user_id);
-        if (!$nv || $nv['role'] !== 'Nhân viên') {
-            echo '<div class="alert alert-danger">Không tìm thấy nhân viên!</div>';
-            return;
-        }
+    public function xuLySuaNhanVien() {
+        $user_id = (int)$_POST['user_id'];
+        $ten     = $_POST['ten'];
+        $sdt     = $_POST['sdt'];
+        $email   = $_POST['email'] ?? null;
+        return $this->controller->suaNhanVien($user_id, $ten, $sdt, $email);
+    }
 
-        echo '<div class="card">
-                <div class="card-header bg-warning"><h4>Sửa nhân viên</h4></div>
-                <div class="card-body">
-                <form method="post">
-                    <input type="hidden" name="action" value="update">
-                    <input type="hidden" name="user_id" value="' . $nv['user_id'] . '">
-                    <div class="mb-3"><label>Họ tên</label><input name="ten" class="form-control" value="' . htmlspecialchars($nv['ten']) . '" required></div>
-                    <div class="mb-3"><label>SĐT</label><input name="sdt" class="form-control" value="' . htmlspecialchars($nv['sdt'] ?? '') . '" required></div>
-                    <div class="mb-3"><label>Email</label><input type="email" name="email" class="form-control" value="' . htmlspecialchars($nv['email'] ?? '') . '"></div>
-                    <button type="submit" class="btn btn-success">Cập nhật</button>
-                    <a href="quanly-nhanvien.php" class="btn btn-secondary">Hủy</a>
-                </form>
-                </div>
-              </div>';
+    public function xuLyXoaNhanVien($user_id) {
+        return $this->controller->xoaNhanVien($user_id);
     }
 }
-?>
