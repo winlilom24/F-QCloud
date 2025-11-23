@@ -1,5 +1,4 @@
 <?php
-// QuanLyUI.php - Đầu file
 session_start();
 
 require_once '../Controller/QLNVController.php';
