@@ -85,7 +85,6 @@ if (isset($_GET['delete'])) {
             <i class="fa-solid fa-user-plus"></i> Thêm nhân viên
         </button>
 
-        <!-- USER AVATAR & DROPDOWN - ĐẸP NHƯ ẢNH BẠN GỬI -->
         <div class="user-profile" onclick="toggleUserMenu(event)">
             <div class="user-avatar-circle">
                 <i class="fa-solid fa-user"></i>

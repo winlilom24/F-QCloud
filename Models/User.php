@@ -12,8 +12,13 @@ class User {
     // Lấy danh sách nhân viên của quản lý
     public function getNhanVienByQuanLy($id_quan_ly) {
         $id_quan_ly = (int)$id_quan_ly;
-        $query = "SELECT user_id, ten, sdt, email, role 
-                  FROM user 
+        // $query = "SELECT user_id, ten, sdt, email, role 
+        //           FROM user 
+        //           WHERE id_quan_ly = ? AND role = 'Nhân viên'";
+
+        $query = "SELECT tk.user_id, tk.mat_khau, u.ten, u.role, u.ten_quan
+                  FROM taikhoan tk
+                  JOIN user u ON tk.user_id = u.user_id
                   WHERE id_quan_ly = ? AND role = 'Nhân viên'";
         $stmt = $this->conn->prepare($query);
         $stmt->bind_param("i", $id_quan_ly);
