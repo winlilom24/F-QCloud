@@ -1,6 +1,6 @@
 <?php
 // models/User.php
-require_once "Repository/Database.php";
+require_once "../Repository/Database.php";
 
 class User {
     private $conn;

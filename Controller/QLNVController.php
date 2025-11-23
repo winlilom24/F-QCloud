@@ -1,6 +1,6 @@
 <?php
 // controllers/QLNVController.php
-require_once "Models/User.php";
+require_once "../Models/User.php";
 
 class QLNVController {
     private $userModel;
