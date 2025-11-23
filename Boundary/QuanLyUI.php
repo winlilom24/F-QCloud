@@ -1,133 +1,89 @@
 <?php
-// QuanLyUI.php - Đầu file
-session_start();
+// ui/QuanLyUI.php
+require_once "Controller/QLNVController.php";
 
-require_once '../Controller/QLNVController.php';
+class QuanLyUI {
+    private $controller;
 
-// Giả sử bạn đang đăng nhập với quản lý id = 1 (sau này lấy từ session)
-$id_quan_ly = $_SESSION['user_id'] ?? 1;  // đổi thành 1 nếu bạn test với quản lý Nguyen Van A
+    public function __construct() {
+        $this->controller = new QLNVController();
+    }
 
-try {
-    $controller = new QLNVController();
-    $nhanVien = $controller->getNhanVienCuaQuanLy($id_quan_ly);
-} catch (Exception $e) {
-    echo "<h3 style='color:red; text-align:center;'>Lỗi kết nối: " . htmlspecialchars($e->getMessage()) . "</h3>";
-    $nhanVien = [];
+    public function hienThiDanhSachNhanVien() {
+        $id_quan_ly = $_SESSION['user_id'] ?? 1;
+        $nhanvien = $this->controller->getNhanVienCuaQuanLy($id_quan_ly);
+
+        if (empty($nhanvien)) {
+            echo '<div class="alert alert-info">Chưa có nhân viên nào trực thuộc.</div>';
+            return;
+        }
+
+        echo '<table class="table table-bordered table-hover">
+                <thead class="table-primary text-center">
+                    <tr>
+                        <th>ID</th><th>Họ tên</th><th>SĐT</th><th>Email</th><th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>';
+
+        foreach ($nhanvien as $nv) {
+            echo '<tr>
+                    <td class="text-center">' . $nv['user_id'] . '</td>
+                    <td>' . htmlspecialchars($nv['ten']) . '</td>
+                    <td>' . htmlspecialchars($nv['sdt'] ?? '-') . '</td>
+                    <td>' . htmlspecialchars($nv['email'] ?? '-') . '</td>
+                    <td class="text-center">
+                        <a href="?action=edit&id=' . $nv['user_id'] . '" class="btn btn-warning btn-sm">Sửa</a>
+                        <a href="?action=delete&id=' . $nv['user_id'] . '" 
+                           onclick="return confirm(\'Xóa nhân viên này?\')" 
+                           class="btn btn-danger btn-sm">Xóa</a>
+                    </td>
+                  </tr>';
+        }
+        echo '</tbody></table>';
+    }
+
+    public function showAddForm() {
+        $id_quan_ly = $_SESSION['user_id'] ?? 1;
+        echo '<div class="card">
+                <div class="card-header bg-success text-white"><h4>Thêm nhân viên mới</h4></div>
+                <div class="card-body">
+                <form method="post">
+                    <input type="hidden" name="action" value="add">
+                    <input type="hidden" name="id_quan_ly" value="' . $id_quan_ly . '">
+                    <div class="mb-3"><label>Họ tên</label><input name="ten" class="form-control" required></div>
+                    <div class="mb-3"><label>SĐT</label><input name="sdt" class="form-control" required></div>
+                    <div class="mb-3"><label>Email</label><input type="email" name="email" class="form-control"></div>
+                    <div class="mb-3"><label>Tài khoản đăng nhập</label><input name="tai_khoan" class="form-control" required></div>
+                    <div class="mb-3"><label>Mật khẩu</label><input type="password" name="mat_khau" class="form-control" required minlength="6"></div>
+                    <button type="submit" class="btn btn-success">Thêm nhân viên</button>
+                    <a href="quanly-nhanvien.php" class="btn btn-secondary">Hủy</a>
+                </form>
+                </div>
+              </div>';
+    }
+
+    public function showEditForm($user_id) {
+        $nv = $this->controller->getById($user_id);
+        if (!$nv || $nv['role'] !== 'Nhân viên') {
+            echo '<div class="alert alert-danger">Không tìm thấy nhân viên!</div>';
+            return;
+        }
+
+        echo '<div class="card">
+                <div class="card-header bg-warning"><h4>Sửa nhân viên</h4></div>
+                <div class="card-body">
+                <form method="post">
+                    <input type="hidden" name="action" value="update">
+                    <input type="hidden" name="user_id" value="' . $nv['user_id'] . '">
+                    <div class="mb-3"><label>Họ tên</label><input name="ten" class="form-control" value="' . htmlspecialchars($nv['ten']) . '" required></div>
+                    <div class="mb-3"><label>SĐT</label><input name="sdt" class="form-control" value="' . htmlspecialchars($nv['sdt'] ?? '') . '" required></div>
+                    <div class="mb-3"><label>Email</label><input type="email" name="email" class="form-control" value="' . htmlspecialchars($nv['email'] ?? '') . '"></div>
+                    <button type="submit" class="btn btn-success">Cập nhật</button>
+                    <a href="quanly-nhanvien.php" class="btn btn-secondary">Hủy</a>
+                </form>
+                </div>
+              </div>';
+    }
 }
 ?>
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Danh sách nhân viên - FQCloud</title>
-    <link rel="stylesheet" href="../Public/css/QLNV.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
-<body>
-<div class="wrapper">
-
-    <!-- Sidebar -->
-    <aside class="sidebar">
-        <div class="logo">
-            <i class="fa-solid fa-cloud"></i> FQCloud
-        </div>
-        <ul class="menu">
-            <li class="active"><a href="#"><i class="fa-solid fa-users"></i> Quản lý nhân viên</a></li>
-            <li><a href="#"><i class="fa-solid fa-table"></i> Quản lý bàn</a></li>
-            <li><a href="#"><i class="fa-solid fa-bowl-food"></i> Quản lý món ăn</a></li>
-        </ul>
-    </aside>
-
-    <!-- Main -->
-    <main class="main-content">
-
-        <!-- Header -->
-        <header class="header">
-            <h2>Danh sách nhân viên</h2>
-            <div class="header-right">
-                <button class="btn btn-primary" onclick="openAddModal()">
-                    <i class="fa-solid fa-user-plus"></i> Thêm nhân viên
-                </button>
-                <div class="admin-box">
-                    <i class="fa-solid fa-bell"></i>
-                    <div class="admin-info">
-                        <span class="admin-name">Quản lý</span>
-                        <i class="fa-solid fa-circle-user"></i>
-                    </div>
-                </div>
-            </div>
-        </header>
-
-        <!-- Table -->
-        <div class="table-wrapper">
-            <table class="employee-table">
-                <thead>
-                <tr>
-                    <th>Tên nhân viên</th>
-                    <th>Email</th>
-                    <th>Số điện thoại</th>
-                    <th>Tên quán</th>
-                    <th>Vai trò</th>
-                    <th>Thao tác</th>
-                </tr>
-                </thead>
-                <tbody>
-                <?php if (empty($nhanVien)): ?>
-                    <tr>
-                        <td colspan="6" style="text-align:center; padding:50px 20px; color:#999;">
-                            <i class="fa-solid fa-users-slash" style="font-size:48px; display:block; margin-bottom:16px; opacity:0.5;"></i>
-                            <strong>Chưa có nhân viên nào</strong><br>
-                            <small>Hãy nhấn nút "Thêm nhân viên" để bắt đầu</small>
-                        </td>
-                    </tr>
-                <?php else: ?>
-                    <?php foreach ($nhanVien as $nv): ?>
-                        <tr>
-                            <td>
-                                <div class="user-info">
-                                    <div class="avatar">
-                                        <?= strtoupper(mb_substr($nv['ten'], 0, 2)) ?>
-                                    </div>
-                                    <div class="user-text">
-                                        <strong><?= htmlspecialchars($nv['ten']) ?></strong>
-                                        <span>ID: <?= $nv['user_id'] ?></span>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                <i class="fa-regular fa-envelope"></i>
-                                <?= htmlspecialchars($nv['email'] ?? 'Chưa có') ?>
-                            </td>
-                            <td>
-                                <i class="fa-solid fa-phone"></i>
-                                <?= htmlspecialchars($nv['sdt'] ?? 'Chưa có') ?>
-                            </td>
-                            <td><?= htmlspecialchars($nv['ten_quan'] ?? 'Chưa đặt tên quán') ?></td>
-                            <td><span class="role-badge"><?= $nv['role'] ?></span></td>
-                            <td>
-                                <a class="btn-action edit" href="edit_nhanvien.php?id=<?= $nv['user_id'] ?>" title="Sửa">
-                                    <i class="fa-solid fa-pen"></i>
-                                </a>
-                                <a class="btn-action delete" href="delete_nhanvien.php?id=<?= $nv['user_id'] ?>" 
-                                   onclick="return confirm('Bạn chắc chắn muốn xóa nhân viên \"<?= htmlspecialchars($nv['ten']) ?>\"?')">
-                                    <i class="fa-solid fa-trash"></i>
-                                </a>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                <?php endif; ?>
-                </tbody>
-            </table>
-        </div>
-    </main>
-</div>
-
-<!-- Modal thêm nhân viên (tạm để trống, bạn làm sau cũng được) -->
-<script>
-function openAddModal() {
-    alert("Chức năng thêm nhân viên sẽ được làm ở bước tiếp theo nhé!");
-}
-</script>
-</body>
-</html>
