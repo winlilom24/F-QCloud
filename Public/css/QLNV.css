@@ -275,3 +275,172 @@ body {
         padding: 15px;
     }
 }
+/* USER DROPDOWN - ĐẸP NHƯ HỆ THỐNG XỊN */
+.user-dropdown {
+    position: relative;
+    display: inline-block;
+    margin-left: 20px;
+}
+.user-info-header {
+    display: flex;
+    align-items: center;
+    background: white;
+    padding: 10px 16px;
+    border-radius: 50px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    cursor: pointer;
+    transition: all 0.3s;
+    min-width: 180px;
+}
+.user-info-header:hover {
+    box-shadow: 0 4px 15px rgba(0,123,255,0.2);
+    transform: translateY(-2px);
+}
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    background: #007bff;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    margin-right: 12px;
+}
+.user-text {
+    text-align: left;
+    line-height: 1.3;
+}
+.user-text strong { font-size: 15px; color: #333; }
+.user-text small { font-size: 12px; color: #666; }
+.dropdown-arrow {
+    margin-left: auto;
+    font-size: 14px;
+    color: #999;
+    transition: transform 0.3s;
+}
+.dropdown-arrow.active { transform: rotate(180deg); }
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: white;
+    min-width: 200px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    overflow: hidden;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s;
+    z-index: 1000;
+}
+.dropdown-menu.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+.dropdown-menu a {
+    display: block;
+    padding: 14px 20px;
+    color: #333;
+    text-decoration: none;
+    font-size: 14px;
+    transition: background 0.2s;
+}
+.dropdown-menu a:hover {
+    background: #f8f9fa;
+}
+.dropdown-menu hr {
+    margin: 8px 0;
+    border: none;
+    border-top: 1px solid #eee;
+}
+.text-danger { color: #dc3545 !important; }
+.text-danger:hover { background: #f8d7da !important; }
+/* USER PROFILE - ĐÚNG NHƯ ẢNH BẠN GỬI */
+.user-profile {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: white;
+    padding: 8px 16px 8px 8px;
+    border-radius: 50px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    user-select: none;
+    margin-left: 20px;
+}
+.user-profile:hover {
+    box-shadow: 0 6px 20px rgba(0,123,255,0.2);
+    transform: translateY(-2px);
+}
+.user-avatar-circle {
+    width: 44px;
+    height: 44px;
+    background: #007bff;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    margin-right: 12px;
+    flex-shrink: 0;
+}
+.user-info {
+    text-align: left;
+    line-height: 1.3;
+}
+.user-name {
+    font-weight: 600;
+    font-size: 15px;
+    color: #333;
+}
+.user-role {
+    font-size: 12px;
+    color: #666;
+}
+.arrow {
+    margin-left: 10px;
+    font-size: 14px;
+    color: #999;
+    transition: transform 0.3s;
+}
+.arrow.active { transform: rotate(180deg); }
+
+.user-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: white;
+    min-width: 200px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+    margin-top: 8px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    z-index: 999;
+    overflow: hidden;
+}
+.user-menu.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+.user-menu a {
+    display: block;
+    padding: 14px 20px;
+    color: #333;
+    text-decoration: none;
+    font-size: 14.5px;
+    transition: background 0.2s;
+}
+.user-menu a:hover { background: #f8f9fa; }
+.user-menu a.logout-item { color: #dc3545; }
+.user-menu a.logout-item:hover { background: #f8d7da; }
