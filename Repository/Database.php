@@ -5,7 +5,7 @@ class Database {
     private $config;
 
     private function __construct() {
-        $this->config = include('../Resources/config.php');
+        $this->config = include __DIR__ . '/../Resources/config.php';
     }
 
     // Chỉ cho phép gọi từ lớp khác
