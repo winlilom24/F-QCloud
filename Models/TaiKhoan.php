@@ -10,7 +10,7 @@ class TaiKhoan {
     }
 
 // KIỂM TRA ĐĂNG NHẬP: tai_khoan + mat_khau
-    public function dangNhap($tai_khoan, $mat_khau_nhap, , $ten_quan) {
+    public function dangNhap($tai_khoan, $mat_khau_nhap, $ten_quan) {
         // 1. TÌM USER THEO TÀI KHOẢN
         $query = "SELECT tk.user_id, tk.mat_khau, u.ten, u.role, u.ten_quan
                   FROM taikhoan tk
@@ -24,7 +24,7 @@ class TaiKhoan {
 
         if ($result->num_rows === 0) {
             $message = 'Tài khoản không tồn tại!'
-            return ['success' => true, 'message' => $message];
+            return ['success' => false, 'message' => $message];
         }
 
         $row = $result->fetch_assoc();
@@ -36,7 +36,7 @@ class TaiKhoan {
         }
 
         //3. KIỂM TRA TÊN QUÁN
-        if ($ten_quan === $row['ten_quan']) {
+        if ($ten_quan !== $row['ten_quan']) {
             $message = 'Sai ten quán'
             return ['success' => false, 'message' => $message];
         }
@@ -55,7 +55,7 @@ class TaiKhoan {
         $_SESSION['session_id'] = $session_id;
 
         // 5. TRẢ VỀ TRUE CHO CONTROLLER
-        return ['success' => true, 'message' => 'Quản lý đăng nhập thành công'];
+        return ['success' => true, 'message' => 'Đăng nhập thành công'];
     }
 }
 ?>
