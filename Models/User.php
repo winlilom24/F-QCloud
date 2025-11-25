@@ -1,6 +1,6 @@
 <?php
 // models/User.php
-require_once "../Repository/Database.php";
+require_once __DIR__ . '/../Repository/Database.php';
 
 class User {
     private $conn;
@@ -9,14 +9,37 @@ class User {
         $this->conn = Database::connect();
     }
 
+    // Tạo tài khoản chủ quán (Quản lý)
+    public function createAccount($ten, $ten_quan, $sdt, $email, $tai_khoan, $mat_khau) {
+        $this->conn->begin_transaction();
+        try {
+            // 1. Thêm vào bảng user với role = Quản lý
+            $query1 = "INSERT INTO user (ten, ten_quan, sdt, email, role) 
+                       VALUES (?, ?, ?, ?, 'Quản lý')";
+            $stmt1 = $this->conn->prepare($query1);
+            $stmt1->bind_param("ssss", $ten, $ten_quan, $sdt, $email);
+            $stmt1->execute();
+            $user_id = $this->conn->insert_id;
+
+            // 2. Tạo tài khoản đăng nhập
+            $hash = password_hash($mat_khau, PASSWORD_DEFAULT);
+            $query2 = "INSERT INTO taikhoan (user_id, tai_khoan, mat_khau) VALUES (?, ?, ?)";
+            $stmt2 = $this->conn->prepare($query2);
+            $stmt2->bind_param("iss", $user_id, $tai_khoan, $hash);
+            $stmt2->execute();
+
+            $this->conn->commit();
+            return ['success' => true, 'message' => 'Đăng ký chủ quán thành công!', 'user_id' => $user_id];
+        } catch (Exception $e) {
+            $this->conn->rollback();
+            return ['success' => false, 'message' => 'Lỗi: Tài khoản đã tồn tại hoặc dữ liệu không hợp lệ!'];
+        }
+    }
+
     // Lấy danh sách nhân viên của quản lý
     public function getNhanVienByQuanLy($id_quan_ly) {
         $id_quan_ly = (int)$id_quan_ly;
-        // $query = "SELECT user_id, ten, sdt, email, role 
-        //           FROM user 
-        //           WHERE id_quan_ly = ? AND role = 'Nhân viên'";
-
-        $query = "SELECT tk.user_id, tk.mat_khau, u.ten, u.role, u.ten_quan, u.sdt, u.email
+        $query = "SELECT tk.user_id, tk.mat_khau, u.ten, u.role, u.ten_quan
                   FROM taikhoan tk
                   JOIN user u ON tk.user_id = u.user_id
                   WHERE id_quan_ly = ? AND role = 'Nhân viên'";
@@ -41,11 +64,11 @@ class User {
         return $stmt->get_result()->fetch_assoc();
     }
 
-    // Tạo nhân viên + tài khoản đăng nhập
+    // Tạo nhân viên + tài khoản đăng nhập (dành cho quản lý thêm nhân viên)
     public function create($ten, $sdt, $email, $tai_khoan, $mat_khau, $id_quan_ly) {
         $this->conn->begin_transaction();
         try {
-            // 1. Thêm vào bảng user
+            // 1. Thêm vào bảng user với role = Nhân viên
             $query1 = "INSERT INTO user (ten, sdt, email, role, id_quan_ly) 
                        VALUES (?, ?, ?, 'Nhân viên', ?)";
             $stmt1 = $this->conn->prepare($query1);
