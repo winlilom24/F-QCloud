@@ -16,7 +16,7 @@ class User {
         //           FROM user 
         //           WHERE id_quan_ly = ? AND role = 'Nhân viên'";
 
-        $query = "SELECT tk.user_id, tk.mat_khau, u.ten, u.role, u.ten_quan
+        $query = "SELECT tk.user_id, tk.mat_khau, u.ten, u.role, u.ten_quan, u.sdt, u.email
                   FROM taikhoan tk
                   JOIN user u ON tk.user_id = u.user_id
                   WHERE id_quan_ly = ? AND role = 'Nhân viên'";
