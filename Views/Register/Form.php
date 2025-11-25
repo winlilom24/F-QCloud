@@ -1,24 +1,25 @@
 <?php
-require_once __DIR__ . '/../../Controller/LoginController.php';
+require_once __DIR__ . '/../../Controller/RegisterController.php';
 
-$controller = new LoginController();
+$controller = new RegisterController();
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $controller->login($_POST);
+    $controller->register($_POST);
 }
 
 $error = $controller->error;
+$success = $controller->success;
 ?>
-
 <!DOCTYPE html>
 <html lang="vi">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>F-QCloud - Đăng nhập</title>
+<title>F-QCloud - Đăng ký</title>
 <link rel="stylesheet" href="../../Public/css/Form.css?v=<?=time()?>">
 </head>
 <body>
+
 <div class="container">
   <div class="left">
     <div class="hero" style="background-image: url('../../Public/images/Trang-chu-2.jpg')"></div>
@@ -26,20 +27,38 @@ $error = $controller->error;
 
   <main class="right">
     <div class="box">
+
       <div class="brand">
         <div class="logo">☁️</div>
         <h1>F-QCloud</h1>
       </div>
       <p class="sub">Bar - Cafe, Nhà hàng, Karaoke & Software</p>
 
-      <?php if (!empty($error)) : ?>
-        <p style='color:red; text-align:center;'><?= $error ?></p>
-      <?php endif; ?>
+      <?php 
+        if($error) echo "<p class='msg error'>$error</p>"; 
+        if($success) echo "<p class='msg success'>$success</p>";
+      ?>
 
       <form class="form" method="post" autocomplete="off">
+
+        <label class="field">
+          <span class="label">Họ và tên</span>
+          <input type="text" name="ten" placeholder="Nhập họ và tên" required />
+        </label>
+
         <label class="field">
           <span class="label">Tên gian hàng</span>
           <input type="text" name="ten_quan" placeholder="Nhập tên gian hàng" required />
+        </label>
+
+        <label class="field">
+          <span class="label">Số điện thoại</span>
+          <input type="text" name="sdt" placeholder="Nhập số điện thoại" required />
+        </label>
+
+        <label class="field">
+          <span class="label">Email</span>
+          <input type="email" name="email" placeholder="Nhập email" required />
         </label>
 
         <label class="field">
@@ -55,9 +74,10 @@ $error = $controller->error;
           </div>
         </label>
 
-        <button class="btn primary" type="submit">🛒 Đăng nhập</button>
+        <button class="btn primary" type="submit">🛒 Đăng ký</button>
+
         <div class="signup-link">
-          Chưa có tài khoản? <a href="../Register/Form.php">Tạo tài khoản</a>
+          Đã có tài khoản? <a href="../Login/Form.php">Đăng nhập</a>
         </div>
       </form>
 
@@ -65,9 +85,11 @@ $error = $controller->error;
         <div>📞 0857551919</div>
         <div>🌐 Tiếng Việt (VN)</div>
       </div>
+
     </div>
   </main>
 </div>
+
 
 <script>
 const eyes = document.querySelectorAll('.eye');
@@ -78,5 +100,6 @@ eyes.forEach(eye => {
   });
 });
 </script>
+
 </body>
 </html>

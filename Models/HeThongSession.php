@@ -1,6 +1,6 @@
 <?php
 // models/HeThongSession.php
-require_once "Repository/Database.php";
+require_once __DIR__ . '/../Repository/Database.php';
 
 class HeThongSession {
     private $conn;

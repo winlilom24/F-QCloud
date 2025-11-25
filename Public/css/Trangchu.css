@@ -1,0 +1,186 @@
+/* ================= RESET ================= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
+}
+
+body {
+  background: #f3f5f7;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ================= HEADER ================= */
+.header-top {
+  height: 60px;
+  width: 100%;
+  background: #0d47a1;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+}
+
+.header-top .menu {
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-top .logo {
+  font-size: 22px;
+}
+
+.header-top .info {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  font-size: 16px;
+}
+
+.btn-logout {
+  background: #ff5252;
+  color: white;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+.btn-logout:hover {
+  background: #d32f2f;
+}
+
+/* ================= MAIN WRAPPER ================= */
+.wrapper {
+  display: flex;
+  height: calc(100vh - 60px);
+}
+
+/* ================= LEFT – TABLE LIST ================= */
+.left-panel {
+  width: 68%;
+  height: 100%;
+  padding: 15px;
+  overflow-y: auto;
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.tabs span {
+  padding: 8px 16px;
+  background: #e0e0e0;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.2s;
+}
+
+.tabs .active {
+  background: #0d47a1;
+  color: white;
+}
+
+/* Table grid */
+.table-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+}
+
+.table-item {
+  background: white;
+  height: 100px;
+  border-radius: 12px;
+  border: 2px solid #cfd8dc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 19px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.table-item:hover {
+  border-color: #2196f3;
+  transform: translateY(-2px);
+}
+
+/* Mang về */
+.takeaway {
+  background: #e8f5e9;
+  border-color: #4caf50 !important;
+  color: #2e7d32 !important;
+  font-weight: 600;
+}
+
+/* ================= RIGHT – BILL PANEL ================= */
+.bill-panel {
+  width: 32%;
+  background: white;
+  border-left: 1px solid #ddd;
+  display: flex;
+  flex-direction: column;
+}
+
+.bill-header {
+  padding: 15px;
+  font-size: 20px;
+  border-bottom: 1px solid #ddd;
+  font-weight: bold;
+}
+
+/* When bill is empty */
+.bill-empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #718096;
+  font-size: 16px;
+  text-align: center;
+}
+
+.bill-footer {
+  padding: 15px;
+  border-top: 1px solid #ddd;
+  display: flex;
+  justify-content: space-between;
+}
+
+.bill-footer button {
+  padding: 12px 20px;
+  border-radius: 8px;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.btn-print {
+  background: #eeeeee;
+}
+
+.btn-print:hover {
+  background: #d6d6d6;
+}
+
+.btn-pay {
+  background: #0d47a1;
+  color: white;
+}
+
+.btn-pay:hover {
+  background: #1565c0;
+}

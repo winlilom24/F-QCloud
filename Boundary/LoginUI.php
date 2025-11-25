@@ -17,7 +17,7 @@ class LoginUI {
     
         $tai_khoan = 'admin';
         $mat_khau = '123456';
-        $ten_quan = 'Highland'
+        $ten_quan = 'Highland';
         $message = $this->loginController->check($tai_khoan, $mat_khau, $ten_quan);
     }
 }

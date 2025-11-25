@@ -1,0 +1,264 @@
+/* RESET */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Inter, system-ui, sans-serif;
+}
+
+body {
+  background: #ffffff;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* LAYOUT CHÍNH */
+.container {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+}
+
+.left {
+  flex: 1;
+  min-width: 50%;
+  position: relative;
+}
+
+.hero {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: 0px center;
+  filter: brightness(0.55);
+}
+
+/* Cột phải */
+.right {
+  width: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  padding: 40px;
+}
+
+/* FORM / BOX */
+.box {
+  width: 100%;
+  max-width: 600px; /* Form lớn hơn */
+  padding: 30px;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* BRAND */
+.brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+
+.logo {
+  width: 48px;
+  height: 48px;
+  background: #4da3ff33;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  font-size: 36px;
+}
+
+.brand h1 {
+  font-size: 36px;
+  font-weight: 900;
+  font-family: "Pacifico", cursive;
+}
+
+.sub {
+  text-align: center;
+  color: #6b7280;
+  margin-bottom: 30px;
+  font-size: 14px;
+}
+
+/* FORM LỚN */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.field .label {
+  font-size: 16px;
+  color: #374151;
+  margin-bottom: 8px;
+}
+
+.field input {
+  width: 100%;
+  padding: 18px;
+  font-size: 17px;
+  border-radius: 12px;
+  border: 1px solid #d1d5db;
+  transition: 0.2s;
+}
+
+.field input:focus {
+  border-color: #4f78ff;
+  box-shadow: 0 0 0 3px #4f78ff33;
+}
+
+/* PASSWORD WRAP */
+.passwrap {
+  position: relative;
+}
+
+.eye {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: none;
+  cursor: pointer;
+  opacity: 0.7;
+  font-size: 22px;
+}
+
+.eye:hover {
+  opacity: 1;
+}
+
+.signup-link {
+  text-align: center;
+  font-size: 15px;
+  margin-top: 12px;
+  color: #6b7280;
+}
+
+.signup-link a {
+  color: #1a73e8;
+  text-decoration: none;
+  font-weight: 600;
+  margin-left: 4px;
+  transition: 0.2s;
+}
+
+.signup-link a:hover {
+  text-decoration: underline;
+}
+
+/* BUTTON */
+.btn.primary {
+  width: 100%;
+  padding: 18px;
+  background: #1a73e8;
+  border: none;
+  border-radius: 12px;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn.primary:hover {
+  background: #1669d8;
+}
+
+/* Forgot */
+.forgot {
+  text-align: right;
+  font-size: 15px;
+  color: #1a73e8;
+  cursor: pointer;
+  margin-top: -8px;
+}
+
+/* Footer */
+.footerline {
+  margin-top: 30px;
+  display: flex;
+  justify-content: space-between;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+/* RESPONSIVE TABLET */
+@media (max-width: 900px) {
+  .container {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .left {
+    height: 260px;
+    width: 100%;
+  }
+
+  .hero {
+    background-position: center center;
+  }
+
+  .right {
+    width: 100%;
+    padding: 25px;
+  }
+
+  .box {
+    max-width: 100%;
+    padding: 25px;
+  }
+
+  .brand h1 {
+    font-size: 28px;
+  }
+
+  .sub {
+    font-size: 13px;
+  }
+
+  .field input {
+    padding: 16px;
+    font-size: 16px;
+  }
+
+  .btn.primary {
+    padding: 16px;
+    font-size: 17px;
+  }
+}
+
+/* RESPONSIVE MOBILE */
+@media (max-width: 480px) {
+  .left {
+    height: 150px;
+  }
+
+  .brand h1 {
+    font-size: 24px;
+  }
+
+  .sub {
+    font-size: 12px;
+  }
+
+  .field input {
+    padding: 14px;
+    font-size: 15px;
+  }
+
+  .btn.primary {
+    padding: 14px;
+    font-size: 16px;
+  }
+
+  .forgot {
+    font-size: 13px;
+  }
+}

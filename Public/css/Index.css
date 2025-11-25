@@ -1,0 +1,156 @@
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+/* Ảnh nền toàn màn hình */
+.hero {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("../../Public/images/Trang-chu-2.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  filter: brightness(0.45); /* làm tối nhẹ để chữ rõ hơn */
+  z-index: -1;
+}
+
+/* Lớp giữa chứa nội dung */
+.welcome-wrapper {
+  width: 100%;
+  height: 100vh;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 20px;
+}
+
+/* Khối nội dung chính */
+.welcome-content {
+  text-align: center;
+  color: white;
+
+  background: rgba(0, 0, 0, 0.45);
+  padding: 60px 100px;
+  border-radius: 20px;
+  backdrop-filter: blur(6px);
+
+  animation: fadeIn 1.2s ease;
+  max-width: 1800px;
+}
+
+/* Logo đám mây */
+.logo {
+  font-size: 120px;
+  margin-bottom: 20px;
+}
+
+/* Tiêu đề */
+.title {
+  font-size: 50px;
+  font-weight: 350;
+}
+
+.brand-name {
+  font-size: 65px;
+  font-weight: 700;
+  margin-top: 5px;
+  margin-bottom: 15px;
+}
+
+/* Sub */
+.subtitle {
+  font-size: 25px;
+  margin-bottom: 30px;
+  line-height: 1.5;
+}
+
+/* Nút đăng nhập */
+.btn-login {
+  display: inline-block;
+  padding: 14px 40px;
+  font-size: 20px;
+  font-weight: 600;
+
+  background: #00aaff;
+  color: white;
+  text-decoration: none;
+  border-radius: 30px;
+
+  transition: 0.25s ease;
+}
+
+.btn-login:hover {
+  background: #0088cc;
+  transform: scale(1.06);
+}
+
+/* Khối 3 tính năng */
+.features {
+  margin-top: 40px;
+
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.feature-box {
+  width: 33%;
+  background: rgba(255, 255, 255, 0.14);
+  padding: 20px;
+  border-radius: 15px;
+  text-align: center;
+
+  transition: 0.25s ease;
+}
+
+.feature-box:hover {
+  background: rgba(255, 255, 255, 0.22);
+  transform: translateY(-6px);
+}
+
+.feature-box .icon {
+  font-size: 42px;
+  margin-bottom: 10px;
+}
+
+.feature-box h3 {
+  font-size: 20px;
+  margin-bottom: 8px;
+}
+
+/* Hiệu ứng Fade-in */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive cho mobile */
+@media (max-width: 768px) {
+  .welcome-content {
+    padding: 30px;
+  }
+
+  .features {
+    flex-direction: column;
+  }
+
+  .feature-box {
+    width: 100%;
+  }
+}
