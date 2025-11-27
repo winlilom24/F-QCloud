@@ -39,7 +39,7 @@ class User {
     // Lấy danh sách nhân viên của quản lý
     public function getNhanVienByQuanLy($id_quan_ly) {
         $id_quan_ly = (int)$id_quan_ly;
-        $query = "SELECT tk.user_id, tk.mat_khau, u.ten, u.role, u.ten_quan
+        $query = "SELECT tk.user_id, tk.tai_khoan, u.ten, u.role, u.ten_quan, u.email, u.sdt
                   FROM taikhoan tk
                   JOIN user u ON tk.user_id = u.user_id
                   WHERE id_quan_ly = ? AND role = 'Nhân viên'";
@@ -65,7 +65,7 @@ class User {
     }
 
     // Tạo nhân viên + tài khoản đăng nhập (dành cho quản lý thêm nhân viên)
-    public function create($ten, $ten_quan, $sdt, $email, $tai_khoan, $mat_khau, $id_quan_ly) {
+    public function create($ten, $sdt, $email, $tai_khoan, $mat_khau, $id_quan_ly) {
         $this->conn->begin_transaction();
         try {
             // 1. Thêm vào bảng user với role = Nhân viên
