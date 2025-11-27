@@ -78,33 +78,39 @@ if (isset($_GET['delete'])) {
     </aside>
 
     <main class="main-content">
-        <header class="header">
-            <h2>Danh sách nhân viên</h2>
-            <div class="header-right">
-        <button class="btn btn-primary" onclick="openAddModal()">
-            <i class="fa-solid fa-user-plus"></i> Thêm nhân viên
-        </button>
+        <header class="page-header">
+            <div class="page-header__info">
+                <p class="eyebrow">Nhân sự F-QCloud</p>
+                <h1>Danh sách nhân viên</h1>
+                <span>Tối ưu hóa quy trình quản lý nhân viên</span>
+            </div>
+            <div class="page-header__actions">
+                <button class="icon-button" aria-label="Thông báo">
+                    <i class="fa-regular fa-bell"></i>
+                </button>
+                <button class="btn btn-primary" onclick="openAddModal()">
+                    <i class="fa-solid fa-user-plus"></i> Thêm nhân viên
+                </button>
+                <div class="user-profile" onclick="toggleUserMenu(event)">
+                    <div class="user-avatar-circle">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                    <div class="user-info">
+                        <div class="user-name">Admin</div>
+                        <div class="user-role">Quản trị viên</div>
+                    </div>
+                    <i class="fa-solid fa-caret-down arrow"></i>
 
-        <div class="user-profile" onclick="toggleUserMenu(event)">
-            <div class="user-avatar-circle">
-                <i class="fa-solid fa-user"></i>
+                    <div class="user-menu" id="userMenu">
+                        <a href="javascript:void(0)" onclick="openChangePasswordModal()">
+                            <i class="fa-solid fa-key"></i> Đổi mật khẩu
+                        </a>
+                        <a href="logout.php" class="logout-item">
+                            <i class="fa-solid fa-arrow-right-from-bracket"></i> Đăng xuất
+                        </a>
+                    </div>
+                </div>
             </div>
-            <div class="user-info">
-                <div class="user-name">Admin</div>
-                <div class="user-role">Quản trị viên</div>
-            </div>
-            <i class="fa-solid fa-caret-down arrow"></i>
-
-            <div class="user-menu" id="userMenu">
-                <a href="javascript:void(0)" onclick="openChangePasswordModal()">
-                    <i class="fa-solid fa-key"></i> Đổi mật khẩu
-                </a>
-                <a href="logout.php" class="logout-item">
-                    <i class="fa-solid fa-arrow-right-from-bracket"></i> Đăng xuất
-                </a>
-            </div>
-        </div>
-    </div>
         </header>
 
         <div id="danhSachNhanVien">
@@ -132,6 +138,10 @@ if (isset($_GET['delete'])) {
                 <div class="form-group" id="passwordGroup">
                     <label>Mật khẩu *</label>
                     <input type="password" name="mat_khau" id="mat_khau" minlength="6" required>
+                </div>
+                <div class="form-group" id="passwordConfirmGroup">
+                    <label>Nhập lại mật khẩu *</label>
+                    <input type="password" name="mat_khau_confirm" id="mat_khau_confirm" minlength="6" required>
                 </div>
                 <div class="form-group">
                     <label>Họ và tên *</label>
