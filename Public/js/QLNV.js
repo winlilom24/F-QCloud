@@ -7,9 +7,12 @@ function openAddModal() {
     document.getElementById('formAction').value = 'add';
     document.getElementById('employeeForm').reset();
     document.getElementById('passwordGroup').style.display = 'block';
+    document.getElementById('passwordConfirmGroup').style.display = 'block';
     document.getElementById('tai_khoan').disabled = false;
     document.getElementById('tai_khoan').required = true;
     document.getElementById('mat_khau').required = true;
+    document.getElementById('mat_khau_confirm').disabled = false;
+    document.getElementById('mat_khau_confirm').required = true;
     document.getElementById('userId').value = '';
     document.getElementById('employeeModal').classList.add('active');
 }
@@ -25,10 +28,14 @@ function openEditModal(id, ten, sdt, email) {
     
     // Ẩn mật khẩu + tài khoản khi sửa
     document.getElementById('passwordGroup').style.display = 'none';
+    document.getElementById('passwordConfirmGroup').style.display = 'none';
     document.getElementById('tai_khoan').value = '(không thể thay đổi)';
     document.getElementById('tai_khoan').disabled = true;
     document.getElementById('tai_khoan').required = false;
     document.getElementById('mat_khau').required = false;
+    document.getElementById('mat_khau_confirm').value = '';
+    document.getElementById('mat_khau_confirm').disabled = true;
+    document.getElementById('mat_khau_confirm').required = false;
 
     document.getElementById('employeeModal').classList.add('active');
 }
@@ -101,6 +108,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const formData = new FormData(this);
         const action = document.getElementById('formAction').value;
+        if (action === 'add') {
+            const password = document.getElementById('mat_khau').value;
+            const confirmPassword = document.getElementById('mat_khau_confirm').value;
+            if (password !== confirmPassword) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Mật khẩu không khớp',
+                    text: 'Vui lòng nhập lại mật khẩu chính xác.'
+                });
+                return;
+            }
+        }
 
         fetch('QLNV.php', {
             method: 'POST',
@@ -134,19 +153,20 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 // HIỂN THỊ / ẨN MENU NGƯỜI DÙNG
-function toggleUserMenu() {
+function toggleUserMenu(event) {
+    event?.stopPropagation();
     const menu = document.getElementById('userMenu');
-    const arrow = document.querySelector('.dropdown-arrow');
+    const arrow = document.querySelector('.user-profile .arrow');
     menu.classList.toggle('active');
-    arrow.classList.toggle('active');
+    arrow?.classList.toggle('active');
 }
 
 // ĐÓNG MENU KHI NHẤN RA NGOÀI
 document.addEventListener('click', function(e) {
-    const dropdown = document.querySelector('.user-dropdown');
-    if (!dropdown.contains(e.target)) {
+    const profile = document.querySelector('.user-profile');
+    if (profile && !profile.contains(e.target)) {
         document.getElementById('userMenu')?.classList.remove('active');
-        document.querySelector('.dropdown-arrow')?.classList.remove('active');
+        document.querySelector('.user-profile .arrow')?.classList.remove('active');
     }
 });
 
