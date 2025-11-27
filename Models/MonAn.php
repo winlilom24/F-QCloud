@@ -1,6 +1,6 @@
 <?php
 // models/MonAn.php
-require_once "Repository/Database.php";
+require_once __DIR__ . '/../Repository/Database.php';
 
 class MonAn {
     private $conn;
@@ -9,11 +9,12 @@ class MonAn {
         $this->conn = Database::connect();
     }
 
-    // Lấy tất cả món ăn (không lấy hinh_anh)
+    // Lấy tất cả món ăn
     public function getAll() {
-        $query = "SELECT id_mon, ten_mon, gia_tien, mo_ta, trang_thai, id_nhom 
-                  FROM monan 
-                  ORDER BY ten_mon";
+        $query = "SELECT m.id_mon, m.ten_mon, m.gia_tien, m.mo_ta, m.trang_thai, m.id_nhom, n.ten_nhom
+                  FROM monan m
+                  LEFT JOIN nhommonan n ON m.id_nhom = n.id_nhom
+                  ORDER BY m.ten_mon";
         $result = $this->conn->query($query);
         $data = [];
         while ($row = $result->fetch_assoc()) {
@@ -34,7 +35,7 @@ class MonAn {
     }
 
     // Thêm món mới
-    public function create($ten_mon, $gia_tien, $mo_ta = '', $trang_thai = 'Còn', $id_nhom = null) {
+    public function create($ten_mon, $gia_tien, $mo_ta = '', $trang_thai = 'Còn món', $id_nhom = null) {
         $query = "INSERT INTO monan (ten_mon, gia_tien, mo_ta, trang_thai, id_nhom) 
                   VALUES (?, ?, ?, ?, ?)";
         $stmt = $this->conn->prepare($query);
@@ -69,6 +70,16 @@ class MonAn {
         return $stmt->execute() && $stmt->affected_rows > 0
             ? ['success' => true, 'message' => 'Xóa món thành công!']
             : ['success' => false, 'message' => 'Không thể xóa món này!'];
+    }
+
+    public function getCategories() {
+        $query = "SELECT id_nhom, ten_nhom FROM nhommonan ORDER BY ten_nhom";
+        $result = $this->conn->query($query);
+        $data = [];
+        while ($row = $result->fetch_assoc()) {
+            $data[] = $row;
+        }
+        return $data;
     }
 }
 ?>

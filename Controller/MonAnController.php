@@ -1,6 +1,6 @@
 <?php
 // controllers/MonAnController.php
-require_once "Models/MonAn.php";
+require_once __DIR__ . '/../Models/MonAn.php';
 
 class MonAnController {
     private $monAnModel;
@@ -11,6 +11,10 @@ class MonAnController {
 
     public function getDanhSach() {
         return $this->monAnModel->getAll();
+    }
+
+    public function getDanhSachNhom() {
+        return $this->monAnModel->getCategories();
     }
 
     public function getById($id) {
