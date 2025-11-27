@@ -65,14 +65,14 @@ class User {
     }
 
     // Tạo nhân viên + tài khoản đăng nhập (dành cho quản lý thêm nhân viên)
-    public function create($ten, $sdt, $email, $tai_khoan, $mat_khau, $id_quan_ly) {
+    public function create($ten, $ten_quan, $sdt, $email, $tai_khoan, $mat_khau, $id_quan_ly) {
         $this->conn->begin_transaction();
         try {
             // 1. Thêm vào bảng user với role = Nhân viên
-            $query1 = "INSERT INTO user (ten, sdt, email, role, id_quan_ly) 
-                       VALUES (?, ?, ?, 'Nhân viên', ?)";
+            $query1 = "INSERT INTO user (ten, ten_quan, sdt, email, role, id_quan_ly) 
+                       VALUES (?, ?, ?, ?, 'Nhân viên', ?)";
             $stmt1 = $this->conn->prepare($query1);
-            $stmt1->bind_param("sssi", $ten, $sdt, $email, $id_quan_ly);
+            $stmt1->bind_param("ssssi", $ten, $ten_quan, $sdt, $email, $id_quan_ly);
             $stmt1->execute();
             $user_id = $this->conn->insert_id;
 
