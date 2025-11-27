@@ -17,7 +17,6 @@ class MonAnUI {
                 <div>
                     <p class="eyebrow">Quản lý món ăn</p>
                     <h2>Danh sách món ăn</h2>
-                    <span class="subtitle">Đồng bộ dữ liệu từ bảng `monan` và `nhommonan`</span>
                 </div>
             </div>
             <div class="table-wrapper">

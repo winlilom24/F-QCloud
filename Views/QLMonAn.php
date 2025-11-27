@@ -86,7 +86,6 @@ $categories = $ui->getDanhSachNhom();
             <div class="page-header__info">
                 <p class="eyebrow">Thực đơn F-QCloud</p>
                 <h1>Quản lý món ăn</h1>
-                <span>Đồng bộ với bảng `monan` trong CSDL quanly_nhahang</span>
             </div>
             <div class="page-header__actions">
                 <button class="icon-button" aria-label="Thông báo">
