@@ -1,38 +1,50 @@
 <?php
-// controllers/LogoutController.php
-require_once "Models/HeThongSession.php"; // Dùng để destroySession
+// controllers/HeThongController.php
+session_start(); // bắt buộc để dùng session
+
+require_once __DIR__ . "/../Models/HeThongSession.php";
+require_once __DIR__ . "/../Models/User.php";
 
 class HeThongController {
     private $sessionModel;
+    private $userModel;
 
     public function __construct() {
         $this->sessionModel = new HeThongSession();
+        $this->userModel = new User();
     }
 
-    /**
-     * ĐĂNG XUẤT: XÓA SESSION + CẬP NHẬT CSDL
-     * @param int $user_id
-     * @return bool true nếu thành công, false nếu lỗi
-     */
     public function dangXuat($user_id) {
         $user_id = (int)$user_id;
+        if ($user_id <= 0) return false;
 
-        if ($user_id <= 0) {
-            return false;
-        }
-
-        // 1. CẬP NHẬT logout_time TRONG CSDL
         $result = $this->sessionModel->destroySession($user_id);
 
-        // 2. XÓA HOÀN TOÀN $_SESSION (PHP)
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
+        session_unset();
+        session_destroy();
+
+        return $result;
+    }
+
+    public function loadPage() {
+        if (!isset($_SESSION['user_id'])) {
+            header("Location: /Views/Login.php");
+            exit;
         }
 
-        session_unset();     // Xóa tất cả biến
-        session_destroy();   // Hủy session
-
-        return $result; // true hoặc false
+        $user = $this->userModel->getUserById($_SESSION['user_id']);
+        require __DIR__ . "/../Views/Home/Page.php";
     }
 }
-?>
+
+$controller = new HeThongController();
+
+// Xử lý logout
+if (isset($_GET['action']) && $_GET['action'] === 'logout') {
+    $controller->dangXuat($_SESSION['user_id'] ?? 0);
+    header("Location: /Views/Login.php");
+    exit;
+}
+
+// Load page mặc định
+$controller->loadPage();

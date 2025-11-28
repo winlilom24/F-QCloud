@@ -23,7 +23,7 @@ class LoginController {
         }
 
         // Nếu thành công, redirect sang TrangChuUI.php
-        header("Location: ../../Boundary/TrangChuUI.php");
+        header("Location: ../Home/Page.php");
         exit;
     }
 }

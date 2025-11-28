@@ -1,7 +1,6 @@
 <?php
 require_once __DIR__ . '/../Models/Ban.php';
 
-
 class BanController {
     private $banModel;
 
@@ -17,12 +16,14 @@ class BanController {
         return $this->banModel->getBan($id);
     }
 
+    // Thêm bàn
     public function addTable() {
         $suc_chua = $_POST['suc_chua'] ?? 0;
         $trang_thai = $_POST['trang_thai'] ?? 'Trống';
         return $this->banModel->create($suc_chua, $trang_thai);
     }
 
+    // Cập nhật bàn
     public function editTable() {
         $id_ban = $_POST['id_ban'] ?? 0;
         $suc_chua = $_POST['suc_chua'] ?? 0;
@@ -30,8 +31,8 @@ class BanController {
         return $this->banModel->edit($id_ban, $suc_chua, $trang_thai);
     }
 
+    // Xóa bàn
     public function delete($id_ban) {
         return $this->banModel->delete($id_ban);
     }
-    
 }

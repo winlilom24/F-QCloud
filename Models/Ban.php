@@ -8,6 +8,25 @@ class Ban {
         $this->conn = Database::connect();
     }
 
+    public function getByFloor($id_tang) {
+    $id_tang = (int)$id_tang;
+    $query = "SELECT id_ban, suc_chua, trang_thai 
+              FROM ban 
+              WHERE id_tang = ?
+              ORDER BY id_ban";
+
+    $stmt = $this->conn->prepare($query);
+    $stmt->bind_param("i", $id_tang);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $bans = [];
+    while ($row = $result->fetch_assoc()) {
+        $bans[] = $row;
+    }
+    return $bans;
+}
+
     public function getAll() {
         $query = "SELECT id_ban, suc_chua, trang_thai FROM ban ORDER BY id_ban";
         $result = $this->conn->query($query);
