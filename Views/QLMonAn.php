@@ -76,7 +76,7 @@ $categories = $ui->getDanhSachNhom();
         <div class="logo"><i class="fa-solid fa-cloud"></i> FQCloud</div>
         <ul class="menu">
             <li><a href="QLNV.php"><i class="fa-solid fa-users"></i> Quản lý nhân viên</a></li>
-            <li><a href="#"><i class="fa-solid fa-table"></i> Quản lý bàn</a></li>
+            <li><a href="QLBan.php"><i class="fa-solid fa-table"></i> Quản lý bàn</a></li>
             <li class="active"><a href="QLMonAn.php"><i class="fa-solid fa-bowl-food"></i> Quản lý món ăn</a></li>
         </ul>
     </aside>

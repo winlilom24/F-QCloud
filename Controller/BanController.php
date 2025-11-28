@@ -1,5 +1,6 @@
 <?php
-require_once "Models/Ban.php";
+require_once __DIR__ . '/../Models/Ban.php';
+
 
 class BanController {
     private $banModel;
@@ -18,13 +19,15 @@ class BanController {
 
     public function addTable() {
         $suc_chua = $_POST['suc_chua'] ?? 0;
-        return $this->banModel->create($suc_chua);
+        $trang_thai = $_POST['trang_thai'] ?? 'Trống';
+        return $this->banModel->create($suc_chua, $trang_thai);
     }
 
     public function editTable() {
         $id_ban = $_POST['id_ban'] ?? 0;
         $suc_chua = $_POST['suc_chua'] ?? 0;
-        return $this->banModel->edit($id_ban, $suc_chua);
+        $trang_thai = $_POST['trang_thai'] ?? 'Trống';
+        return $this->banModel->edit($id_ban, $suc_chua, $trang_thai);
     }
 
     public function delete($id_ban) {

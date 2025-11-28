@@ -1,5 +1,5 @@
 <?php
-require "Repository/Database.php";
+require_once __DIR__ . '/../Repository/Database.php';
 
 class Ban {
     private $conn;
@@ -29,15 +29,17 @@ class Ban {
         return $result->fetch_assoc(); // trả về 1 bàn hoặc null
     }
 
-    public function create($suc_chua) {
+    public function create($suc_chua, $trang_thai = 'Trống') {
         $suc_chua = (int)$suc_chua;
+        $trang_thai = in_array($trang_thai, ['Trống', 'Đang phục vụ'], true) ? $trang_thai : 'Trống';
+
         if ($suc_chua < 1) {
             return ['success' => false, 'message' => 'Sức chứa không hợp lệ!'];
         }
 
-        $query = "INSERT INTO ban (suc_chua, trang_thai) VALUES (?, 'Trống')";
+        $query = "INSERT INTO ban (suc_chua, trang_thai) VALUES (?, ?)";
         $stmt = $this->conn->prepare($query);
-        $stmt->bind_param("i", $suc_chua);
+        $stmt->bind_param("is", $suc_chua, $trang_thai);
 
         if ($stmt->execute()) {
             return ['success' => true, 'message' => 'Thêm bàn thành công!'];
@@ -46,17 +48,18 @@ class Ban {
         }
     }
 
-    public function edit($id_ban, $suc_chua) {
+    public function edit($id_ban, $suc_chua, $trang_thai = 'Trống') {
         $id_ban = (int)$id_ban;
         $suc_chua = (int)$suc_chua;
+        $trang_thai = in_array($trang_thai, ['Trống', 'Đang phục vụ'], true) ? $trang_thai : 'Trống';
 
         if ($id_ban <= 0 || $suc_chua < 1) {
             return ['success' => false, 'message' => 'Dữ liệu không hợp lệ!'];
         }
 
-        $query = "UPDATE ban SET suc_chua = ? WHERE id_ban = ?";
+        $query = "UPDATE ban SET suc_chua = ?, trang_thai = ? WHERE id_ban = ?";
         $stmt = $this->conn->prepare($query);
-        $stmt->bind_param("ii", $suc_chua, $id_ban);
+        $stmt->bind_param("isi", $suc_chua, $trang_thai, $id_ban);
 
         if ($stmt->execute()) {
             return $stmt->affected_rows > 0
