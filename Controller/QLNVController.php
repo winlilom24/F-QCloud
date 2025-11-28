@@ -14,6 +14,22 @@ class QLNVController {
     }
 
     public function themNhanVien($data) {
+        // Validate dữ liệu đầu vào
+        require_once __DIR__ . '/../Utils/Validator.php';
+        $rs1 = Validator::validateSoDienThoai($data['sdt']);
+    
+        if (!$rs1['success']) {
+            // Trả về lỗi validation
+            return ['success' => false, 'message' => $rs1['message']];;
+        }
+
+        $rs2 = Validator::validateTen($data['ten']);
+    
+        if (!$rs2['success']) {
+            // Trả về lỗi validation
+            return ['success' => false, 'message' => $rs2['message']];;
+        }
+
         return $this->userModel->create(
             $data['ten'],
             $data['sdt'],
