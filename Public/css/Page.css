@@ -1,0 +1,481 @@
+/* ========================= RESET ========================= */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Inter", sans-serif;
+}
+
+html,
+body {
+  height: 100%;
+  background: #f5f7fb;
+  color: #1f2d3d;
+}
+
+/* ========================= THEME ========================= */
+
+.theme-blue {
+  --primary: #0a6efd;
+  --primary-light: #e5efff;
+  --primary-dark: #0546b3;
+
+  --bg: #f5f7fb;
+  --bg-card: #ffffff;
+  --bg-hover: #eef3ff;
+
+  --border: #d8e0f0;
+  --text: #1f2d3d;
+  --text-light: #56657a;
+}
+
+/* ========================= HEADER ========================= */
+
+.top-bar {
+  height: 64px;
+  background: var(--primary-dark);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  padding: 0 18px;
+  justify-content: space-between;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  height: 40px;
+  margin-right: 12px;
+}
+
+.brand-info .title {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.brand-info .subtitle {
+  font-size: 12px;
+  opacity: 0.85;
+}
+
+.header-controls {
+  display: flex;
+  gap: 12px;
+}
+
+.icon-btn,
+.hamburger-menu {
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #fff;
+}
+
+/* ========================= WORKSPACE ========================= */
+
+.workspace {
+  height: calc(100vh - 64px - 34px);
+  overflow: hidden;
+}
+
+.workspace-shell {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ========================= TAB BAR ========================= */
+
+.workspace-bar {
+  height: 50px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  border-bottom: 1px solid var(--border);
+  gap: 16px;
+}
+
+.workspace-tabs {
+  display: flex;
+  gap: 8px;
+}
+
+.workspace-tab {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: none;
+  background: var(--bg-card);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.workspace-tab.active {
+  background: var(--primary);
+  color: white;
+}
+
+.workspace-search {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 0 10px;
+  border-radius: 6px;
+  height: 34px;
+}
+
+.workspace-search input {
+  flex: 1;
+  outline: none;
+  border: none;
+  background: transparent;
+}
+
+.search-clear {
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  opacity: 0.6;
+}
+
+.workspace-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.action-pill {
+  background: var(--bg-card);
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 1px solid var(--border);
+}
+
+/* ========================= WORKSPACE BODY ========================= */
+
+.workspace-body {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+/* ========================= PANEL BÊN TRÁI ========================= */
+
+.board-panel {
+  width: 55%;
+  padding: 14px;
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-card {
+  background: var(--bg-card);
+  padding: 16px;
+  border-radius: 14px;
+  flex: 1;
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+}
+
+/* --------- Floor Tabs ---------- */
+
+.filter-strip {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.floor-tabs {
+  display: flex;
+  gap: 8px;
+}
+
+.floor-btn {
+  padding: 6px 12px;
+  background: #eef2fa;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.floor-btn.active {
+  background: var(--primary);
+  color: #fff;
+}
+
+/* --------- Status Pills ---------- */
+
+.status-pills {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.status-pill {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.status-pill input {
+  margin-right: 4px;
+}
+
+/* --------- Table Grid ---------- */
+
+.table-grid {
+  flex: 1;
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(4, 1fr);
+  padding: 10px 0;
+}
+
+.table-item {
+  height: 95px;
+  border-radius: 12px;
+  border: 2px solid var(--border);
+  background: #f9fbff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  transition: 0.15s;
+}
+
+.table-item:hover {
+  border-color: var(--primary);
+  background: var(--primary-light);
+}
+
+.table-item .table-name {
+  font-weight: bold;
+  font-size: 15px;
+}
+
+/* --------- Pagination ---------- */
+
+.table-pagination {
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  align-items: center;
+}
+
+.page-btn {
+  border: none;
+  background: var(--bg-card);
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 1px solid var(--border);
+}
+
+/* --------- Metrics ---------- */
+
+.metric-row {
+  display: flex;
+  gap: 14px;
+  margin-top: 12px;
+}
+
+.metric-card {
+  background: var(--bg-card);
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  flex: 1;
+}
+
+.metric-label {
+  font-size: 13px;
+  color: var(--text-light);
+}
+
+.metric-value {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.metric-value.busy {
+  color: #d9534f;
+}
+
+.metric-value.free {
+  color: #28a745;
+}
+
+/* ========================= PANEL BÊN PHẢI ========================= */
+
+.order-panel {
+  width: 45%;
+  padding: 14px;
+}
+
+.order-card {
+  background: var(--bg-card);
+  height: 100%;
+  border-radius: 14px;
+  padding: 18px;
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+}
+
+.order-heading {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.order-title {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.order-status {
+  font-size: 13px;
+  color: var(--text-light);
+}
+
+.order-empty {
+  flex: 1;
+  text-align: center;
+  padding-top: 90px;
+  color: var(--text-light);
+}
+
+.order-empty-icon {
+  font-size: 48px;
+  margin-bottom: 8px;
+}
+
+.order-detail {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+.order-items {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Tổng tiền */
+
+.bill-summary {
+  border-top: 1px solid var(--border);
+  padding-top: 14px;
+  margin-top: 12px;
+}
+
+.bill-summary .row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.bill-summary .total {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.side-menu {
+  position: fixed;
+  top: 0;
+  left: -260px;
+  width: 260px;
+  height: 100vh;
+  background: #1c2536;
+  color: #fff;
+  padding: 20px;
+  box-shadow: 2px 0 6px rgba(0, 0, 0, 0.2);
+  transition: 0.3s;
+  z-index: 9999;
+}
+.side-menu.open {
+  left: 0;
+}
+.side-menu h3 {
+  margin-top: 0;
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+.menu-item {
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+}
+.menu-item a {
+  color: #fff;
+  text-decoration: none;
+  display: block;
+}
+
+/* Buttons */
+
+.action-bar {
+  margin-top: 14px;
+  display: flex;
+  gap: 12px;
+}
+
+.btn {
+  padding: 10px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  border: none;
+  font-size: 15px;
+  flex: 1;
+}
+
+.btn.ghost {
+  background: #eef3ff;
+}
+
+.btn.outline {
+  border: 1px solid var(--primary);
+  color: var(--primary);
+  background: white;
+}
+
+.btn.primary {
+  background: var(--primary);
+  color: white;
+}
+
+/* ========================= FOOTER ========================= */
+
+.footer-strip {
+  background: #fff;
+  padding: 8px 14px;
+  height: 34px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+}
+
+.footer-separator {
+  margin: 0 8px;
+}

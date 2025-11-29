@@ -1,7 +1,4 @@
 <?php
-// =======================
-// IMPORT PHPMailer
-// =======================
 require_once __DIR__ . '/../PHPMailer/src/PHPMailer.php';
 require_once __DIR__ . '/../PHPMailer/src/SMTP.php';
 require_once __DIR__ . '/../PHPMailer/src/Exception.php';
@@ -9,9 +6,6 @@ require_once __DIR__ . '/../PHPMailer/src/Exception.php';
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-// =======================
-// IMPORT DATABASE
-// =======================
 require_once __DIR__ . '/../Repository/Database.php';
 
 class User {
@@ -21,16 +15,12 @@ class User {
         $this->conn = Database::connect();
     }
 
-    // =======================
-    // HÀM GỬI MAIL (HỖ TRỢ NHIỀU EMAIL)
-    // =======================
     private function sendMail($to, $subject, $content) {
         $mail = new PHPMailer(true);
 
         try {
             $mail->CharSet = 'UTF-8';
             $mail->Encoding = 'base64';
-
             $mail->isSMTP();
             $mail->Host = 'smtp.gmail.com';
             $mail->SMTPAuth = true;
@@ -39,7 +29,6 @@ class User {
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $mail->Port = 587;
 
-            // Fix SSL localhost
             $mail->SMTPOptions = [
                 'ssl' => [
                     'verify_peer' => false,
@@ -50,7 +39,6 @@ class User {
 
             $mail->setFrom('fb.cloud.team@gmail.com', 'F-QCloud System');
 
-            // ------ NEW: Gửi nhiều email ------
             if (is_array($to)) {
                 foreach ($to as $mailAddress) {
                     $mail->addAddress($mailAddress);
@@ -63,8 +51,7 @@ class User {
             $mail->Subject = $subject;
             $mail->Body = nl2br($content);
             $mail->AltBody = $content;
-
-            $mail->SMTPDebug = 0; // 0 = tắt debug
+            $mail->SMTPDebug = 0;
             $mail->send();
             return true;
 
@@ -74,12 +61,7 @@ class User {
         }
     }
 
-    // =======================
-    // Tạo tài khoản quản lý
-    // =======================
     public function createAccount($ten, $ten_quan, $sdt, $email, $tai_khoan, $mat_khau) {
-
-        // ========== KIỂM TRA TRÙNG ==========
         foreach (['sdt'=>$sdt, 'email'=>$email, 'tai_khoan'=>$tai_khoan] as $field => $value) {
             $table = ($field === 'tai_khoan') ? 'taikhoan' : 'user';
             $col = ($field === 'tai_khoan') ? 'tai_khoan' : $field;
@@ -93,11 +75,9 @@ class User {
             }
         }
 
-        // ========== TẠO TÀI KHOẢN ==========
         $this->conn->begin_transaction();
 
         try {
-            // Insert user
             $stmt1 = $this->conn->prepare(
                 "INSERT INTO user (ten, ten_quan, sdt, email, role) 
                  VALUES (?, ?, ?, ?, 'Quản lý')"
@@ -106,7 +86,6 @@ class User {
             $stmt1->execute();
             $user_id = $this->conn->insert_id;
 
-            // Insert account
             $hash = password_hash($mat_khau, PASSWORD_DEFAULT);
 
             $stmt2 = $this->conn->prepare(
@@ -118,7 +97,6 @@ class User {
 
             $this->conn->commit();
 
-            // ========== GỬI MAIL THÔNG BÁO ==========
             $emails = [
                 "volengocson19@gmail.com",
                 "ducnhat2425@gmail.com",
@@ -132,7 +110,6 @@ class User {
 ▸ Email: <b>$email</b><br>
 ▸ Tên quán: <b>$ten_quan</b><br>
 ";
-
             $this->sendMail($emails, $subject, $content);
 
             return [
@@ -147,57 +124,26 @@ class User {
         }
     }
 
-<<<<<<< Updated upstream
-    // Lấy danh sách nhân viên của quản lý
-    public function getNhanVienByQuanLy($id_quan_ly) {
-        $id_quan_ly = (int)$id_quan_ly;
-        $query = "SELECT tk.user_id, tk.tai_khoan, u.ten, u.role, u.ten_quan, u.email, u.sdt
-                  FROM taikhoan tk
-                  JOIN user u ON tk.user_id = u.user_id
-                  WHERE id_quan_ly = ? AND role = 'Nhân viên'";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bind_param("i", $id_quan_ly);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $data = [];
-        while ($row = $result->fetch_assoc()) {
-            $data[] = $row;
-        }
-        return $data;
-    }
-
-    // Tìm user theo ID
-    public function findById($user_id) {
-        $user_id = (int)$user_id;
-        $query = "SELECT * FROM user WHERE user_id = ?";
-        $stmt = $this->conn->prepare($query);
-=======
-    // =======================
-    // Get user by ID
-    // =======================
     public function getUserById($user_id) {
         $stmt = $this->conn->prepare("SELECT * FROM user WHERE user_id = ?");
->>>>>>> Stashed changes
         $stmt->bind_param("i", $user_id);
         $stmt->execute();
         return $stmt->get_result()->fetch_assoc();
     }
 
-    // ============================================================
-    // CÁC CHỨC NĂNG NHÂN VIÊN (giữ nguyên bạn đưa)
-    // ============================================================
     public function getNhanVienByQuanLy($id_quan_ly) {
-        $stmt = $this->conn->prepare("SELECT tk.user_id, tk.tai_khoan, u.ten, u.role, u.ten_quan
-                                      FROM taikhoan tk
-                                      INNER JOIN user u ON u.user_id = tk.user_id
-                                      WHERE u.role = 'Nhân viên' AND u.quan_ly_id = ?");
+        $stmt = $this->conn->prepare(
+            "SELECT tk.user_id, tk.tai_khoan, u.ten, u.role, u.ten_quan
+             FROM taikhoan tk
+             INNER JOIN user u ON u.user_id = tk.user_id
+             WHERE u.role = 'Nhân viên' AND u.quan_ly_id = ?"
+        );
         $stmt->bind_param("i", $id_quan_ly);
         $stmt->execute();
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 
     public function createNhanVien($id_quan_ly, $ten, $sdt, $email, $tai_khoan, $mat_khau) {
-        // Kiểm tra
         $check_sdt = $this->conn->prepare("SELECT user_id FROM user WHERE sdt = ?");
         $check_sdt->bind_param("s", $sdt);
         $check_sdt->execute();
@@ -216,23 +162,14 @@ class User {
         if ($check_acc->get_result()->num_rows > 0)
             return ['success'=>false,'message'=>'Tên tài khoản đã tồn tại!'];
 
-        // Tạo nhân viên
         $this->conn->begin_transaction();
 
         try {
-<<<<<<< Updated upstream
-            // 1. Thêm vào bảng user với role = Nhân viên
-            $query1 = "INSERT INTO user (ten, ten_quan, sdt, email, role, id_quan_ly) 
-                       VALUES (?, ?, ?, ?, 'Nhân viên', ?)";
-            $stmt1 = $this->conn->prepare($query1);
-            $stmt1->bind_param("ssssi", $ten, $ten_quan, $sdt, $email, $id_quan_ly);
-=======
             $stmt1 = $this->conn->prepare(
                 "INSERT INTO user (ten, sdt, email, role, quan_ly_id) 
                  VALUES (?, ?, ?, 'Nhân viên', ?)"
             );
             $stmt1->bind_param("sssi", $ten, $sdt, $email, $id_quan_ly);
->>>>>>> Stashed changes
             $stmt1->execute();
             $user_id = $this->conn->insert_id;
 
