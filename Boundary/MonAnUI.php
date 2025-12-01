@@ -10,7 +10,10 @@ class MonAnUI {
     }
 
     public function hienThiDanhSach() {
-        $monan = $this->controller->getDanhSach();
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $result = $this->controller->getDanhSachPaginated($page);
+        $monan = $result['data'];
+        $pagination = $result['pagination'];
         ?>
         <div class="employee-panel dish-panel">
             <div class="employee-panel__head">
@@ -83,7 +86,74 @@ class MonAnUI {
                     </tbody>
                 </table>
             </div>
+            <?php if ($pagination->getTotalPages() > 1): ?>
+            <div class="pagination-wrapper">
+                <?= $pagination->render('?page=') ?>
+            </div>
+            <?php endif; ?>
         </div>
+
+        <style>
+        .pagination-wrapper {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            padding: 20px 0;
+        }
+
+        .pagination {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .pagination-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 12px;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            color: #495057;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            min-width: 40px;
+            justify-content: center;
+        }
+
+        .pagination-btn:hover {
+            background: #e9ecef;
+            border-color: #adb5bd;
+            color: #212529;
+        }
+
+        .pagination-btn.pagination-current {
+            background: #28a745;
+            border-color: #28a745;
+            color: white;
+            font-weight: 600;
+        }
+
+        .pagination-btn.pagination-prev,
+        .pagination-btn.pagination-next {
+            padding: 8px 16px;
+        }
+
+        .pagination-btn.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .pagination-dots {
+            color: #6c757d;
+            font-weight: 500;
+            padding: 8px 4px;
+        }
+        </style>
         <?php
     }
 

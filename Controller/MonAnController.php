@@ -13,6 +13,23 @@ class MonAnController {
         return $this->monAnModel->getAll();
     }
 
+    public function getDanhSachPaginated($page = 1) {
+        require_once __DIR__ . '/../Utils/Pagination.php';
+
+        $totalItems = $this->monAnModel->countAll();
+        $pagination = new Pagination($totalItems, 5, $page);
+
+        $dishes = $this->monAnModel->getAllPaginated(
+            $pagination->getOffset(),
+            $pagination->getLimit()
+        );
+
+        return [
+            'data' => $dishes,
+            'pagination' => $pagination
+        ];
+    }
+
     public function getDanhSachNhom() {
         return $this->monAnModel->getCategories();
     }

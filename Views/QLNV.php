@@ -21,6 +21,79 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     exit;
 }
 
+// XỬ LÝ AJAX PHÂN TRANG
+if (isset($_GET['ajax']) && $_GET['ajax'] === 'pagination') {
+    ob_clean();
+    $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+    $id_quan_ly = $_SESSION['user_id'] ?? 1;
+    $result = $ui->controller->getNhanVienCuaQuanLyPaginated($id_quan_ly, $page);
+    $nhanVien = $result['data'];
+    $pagination = $result['pagination'];
+
+    // Trả về HTML cho table body và pagination
+    ob_start();
+    if (empty($nhanVien)): ?>
+        <tr>
+            <td colspan="6" class="empty-state">
+                <i class="fa-solid fa-users-slash"></i>
+                <p>Chưa có nhân viên nào</p>
+                <small>Nhấn "Thêm nhân viên" để bắt đầu</small>
+            </td>
+        </tr>
+    <?php else: foreach ($nhanVien as $nv):
+        $avatarText = strtoupper(mb_substr($nv['tai_khoan'] ?? $nv['ten'], 0, 1));
+    ?>
+        <tr>
+            <td>
+                <div class="user-info">
+                    <div class="avatar"><?= $avatarText ?></div>
+                    <div class="user-text">
+                        <strong><?= htmlspecialchars($nv['tai_khoan'] ?? 'Chưa có') ?></strong>
+                        <span><?= htmlspecialchars($nv['ten'] ?? '') ?></span>
+                    </div>
+                </div>
+            </td>
+            <td><i class="fa-regular fa-envelope"></i> <?= htmlspecialchars($nv['email'] ?? 'Chưa có') ?></td>
+            <td><i class="fa-solid fa-phone"></i> <?= htmlspecialchars($nv['sdt'] ?? 'Chưa có') ?></td>
+            <td><span class="role-badge"><?= htmlspecialchars($nv['role'] ?? 'Nhân viên') ?></span></td>
+            <td>
+                <a class="btn-action edit" href="javascript:void(0)"
+                   onclick="openEditModal(
+                       <?= $nv['user_id'] ?>,
+                       '<?= htmlspecialchars(addslashes($nv['ten']), ENT_QUOTES) ?>',
+                       '<?= htmlspecialchars(addslashes($nv['sdt'] ?? ''), ENT_QUOTES) ?>',
+                       '<?= htmlspecialchars(addslashes($nv['email'] ?? ''), ENT_QUOTES) ?>'
+                   )" title="Sửa">
+                    <i class="fa-solid fa-pen"></i>
+                </a>
+                <a class="btn-action delete" href="javascript:void(0)"
+                   onclick="confirmDelete(<?= $nv['user_id'] ?>, '<?= htmlspecialchars(addslashes($nv['ten']), ENT_QUOTES) ?>')"
+                   title="Xóa">
+                    <i class="fa-solid fa-trash"></i>
+                </a>
+            </td>
+        </tr>
+    <?php endforeach; endif;
+
+    $tableBody = ob_get_clean();
+
+    ob_start();
+    if ($pagination->getTotalPages() > 1): ?>
+        <div class="pagination-wrapper">
+            <?= $pagination->render('javascript:loadPage(') ?>
+        </div>
+    <?php endif;
+    $paginationHtml = ob_get_clean();
+
+    echo json_encode([
+        'tableBody' => $tableBody,
+        'pagination' => $paginationHtml,
+        'currentPage' => $pagination->getCurrentPage(),
+        'totalPages' => $pagination->getTotalPages()
+    ]);
+    exit;
+}
+
 // XỬ LÝ XÓA (dùng AJAX trong JS)
 if (isset($_GET['delete'])) {
     $ok = $ui->xuLyXoaNhanVien((int)$_GET['delete']);

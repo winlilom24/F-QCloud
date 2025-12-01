@@ -143,6 +143,33 @@ class User {
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 
+    public function getNhanVienByQuanLyPaginated($id_quan_ly, $offset = 0, $limit = 5) {
+        $stmt = $this->conn->prepare(
+            "SELECT tk.user_id, tk.tai_khoan, u.ten, u.sdt, u.email, u.role, u.ten_quan
+             FROM taikhoan tk
+             INNER JOIN user u ON u.user_id = tk.user_id
+             WHERE u.role = 'Nhân viên' AND u.id_quan_ly = ?
+             ORDER BY u.user_id ASC
+             LIMIT ? OFFSET ?"
+        );
+        $stmt->bind_param("iii", $id_quan_ly, $limit, $offset);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function countNhanVienByQuanLy($id_quan_ly) {
+        $stmt = $this->conn->prepare(
+            "SELECT COUNT(*) as total
+             FROM taikhoan tk
+             INNER JOIN user u ON u.user_id = tk.user_id
+             WHERE u.role = 'Nhân viên' AND u.id_quan_ly = ?"
+        );
+        $stmt->bind_param("i", $id_quan_ly);
+        $stmt->execute();
+        $result = $stmt->get_result()->fetch_assoc();
+        return (int)$result['total'];
+    }
+
     public function createNhanVien($id_quan_ly, $ten, $sdt, $email, $tai_khoan, $mat_khau) {
         $check_sdt = $this->conn->prepare("SELECT user_id FROM user WHERE sdt = ?");
         $check_sdt->bind_param("s", $sdt);

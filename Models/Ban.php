@@ -37,6 +37,26 @@ class Ban {
         return $bans;
     }
 
+    public function getAllPaginated($offset = 0, $limit = 5) {
+        $query = "SELECT id_ban, suc_chua, trang_thai FROM ban ORDER BY id_ban LIMIT ? OFFSET ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bind_param("ii", $limit, $offset);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $bans = [];
+        while ($row = $result->fetch_assoc()) {
+            $bans[] = $row;
+        }
+        return $bans;
+    }
+
+    public function countAll() {
+        $query = "SELECT COUNT(*) as total FROM ban";
+        $result = $this->conn->query($query);
+        $row = $result->fetch_assoc();
+        return (int)$row['total'];
+    }
+
     // SỬA: Thiếu prepare + bind + return
     public function getBan($id) {
         $id = (int)$id;

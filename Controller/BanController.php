@@ -12,6 +12,23 @@ class BanController {
         return $this->banModel->getAll();
     }
 
+    public function getTablePaginated($page = 1) {
+        require_once __DIR__ . '/../Utils/Pagination.php';
+
+        $totalItems = $this->banModel->countAll();
+        $pagination = new Pagination($totalItems, 5, $page);
+
+        $tables = $this->banModel->getAllPaginated(
+            $pagination->getOffset(),
+            $pagination->getLimit()
+        );
+
+        return [
+            'data' => $tables,
+            'pagination' => $pagination
+        ];
+    }
+
     public function getBanById($id) {
         return $this->banModel->getBan($id);
     }

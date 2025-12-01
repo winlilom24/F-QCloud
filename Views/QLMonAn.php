@@ -32,6 +32,83 @@ if (isset($_GET['delete'])) {
     exit;
 }
 
+// XỬ LÝ AJAX PHÂN TRANG
+if (isset($_GET['ajax']) && $_GET['ajax'] === 'pagination') {
+    ob_clean();
+    $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+    $result = $ui->controller->getDanhSachPaginated($page);
+    $monan = $result['data'];
+    $pagination = $result['pagination'];
+
+    // Trả về HTML cho table body và pagination
+    ob_start();
+    if (empty($monan)): ?>
+        <tr>
+            <td colspan="6" class="empty-state">
+                <i class="fa-solid fa-bowl-rice"></i>
+                <p>Chưa có món ăn nào</p>
+                <small>Nhấn "Thêm món ăn" để bổ sung thực đơn</small>
+            </td>
+        </tr>
+    <?php else: foreach ($monan as $mon):
+        $price = number_format((float)$mon['gia_tien'], 0, ',', '.');
+        $statusClass = ($mon['trang_thai'] === 'Còn món') ? 'role-badge dish-available' : 'role-badge dish-soldout';
+        $statusLabel = $mon['trang_thai'] ?? 'Còn món';
+    ?>
+        <tr>
+            <td>
+                <div class="user-info">
+                    <div class="avatar"><?= strtoupper(mb_substr($mon['ten_mon'], 0, 1)) ?></div>
+                    <div class="user-text">
+                        <strong><?= htmlspecialchars($mon['ten_mon']) ?></strong>
+                        <span>ID: <?= $mon['id_mon'] ?></span>
+                    </div>
+                </div>
+            </td>
+            <td><span class="price-tag"><?= $price ?>₫</span></td>
+            <td><?= htmlspecialchars($mon['ten_nhom'] ?? 'Chưa phân nhóm') ?></td>
+            <td><span class="<?= $statusClass ?>"><?= htmlspecialchars($statusLabel) ?></span></td>
+            <td class="description-cell"><?= htmlspecialchars($mon['mo_ta'] ?? '—') ?></td>
+            <td>
+                <a class="btn-action edit" href="javascript:void(0)"
+                   onclick="openDishEditModal(
+                       <?= (int)$mon['id_mon'] ?>,
+                       '<?= htmlspecialchars(addslashes($mon['ten_mon']), ENT_QUOTES) ?>',
+                       '<?= htmlspecialchars($mon['gia_tien']) ?>',
+                       '<?= htmlspecialchars(addslashes($mon['mo_ta'] ?? ''), ENT_QUOTES) ?>',
+                       '<?= htmlspecialchars($mon['trang_thai']) ?>',
+                       '<?= $mon['id_nhom'] !== null ? (int)$mon['id_nhom'] : '' ?>'
+                   )" title="Sửa món">
+                    <i class="fa-solid fa-pen"></i>
+                </a>
+                <a class="btn-action delete" href="javascript:void(0)"
+                   onclick="confirmDishDelete(<?= (int)$mon['id_mon'] ?>, '<?= htmlspecialchars(addslashes($mon['ten_mon']), ENT_QUOTES) ?>')"
+                   title="Xóa món">
+                    <i class="fa-solid fa-trash"></i>
+                </a>
+            </td>
+        </tr>
+    <?php endforeach; endif;
+
+    $tableBody = ob_get_clean();
+
+    ob_start();
+    if ($pagination->getTotalPages() > 1): ?>
+        <div class="pagination-wrapper">
+            <?= $pagination->render('javascript:loadPage(') ?>
+        </div>
+    <?php endif;
+    $paginationHtml = ob_get_clean();
+
+    echo json_encode([
+        'tableBody' => $tableBody,
+        'pagination' => $paginationHtml,
+        'currentPage' => $pagination->getCurrentPage(),
+        'totalPages' => $pagination->getTotalPages()
+    ]);
+    exit;
+}
+
 $categories = $ui->getDanhSachNhom();
 ?>
 <!DOCTYPE html>

@@ -13,6 +13,24 @@ class QLNVController {
         return $this->userModel->getNhanVienByQuanLy($id_quan_ly);
     }
 
+    public function getNhanVienCuaQuanLyPaginated($id_quan_ly, $page = 1) {
+        require_once __DIR__ . '/../Utils/Pagination.php';
+
+        $totalItems = $this->userModel->countNhanVienByQuanLy($id_quan_ly);
+        $pagination = new Pagination($totalItems, 5, $page);
+
+        $employees = $this->userModel->getNhanVienByQuanLyPaginated(
+            $id_quan_ly,
+            $pagination->getOffset(),
+            $pagination->getLimit()
+        );
+
+        return [
+            'data' => $employees,
+            'pagination' => $pagination
+        ];
+    }
+
     public function themNhanVien($data) {
         // Validate dữ liệu đầu vào
         require_once __DIR__ . '/../Utils/Validator.php';

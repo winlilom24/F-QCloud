@@ -161,3 +161,38 @@ function openChangePasswordModal() {
     });
 }
 
+// AJAX Pagination
+function loadPage(page) {
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', `QLBan.php?ajax=pagination&page=${page}`, true);
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            const response = JSON.parse(xhr.responseText);
+
+            // Cập nhật table body
+            const tbody = document.querySelector('.employee-table tbody');
+            tbody.innerHTML = response.tableBody;
+
+            // Cập nhật pagination
+            const paginationWrapper = document.querySelector('.pagination-wrapper');
+            if (paginationWrapper) {
+                paginationWrapper.innerHTML = response.pagination;
+            } else if (response.pagination) {
+                // Nếu chưa có pagination wrapper, thêm vào
+                const tableWrapper = document.querySelector('.table-wrapper');
+                const newPagination = document.createElement('div');
+                newPagination.className = 'pagination-wrapper';
+                newPagination.innerHTML = response.pagination;
+                tableWrapper.parentNode.insertBefore(newPagination, tableWrapper.nextSibling);
+            }
+
+            // Scroll to top of table
+            document.querySelector('.table-wrapper').scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+    };
+    xhr.send();
+}
+

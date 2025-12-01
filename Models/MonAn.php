@@ -23,6 +23,32 @@ class MonAn {
         return $data;
     }
 
+    // Lấy món ăn có phân trang
+    public function getAllPaginated($offset = 0, $limit = 5) {
+        $query = "SELECT m.id_mon, m.ten_mon, m.gia_tien, m.mo_ta, m.trang_thai, m.id_nhom, n.ten_nhom
+                  FROM monan m
+                  LEFT JOIN nhommonan n ON m.id_nhom = n.id_nhom
+                  ORDER BY m.ten_mon
+                  LIMIT ? OFFSET ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bind_param("ii", $limit, $offset);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $data = [];
+        while ($row = $result->fetch_assoc()) {
+            $data[] = $row;
+        }
+        return $data;
+    }
+
+    // Đếm tổng số món ăn
+    public function countAll() {
+        $query = "SELECT COUNT(*) as total FROM monan";
+        $result = $this->conn->query($query);
+        $row = $result->fetch_assoc();
+        return (int)$row['total'];
+    }
+
     // Lấy 1 món theo ID
     public function getById($id) {
         $id = (int)$id;
