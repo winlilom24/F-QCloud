@@ -21,8 +21,27 @@ class QuanLyDoanhThuUI {
         $donHangDangSuDung = array_filter($donHangList, function($dh) {
             return !isset($dh['trang_thai_hd']) || $dh['trang_thai_hd'] !== 'Đã thanh toán';
         });
+
+        // Lấy danh sách hóa đơn chưa có doanh thu
+        $hoaDonChuaCoDoanhThu = $this->controller->getHoaDonChuaCoDoanhThu();
         ?>
         <div class="revenue-panel">
+            <!-- Thông báo hóa đơn chưa có doanh thu -->
+            <?php if (!empty($hoaDonChuaCoDoanhThu)): ?>
+            <div class="alert alert-warning" style="background: #fef3c7; border: 1px solid #f59e0b; border-radius: 12px; padding: 16px 20px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <i class="fa-solid fa-exclamation-triangle" style="color: #f59e0b; font-size: 20px;"></i>
+                    <div>
+                        <strong style="color: #92400e; font-size: 15px;">Có <?php echo count($hoaDonChuaCoDoanhThu); ?> hóa đơn đã thanh toán chưa có doanh thu</strong>
+                        <p style="color: #78350f; font-size: 13px; margin: 4px 0 0 0;">Nhấn nút bên dưới để tự động tạo doanh thu từ các hóa đơn này</p>
+                    </div>
+                </div>
+                <button class="btn btn-auto-create" onclick="taoDoanhThuTuTatCaHoaDon()" style="background: #f59e0b; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; white-space: nowrap;">
+                    <i class="fa-solid fa-magic"></i> Tạo doanh thu tự động
+                </button>
+            </div>
+            <?php endif; ?>
+
             <!-- Thống kê tổng quan -->
             <div class="stats-grid">
                 <div class="stat-card clickable" onclick="showRevenueDetails()">
@@ -221,7 +240,12 @@ class QuanLyDoanhThuUI {
                 <div class="modal-content large-modal">
                     <div class="modal-header">
                         <h3 id="statsModalTitle">Chi tiết thống kê</h3>
-                        <span class="close" onclick="closeStatsModal()">×</span>
+                        <div class="modal-header-actions">
+                            <button class="btn btn-print" onclick="printRevenue()" id="printBtn" style="display: none;">
+                                <i class="fa-solid fa-print"></i> In báo cáo
+                            </button>
+                            <span class="close" onclick="closeStatsModal()">×</span>
+                        </div>
                     </div>
                     <div class="modal-body">
                         <!-- Filter controls -->
@@ -265,6 +289,9 @@ class QuanLyDoanhThuUI {
                     </div>
                 </div>
             </div>
+
+            <!-- Print Area (ẩn, chỉ hiển thị khi in) -->
+            <div id="printArea" style="display: none;"></div>
         </div>
         <?php
     }
@@ -308,6 +335,14 @@ class QuanLyDoanhThuUI {
 
     public function getDonHangDangSuDung() {
         return $this->controller->getDonHangDangSuDung();
+    }
+
+    public function taoDoanhThuTuHoaDon($id_hoa_don) {
+        return $this->controller->taoDoanhThuTuHoaDon($id_hoa_don);
+    }
+
+    public function taoDoanhThuTuTatCaHoaDon() {
+        return $this->controller->taoDoanhThuTuTatCaHoaDon();
     }
 }
 ?>

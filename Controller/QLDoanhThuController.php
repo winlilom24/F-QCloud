@@ -129,5 +129,13 @@ class QLDoanhThuController {
     public function getAllDonHang() {
         return $this->hoaDonModel ? $this->hoaDonModel->getAll() : [];
     }
+
+    public function taoDoanhThuTuHoaDon($id_hoa_don) {
+        return $this->doanhThuModel->taoDoanhThuTuHoaDon($id_hoa_don);
+    }
+
+    public function taoDoanhThuTuTatCaHoaDon() {
+        return $this->doanhThuModel->taoDoanhThuTuTatCaHoaDon();
+    }
 }
 ?>

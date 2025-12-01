@@ -181,6 +181,100 @@ class DoanhThu {
         $stmt->execute();
         return $stmt->get_result()->fetch_assoc();
     }
+
+    public function taoDoanhThuTuHoaDon($id_hoa_don) {
+        // Kiểm tra hóa đơn có tồn tại và đã thanh toán không
+        $check_stmt = $this->conn->prepare("
+            SELECT hd.id_hoa_don, hd.trang_thai, hd.thoi_gian,
+                   (SELECT SUM(m.gia_tien * ct.so_luong)
+                    FROM chitietorder ct
+                    JOIN monan m ON ct.id_mon = m.id_mon
+                    JOIN `order` o ON ct.id_order = o.id_order
+                    WHERE o.id_order = hd.id_order) as tong_tien
+            FROM hoadon hd
+            WHERE hd.id_hoa_don = ?
+        ");
+        $check_stmt->bind_param("i", $id_hoa_don);
+        $check_stmt->execute();
+        $hoaDon = $check_stmt->get_result()->fetch_assoc();
+
+        if (!$hoaDon) {
+            return ['success' => false, 'message' => 'Hóa đơn không tồn tại!'];
+        }
+
+        if ($hoaDon['trang_thai'] !== 'Đã thanh toán') {
+            return ['success' => false, 'message' => 'Hóa đơn chưa được thanh toán!'];
+        }
+
+        // Kiểm tra xem đã có doanh thu chưa
+        $check_doanhthu = $this->conn->prepare("
+            SELECT id_doanh_thu FROM doanhthu WHERE id_hoa_don = ?
+        ");
+        $check_doanhthu->bind_param("i", $id_hoa_don);
+        $check_doanhthu->execute();
+        if ($check_doanhthu->get_result()->num_rows > 0) {
+            return ['success' => false, 'message' => 'Hóa đơn này đã có doanh thu!'];
+        }
+
+        // Tính tổng tiền
+        $tong_tien = $hoaDon['tong_tien'] ?? 0;
+        if ($tong_tien <= 0) {
+            return ['success' => false, 'message' => 'Không thể tính tổng tiền từ hóa đơn!'];
+        }
+
+        // Lấy ngày từ hóa đơn
+        $ngay_tinh = date('Y-m-d', strtotime($hoaDon['thoi_gian']));
+
+        // Tạo doanh thu
+        $stmt = $this->conn->prepare("
+            INSERT INTO doanhthu (id_hoa_don, tong_tien, ngay_tinh, ghi_chu)
+            VALUES (?, ?, ?, ?)
+        ");
+        $ghi_chu = "Tự động tạo từ hóa đơn #" . $id_hoa_don;
+        $stmt->bind_param("idss", $id_hoa_don, $tong_tien, $ngay_tinh, $ghi_chu);
+        $stmt->execute();
+
+        if ($stmt->affected_rows > 0) {
+            return [
+                'success' => true,
+                'message' => 'Đã tạo doanh thu thành công!',
+                'id_doanh_thu' => $this->conn->insert_id,
+                'tong_tien' => $tong_tien
+            ];
+        }
+        return ['success' => false, 'message' => 'Không thể tạo doanh thu!'];
+    }
+
+    public function taoDoanhThuTuTatCaHoaDon() {
+        // Lấy tất cả hóa đơn đã thanh toán nhưng chưa có doanh thu
+        $hoaDonList = $this->getHoaDonChuaCoDoanhThu();
+        
+        if (empty($hoaDonList)) {
+            return ['success' => true, 'message' => 'Không có hóa đơn nào cần tạo doanh thu!', 'count' => 0];
+        }
+
+        $successCount = 0;
+        $failCount = 0;
+        $totalRevenue = 0;
+
+        foreach ($hoaDonList as $hoaDon) {
+            $result = $this->taoDoanhThuTuHoaDon($hoaDon['id_hoa_don']);
+            if ($result['success']) {
+                $successCount++;
+                $totalRevenue += $result['tong_tien'];
+            } else {
+                $failCount++;
+            }
+        }
+
+        return [
+            'success' => true,
+            'message' => "Đã tạo doanh thu cho {$successCount} hóa đơn. Tổng doanh thu: " . number_format($totalRevenue, 0, ',', '.') . "₫",
+            'count' => $successCount,
+            'fail_count' => $failCount,
+            'total_revenue' => $totalRevenue
+        ];
+    }
 }
 ?>
 

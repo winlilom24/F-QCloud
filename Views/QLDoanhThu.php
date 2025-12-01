@@ -37,6 +37,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $tempController = new QLDoanhThuController();
         $data = $tempController->getAllDoanhThu();
         echo json_encode(['success' => true, 'data' => $data]);
+    } elseif ($_POST['action'] === 'tao_doanh_thu_tu_hoa_don') {
+        $id_hoa_don = isset($_POST['id_hoa_don']) ? (int)$_POST['id_hoa_don'] : 0;
+        if ($id_hoa_don > 0) {
+            $result = $ui->taoDoanhThuTuHoaDon($id_hoa_don);
+        } else {
+            $result = $ui->taoDoanhThuTuTatCaHoaDon();
+        }
+        echo json_encode($result);
     }
     exit;
 }
@@ -108,6 +116,9 @@ if (isset($_GET['delete'])) {
             <div class="page-header__actions">
                 <button class="icon-button" aria-label="Thông báo">
                     <i class="fa-regular fa-bell"></i>
+                </button>
+                <button class="btn btn-print-page" onclick="printRevenueReport()" title="In báo cáo doanh thu">
+                    <i class="fa-solid fa-print"></i> In báo cáo
                 </button>
                 <button class="btn btn-primary" onclick="openAddModal()">
                     <i class="fa-solid fa-plus"></i> Thêm doanh thu
