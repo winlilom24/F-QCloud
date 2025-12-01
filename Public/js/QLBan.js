@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         showConfirmButton: false
                     }).then(() => {
                         closeTableModal();
-                        location.reload();
+                        location.href = 'QLBan.php?page=1';
                     });
                 } else {
                     Swal.fire({

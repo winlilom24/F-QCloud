@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         showConfirmButton: false
                     }).then(() => {
                         closeDishModal();
-                        location.reload();
+                        location.href = 'QLMonAn.php?page=1';
                     });
                 } else {
                     Swal.fire({

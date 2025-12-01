@@ -136,7 +136,8 @@ class User {
             "SELECT tk.user_id, tk.tai_khoan, u.ten, u.sdt, u.email, u.role, u.ten_quan
              FROM taikhoan tk
              INNER JOIN user u ON u.user_id = tk.user_id
-             WHERE u.role = 'Nhân viên' AND u.id_quan_ly = ?"
+             WHERE u.role = 'Nhân viên' AND u.id_quan_ly = ?
+             ORDER BY u.user_id DESC"
         );
         $stmt->bind_param("i", $id_quan_ly);
         $stmt->execute();
@@ -149,7 +150,7 @@ class User {
              FROM taikhoan tk
              INNER JOIN user u ON u.user_id = tk.user_id
              WHERE u.role = 'Nhân viên' AND u.id_quan_ly = ?
-             ORDER BY u.user_id ASC
+             ORDER BY u.user_id DESC
              LIMIT ? OFFSET ?"
         );
         $stmt->bind_param("iii", $id_quan_ly, $limit, $offset);

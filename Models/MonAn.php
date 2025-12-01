@@ -14,7 +14,7 @@ class MonAn {
         $query = "SELECT m.id_mon, m.ten_mon, m.gia_tien, m.mo_ta, m.trang_thai, m.id_nhom, n.ten_nhom
                   FROM monan m
                   LEFT JOIN nhommonan n ON m.id_nhom = n.id_nhom
-                  ORDER BY m.ten_mon";
+                  ORDER BY m.id_mon DESC";
         $result = $this->conn->query($query);
         $data = [];
         while ($row = $result->fetch_assoc()) {
@@ -28,7 +28,7 @@ class MonAn {
         $query = "SELECT m.id_mon, m.ten_mon, m.gia_tien, m.mo_ta, m.trang_thai, m.id_nhom, n.ten_nhom
                   FROM monan m
                   LEFT JOIN nhommonan n ON m.id_nhom = n.id_nhom
-                  ORDER BY m.ten_mon
+                  ORDER BY m.id_mon DESC
                   LIMIT ? OFFSET ?";
         $stmt = $this->conn->prepare($query);
         $stmt->bind_param("ii", $limit, $offset);

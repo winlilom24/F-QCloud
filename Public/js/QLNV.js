@@ -136,7 +136,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     showConfirmButton: false
                 }).then(() => {
                     closeModal();
-                    location.reload();
+                    location.href = 'QLNV.php?page=1';
                 });
             } else {
                 Swal.fire({

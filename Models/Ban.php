@@ -28,7 +28,7 @@ class Ban {
 }
 
     public function getAll() {
-        $query = "SELECT id_ban, suc_chua, trang_thai FROM ban ORDER BY id_ban";
+        $query = "SELECT id_ban, suc_chua, trang_thai FROM ban ORDER BY id_ban DESC";
         $result = $this->conn->query($query);
         $bans = [];
         while ($row = $result->fetch_assoc()) {
@@ -38,7 +38,7 @@ class Ban {
     }
 
     public function getAllPaginated($offset = 0, $limit = 5) {
-        $query = "SELECT id_ban, suc_chua, trang_thai FROM ban ORDER BY id_ban LIMIT ? OFFSET ?";
+        $query = "SELECT id_ban, suc_chua, trang_thai FROM ban ORDER BY id_ban DESC LIMIT ? OFFSET ?";
         $stmt = $this->conn->prepare($query);
         $stmt->bind_param("ii", $limit, $offset);
         $stmt->execute();
