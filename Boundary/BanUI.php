@@ -229,4 +229,65 @@ class BanUI {
     public function delete($id){
         return $this->banController->delete($id);
     }
+
+    public function hienThiDanhSachBanGrid() {
+    $bans = $this->banController->getTable();
+    
+    if (empty($bans)) {
+        return '<div class="table-grid-empty">Chưa có bàn nào được tạo.</div>';
+    }
+
+    $html = '';
+    $currentRow = 0;
+    $maxColumns = 10; // Số bàn tối đa trên một hàng
+
+    foreach ($bans as $ban) {
+        $trangThai = $ban['trang_thai'] ?? 'Trống';
+        $isFree = $trangThai === 'Trống';
+        
+        // Tạo class và màu sắc cho bàn
+        $banClass = $isFree ? 'ban-trong' : 'ban-dang-su-dung';
+        $icon = $isFree ? '🪑' : '👥';
+        
+        $html .= '<div class="ban ' . $banClass . '" data-id="' . (int)$ban['id_ban'] . '">';
+        $html .= '<div class="ban-so">' . (int)$ban['id_ban'] . '</div>';
+        $html .= '<div class="ban-icon">' . $icon . '</div>';
+        $html .= '<div class="ban-ten">Bàn ' . (int)$ban['id_ban'] . '</div>';
+        $html .= '<div class="ban-trang-thai">' . htmlspecialchars($trangThai) . '</div>';
+        $html .= '<div class="ban-suc-chua">' . (int)$ban['suc_chua'] . ' chỗ</div>';
+        $html .= '</div>';
+
+        $currentRow++;
+        if ($currentRow % $maxColumns === 0 && $currentRow < count($bans)) {
+            // Có thể thêm logic để tạo hàng mới nếu cần
+        }
+    }
+
+    return $html;
+}
+
+public function layThongKeBan() {
+    $bans = $this->banController->getTable();
+    
+    $thongKe = [
+        'tong_ban' => 0,
+        'ban_dang_su_dung' => 0,
+        'ban_con_trong' => 0
+    ];
+
+    if (!empty($bans)) {
+        $thongKe['tong_ban'] = count($bans);
+        
+        foreach ($bans as $ban) {
+            $trangThai = $ban['trang_thai'] ?? 'Trống';
+            if ($trangThai !== 'Trống') {
+                $thongKe['ban_dang_su_dung']++;
+            } else {
+                $thongKe['ban_con_trong']++;
+            }
+        }
+    }
+
+    return $thongKe;
+}
 }

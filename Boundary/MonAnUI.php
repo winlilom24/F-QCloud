@@ -172,5 +172,31 @@ class MonAnUI {
     public function xuLyXoaMon($id_mon) {
         return $this->controller->delete($id_mon);
     }
+
+    public function themMon(){
+        $danhSachMonAn = $this->controller->getDanhSach();
+        $html = '';
+        $stt = 1;
+        if (empty($danhSachMonAn)) {
+            $html .= '<tr><td colspan="3" style="text-align: center; padding: 20px;">Không có món ăn nào trong danh sách.</td></tr>';
+            return $html;
+        }
+
+        foreach ($danhSachMonAn as $mon) {
+            $idMon = $mon['id_mon'] ?? 0;
+            $tenMon = htmlspecialchars($mon['ten_mon'] ?? '');
+            
+            $html .= '<tr class="mon-item" data-id="' . $idMon . '" data-gia="' . ($mon['gia_ban'] ?? 0) . '">';
+            $html .= '<td>' . $stt++ . '</td>';
+            $html .= '<td>' . $tenMon . '</td>';
+            $html .= '<td>';
+            $html .= '<input type="number" class="input-so-luong" min="0" value="0" data-id="' . $idMon . '">';
+            $html .= '</td>';
+            $html .= '</tr>';
+        }
+
+        return $html;
+    }
+    
 }
 ?>

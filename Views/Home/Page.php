@@ -1,6 +1,8 @@
 <?php 
 session_start(); 
-require_once __DIR__ . '/../../Models/User.php'; 
+require_once __DIR__ . '/../../Models/User.php';
+require_once __DIR__ . '/../../Boundary/BanUI.php'; 
+require_once __DIR__ . '/../../Boundary/MonAnUI.php'; 
 
 // Kiểm tra đăng nhập
 if (!isset($_SESSION['user_id'])) { 
@@ -15,6 +17,13 @@ $userRecord = $userModel->getUserById($_SESSION['user_id']);
 $storeName = $userRecord['ten_quan'] ?? ($_SESSION['ten_quan'] ?? 'F-QCloud');
 $userName  = $userRecord['ten']      ?? ($_SESSION['ten']      ?? 'Người dùng');
 $userRole  = $userRecord['role']     ?? ($_SESSION['role']     ?? 'Quản lý');
+
+$banUI = new BanUI();
+$danhSachBanHtml = $banUI->hienThiDanhSachBanGrid();
+$thongKeBan = $banUI->layThongKeBan();
+
+$monAnUI = new MonAnUI();
+$danhSachMon = $monAnUI->themMon();
 ?>
 
 <!DOCTYPE html>
@@ -56,7 +65,7 @@ $userRole  = $userRecord['role']     ?? ($_SESSION['role']     ?? 'Quản lý');
         <div class="brand">
             <img src="../../Public/images/logo.png" class="logo" alt="F-QCloud logo"/>
 
-            <div class="brand-info" style="display: none;">
+            <div class="brand-info">
                 <span class="title"><?= htmlspecialchars($storeName) ?></span>
                 <span class="subtitle"><?= htmlspecialchars($userName) ?> • <?= htmlspecialchars($userRole) ?></span>
             </div>
@@ -121,26 +130,26 @@ $userRole  = $userRecord['role']     ?? ($_SESSION['role']     ?? 'Quản lý');
                             </label>
                         </div>
 
-                        <!-- Bộ lọc trạng thái -->
-                        <div class="status-pills">
-                            <label class="status-pill">
-                                <input type="radio" name="statusFilter" value="all" checked>
-                                <span>Tất cả <strong id="count-all">(0)</strong></span>
-                            </label>
-
-                            <label class="status-pill">
-                                <input type="radio" name="statusFilter" value="used">
-                                <span>Sử dụng <strong id="count-used">(0)</strong></span>
-                            </label>
-
-                            <label class="status-pill">
-                                <input type="radio" name="statusFilter" value="free">
-                                <span>Còn trống <strong id="count-free">(0)</strong></span>
-                            </label>
-                        </div>
+<!-- Cập nhật số lượng trong bộ lọc trạng thái -->
+<div class="status-pills">
+    <label class="status-pill">
+        <input type="radio" name="statusFilter" value="all" checked>
+        <span>Tất cả <strong id="count-all">(<?php echo $thongKeBan['tong_ban']; ?>)</strong></span>
+    </label>
+    <label class="status-pill">
+        <input type="radio" name="statusFilter" value="used">
+        <span>Sử dụng <strong id="count-used">(<?php echo $thongKeBan['ban_dang_su_dung']; ?>)</strong></span>
+    </label>
+    <label class="status-pill">
+        <input type="radio" name="statusFilter" value="free">
+        <span>Còn trống <strong id="count-free">(<?php echo $thongKeBan['ban_con_trong']; ?>)</strong></span>
+    </label>
+</div>
 
                         <!-- Grid bàn -->
-                        <div id="table-grid" class="table-grid"></div>
+                        <div id="table-grid" class="table-grid">
+                            <?php echo $danhSachBanHtml; ?>
+                        </div>
 
                         <!-- Phân trang -->
                         <div class="table-pagination">
@@ -151,23 +160,21 @@ $userRole  = $userRecord['role']     ?? ($_SESSION['role']     ?? 'Quản lý');
 
                     </div>
 
-                    <!-- Thống kê -->
-                    <div class="metric-row">
-                        <div class="metric-card">
-                            <span class="metric-label">Tổng bàn</span>
-                            <span class="metric-value" id="stat-all">0</span>
-                        </div>
-
-                        <div class="metric-card">
-                            <span class="metric-label">Đang sử dụng</span>
-                            <span class="metric-value busy" id="stat-used">0</span>
-                        </div>
-
-                        <div class="metric-card">
-                            <span class="metric-label">Còn trống</span>
-                            <span class="metric-value free" id="stat-free">0</span>
-                        </div>
-                    </div>
+<!-- Cập nhật các số liệu thống kê -->
+<div class="metric-row">
+    <div class="metric-card">
+        <span class="metric-label">Tổng bàn</span>
+        <span class="metric-value" id="stat-all"><?php echo $thongKeBan['tong_ban']; ?></span>
+    </div>
+    <div class="metric-card">
+        <span class="metric-label">Đang sử dụng</span>
+        <span class="metric-value busy" id="stat-used"><?php echo $thongKeBan['ban_dang_su_dung']; ?></span>
+    </div>
+    <div class="metric-card">
+        <span class="metric-label">Còn trống</span>
+        <span class="metric-value free" id="stat-free"><?php echo $thongKeBan['ban_con_trong']; ?></span>
+    </div>
+</div>
 
                 </section>
 
@@ -196,8 +203,40 @@ $userRole  = $userRecord['role']     ?? ($_SESSION['role']     ?? 'Quản lý');
                         </div>
 
                         <!-- Chi tiết đơn -->
-                        <div id="order-detail" class="order-detail hidden">
-                            <div id="order-items" class="order-items"></div>
+                        <div id="order-detail" class="order-detail hidden" >
+                            <div id="order-items" class="order-items">
+                                <div id="formThemMon" class="form-them-mon hidden">
+    <div class="form-header">
+        <h3>Thêm món vào đơn</h3>
+        <button class="btn-close" id="btnDongForm">×</button>
+    </div>
+   <form action="" method="post">
+    <div class="form-body">
+        <div class="table-container">
+            <table class="table-mon-an">
+                <thead>
+                    <tr>
+                        <th>Mã món</th>
+                        <th>Tên món</th>
+                        <th>Số lượng</th>
+                    </tr>
+                </thead>
+                <tbody id="tbodyMonAn">
+                                    <?php
+                                        echo $monAnUI->themMon(); 
+                                    ?>
+                </tbody>
+            </table>
+        </div>
+       
+        <div class="form-actions">
+            <button class="btn btn-primary" id="btnXacNhan">Xác nhận</button>
+            <button class="btn btn-secondary" id="btnHuy">Hủy</button>
+        </div>
+    </div>
+    </form>
+</div>
+                            </div>
                         </div>
 
                         <!-- Tổng tiền -->
