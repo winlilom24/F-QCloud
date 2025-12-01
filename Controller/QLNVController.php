@@ -1,6 +1,6 @@
 <?php
 // controllers/QLNVController.php
-require_once "../Models/User.php";
+require_once __DIR__ . '/../Models/User.php';
 
 class QLNVController {
     private $userModel;
@@ -30,13 +30,13 @@ class QLNVController {
             return ['success' => false, 'message' => $rs2['message']];;
         }
 
-        return $this->userModel->create(
+        return $this->userModel->createNhanVien(
+            $data['id_quan_ly'],
             $data['ten'],
             $data['sdt'],
             $data['email'],
             $data['tai_khoan'],
-            $data['mat_khau'],
-            $data['id_quan_ly']
+            $data['mat_khau']
         );
     }
 
@@ -49,7 +49,7 @@ class QLNVController {
     }
 
     public function getById($user_id) {
-        return $this->userModel->findById($user_id);
+        return $this->userModel->getUserById($user_id);
     }
 }
 ?>

@@ -133,10 +133,10 @@ class User {
 
     public function getNhanVienByQuanLy($id_quan_ly) {
         $stmt = $this->conn->prepare(
-            "SELECT tk.user_id, tk.tai_khoan, u.ten, u.role, u.ten_quan
+            "SELECT tk.user_id, tk.tai_khoan, u.ten, u.sdt, u.email, u.role, u.ten_quan
              FROM taikhoan tk
              INNER JOIN user u ON u.user_id = tk.user_id
-             WHERE u.role = 'Nhân viên' AND u.quan_ly_id = ?"
+             WHERE u.role = 'Nhân viên' AND u.id_quan_ly = ?"
         );
         $stmt->bind_param("i", $id_quan_ly);
         $stmt->execute();
@@ -166,7 +166,7 @@ class User {
 
         try {
             $stmt1 = $this->conn->prepare(
-                "INSERT INTO user (ten, sdt, email, role, quan_ly_id) 
+                "INSERT INTO user (ten, sdt, email, role, id_quan_ly)
                  VALUES (?, ?, ?, 'Nhân viên', ?)"
             );
             $stmt1->bind_param("sssi", $ten, $sdt, $email, $id_quan_ly);
