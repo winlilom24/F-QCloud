@@ -1,6 +1,6 @@
 <?php
 // models/HoaDon.php
-require_once "Repository/Database.php";
+require_once __DIR__ . '/../Repository/Database.php';
 
 class HoaDon {
     private $conn;
@@ -49,6 +49,63 @@ class HoaDon {
             $this->conn->rollback();
             return false;
         }
+    }
+
+    public function getAll() {
+        $stmt = $this->conn->prepare("
+            SELECT hd.*, hd.trang_thai as trang_thai_hd, o.id_ban, o.id_nhan_vien, o.thoi_gian as thoi_gian_order, 
+                   u.ten as ten_nhan_vien, b.suc_chua,
+                   (SELECT SUM(m.gia_tien * ct.so_luong)
+                    FROM chitietorder ct
+                    JOIN monan m ON ct.id_mon = m.id_mon
+                    WHERE ct.id_order = o.id_order) as tong_tien
+            FROM hoadon hd
+            LEFT JOIN `order` o ON hd.id_order = o.id_order
+            LEFT JOIN user u ON o.id_nhan_vien = u.user_id
+            LEFT JOIN ban b ON o.id_ban = b.id_ban
+            ORDER BY hd.thoi_gian DESC
+        ");
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function getByStatus($trang_thai) {
+        $stmt = $this->conn->prepare("
+            SELECT hd.*, hd.trang_thai as trang_thai_hd, o.id_ban, o.id_nhan_vien, o.thoi_gian as thoi_gian_order,
+                   u.ten as ten_nhan_vien, b.suc_chua,
+                   (SELECT SUM(m.gia_tien * ct.so_luong)
+                    FROM chitietorder ct
+                    JOIN monan m ON ct.id_mon = m.id_mon
+                    WHERE ct.id_order = o.id_order) as tong_tien
+            FROM hoadon hd
+            LEFT JOIN `order` o ON hd.id_order = o.id_order
+            LEFT JOIN user u ON o.id_nhan_vien = u.user_id
+            LEFT JOIN ban b ON o.id_ban = b.id_ban
+            WHERE hd.trang_thai = ?
+            ORDER BY hd.thoi_gian DESC
+        ");
+        $stmt->bind_param("s", $trang_thai);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function getById($id_hoa_don) {
+        $stmt = $this->conn->prepare("
+            SELECT hd.*, hd.trang_thai as trang_thai_hd, o.id_ban, o.id_nhan_vien, o.thoi_gian as thoi_gian_order,
+                   u.ten as ten_nhan_vien, b.suc_chua,
+                   (SELECT SUM(m.gia_tien * ct.so_luong)
+                    FROM chitietorder ct
+                    JOIN monan m ON ct.id_mon = m.id_mon
+                    WHERE ct.id_order = o.id_order) as tong_tien
+            FROM hoadon hd
+            LEFT JOIN `order` o ON hd.id_order = o.id_order
+            LEFT JOIN user u ON o.id_nhan_vien = u.user_id
+            LEFT JOIN ban b ON o.id_ban = b.id_ban
+            WHERE hd.id_hoa_don = ?
+        ");
+        $stmt->bind_param("i", $id_hoa_don);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_assoc();
     }
 }
 ?>

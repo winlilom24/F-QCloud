@@ -155,6 +155,7 @@ $categories = $ui->getDanhSachNhom();
             <li><a href="QLNV.php"><i class="fa-solid fa-users"></i> Quản lý nhân viên</a></li>
             <li><a href="QLBan.php"><i class="fa-solid fa-table"></i> Quản lý bàn</a></li>
             <li class="active"><a href="QLMonAn.php"><i class="fa-solid fa-bowl-food"></i> Quản lý món ăn</a></li>
+            <li><a href="QLDoanhThu.php"><i class="fa-solid fa-chart-line"></i> Doanh thu</a></li>
         </ul>
     </aside>
 
