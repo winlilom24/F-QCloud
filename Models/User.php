@@ -171,7 +171,7 @@ class User {
         return (int)$result['total'];
     }
 
-    public function createNhanVien($id_quan_ly, $ten, $sdt, $email, $tai_khoan, $mat_khau) {
+    public function createNhanVien($id_quan_ly, $ten, $sdt, $email, $tai_khoan, $mat_khau, $ten_quan = null) {
         $check_sdt = $this->conn->prepare("SELECT user_id FROM user WHERE sdt = ?");
         $check_sdt->bind_param("s", $sdt);
         $check_sdt->execute();
@@ -194,10 +194,10 @@ class User {
 
         try {
             $stmt1 = $this->conn->prepare(
-                "INSERT INTO user (ten, sdt, email, role, id_quan_ly)
-                 VALUES (?, ?, ?, 'Nhân viên', ?)"
+                "INSERT INTO user (ten, sdt, email, role, id_quan_ly, ten_quan)
+                 VALUES (?, ?, ?, 'Nhân viên', ?, ?)"
             );
-            $stmt1->bind_param("sssi", $ten, $sdt, $email, $id_quan_ly);
+            $stmt1->bind_param("sssis", $ten, $sdt, $email, $id_quan_ly, $ten_quan);
             $stmt1->execute();
             $user_id = $this->conn->insert_id;
 

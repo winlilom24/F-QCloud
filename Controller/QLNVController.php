@@ -48,13 +48,17 @@ class QLNVController {
             return ['success' => false, 'message' => $rs2['message']];;
         }
 
+        // Lấy tên quán từ session của quản lý
+        $ten_quan = $_SESSION['ten_quan'] ?? null;
+
         return $this->userModel->createNhanVien(
             $data['id_quan_ly'],
             $data['ten'],
             $data['sdt'],
             $data['email'],
             $data['tai_khoan'],
-            $data['mat_khau']
+            $data['mat_khau'],
+            $ten_quan
         );
     }
 
