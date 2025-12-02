@@ -1,199 +1,29 @@
 // Public/js/QLDoanhThu.js
 // Quản lý doanh thu - Modal + SweetAlert2 + AJAX + Tab Navigation + Stats Details
 
-// Mở modal Thêm doanh thu
-function openAddModal() {
-    document.getElementById('modalTitle').textContent = 'Thêm doanh thu mới';
-    document.getElementById('formAction').value = 'add';
-    document.getElementById('revenueForm').reset();
-    document.getElementById('revenueId').value = '';
-    document.getElementById('revenueModal').classList.add('active');
-}
-
-// Mở modal Sửa doanh thu
-function openEditModal(id, id_hoa_don, tong_tien, ngay_tinh, ghi_chu) {
-    document.getElementById('modalTitle').textContent = 'Sửa thông tin doanh thu';
-    document.getElementById('formAction').value = 'update';
-    document.getElementById('revenueId').value = id;
-    document.getElementById('id_hoa_don').value = id_hoa_don;
-    document.getElementById('tong_tien').value = tong_tien;
-    document.getElementById('ngay_tinh').value = ngay_tinh;
-    document.getElementById('ghi_chu').value = ghi_chu || '';
-
-    document.getElementById('revenueModal').classList.add('active');
-}
-
-// Đóng modal
-function closeModal() {
-    document.getElementById('revenueModal').classList.remove('active');
-}
-
-// Đóng khi nhấn ngoài modal
-window.addEventListener('click', function(e) {
-    const modal = document.getElementById('revenueModal');
-    if (e.target === modal) {
-        closeModal();
-    }
-});
-
-// Xác nhận xóa bằng SweetAlert2
-function confirmDelete(revenueId, billCode) {
-    Swal.fire({
-        title: 'Xóa doanh thu?',
-        html: `
-            <div style="text-align:left; padding:10px 20px; font-size:16px;">
-                <p>Bạn có chắc chắn muốn xóa doanh thu của:</p>
-                <strong style="font-size:18px; color:#d33;">${billCode}</strong>
-                <br><br>
-                <small style="color:#888;">Hành động này <strong>không thể hoàn tác</strong>!</small>
-            </div>
-        `,
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#6c757d',
-        confirmButtonText: 'Xóa ngay',
-        cancelButtonText: 'Hủy bỏ',
-        reverseButtons: true,
-        buttonsStyling: true,
-        padding: '2rem',
-        width: '500px'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // Gửi yêu cầu xóa
-            fetch(`QLDoanhThu.php?delete=${revenueId}`)
-                .then(response => response.text())
-                .then(() => {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Đã xóa!',
-                        text: `Doanh thu của ${billCode} đã được xóa thành công.`,
-                        timer: 2000,
-                        showConfirmButton: false
-                    }).then(() => {
-                        location.reload();
-                    });
-                })
-                .catch(() => {
-                    Swal.fire('Lỗi!', 'Không thể xóa doanh thu này.', 'error');
-                });
-        }
-    });
-}
-
-// Xử lý submit form (Thêm & Sửa) bằng AJAX
-document.addEventListener('DOMContentLoaded', function () {
-    const form = document.getElementById('revenueForm');
-    if (!form) return;
-
-    form.addEventListener('submit', function (e) {
-        e.preventDefault();
-
-        const formData = new FormData(this);
-        const action = document.getElementById('formAction').value;
-
-        // Validate dữ liệu
-        const idHoaDon = document.getElementById('id_hoa_don').value;
-        const tongTien = parseFloat(document.getElementById('tong_tien').value);
-        const ngayTinh = document.getElementById('ngay_tinh').value;
-
-        if (!idHoaDon) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Thiếu thông tin',
-                text: 'Vui lòng nhập ID hóa đơn.'
-            });
-            return;
-        }
-
-        if (!tongTien || tongTien <= 0) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Dữ liệu không hợp lệ',
-                text: 'Tổng tiền phải là số dương.'
-            });
-            return;
-        }
-
-        if (!ngayTinh) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Thiếu thông tin',
-                text: 'Vui lòng chọn ngày tính.'
-            });
-            return;
-        }
-
-        fetch('QLDoanhThu.php', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Thành công!',
-                    text: data.message || (action === 'add' ? 'Doanh thu đã được thêm!' : 'Cập nhật thành công!'),
-                    timer: 1800,
-                    showConfirmButton: false
-                }).then(() => {
-                    closeModal();
-                    location.reload();
-                });
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Thất bại!',
-                    text: data.message || 'Đã có lỗi xảy ra. Vui lòng thử lại.'
-                });
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            Swal.fire('Lỗi!', 'Không thể kết nối đến server.', 'error');
-        });
-    });
-
-    // Format số tiền khi nhập
-    const tongTienInput = document.getElementById('tong_tien');
-    if (tongTienInput) {
-        tongTienInput.addEventListener('input', function(e) {
-            // Chỉ cho phép số và dấu chấm
-            let value = e.target.value.replace(/[^0-9.]/g, '');
-            // Đảm bảo chỉ có một dấu chấm
-            const parts = value.split('.');
-            if (parts.length > 2) {
-                value = parts[0] + '.' + parts.slice(1).join('');
-            }
-            e.target.value = value;
-        });
-    }
-});
-
 // HIỂN THỊ / ẨN MENU NGƯỜI DÙNG
 function toggleUserMenu(event) {
-    event?.stopPropagation();
-    const menu = document.getElementById('userMenu');
-    const arrow = document.querySelector('.user-profile .arrow');
-    menu.classList.toggle('active');
-    arrow?.classList.toggle('active');
+  event?.stopPropagation();
+  const menu = document.getElementById("userMenu");
+  const arrow = document.querySelector(".user-profile .arrow");
+  menu.classList.toggle("active");
+  arrow?.classList.toggle("active");
 }
 
 // ĐÓNG MENU KHI NHẤN RA NGOÀI
-document.addEventListener('click', function(e) {
-    const profile = document.querySelector('.user-profile');
-    if (profile && !profile.contains(e.target)) {
-        document.getElementById('userMenu')?.classList.remove('active');
-        document.querySelector('.user-profile .arrow')?.classList.remove('active');
-    }
+document.addEventListener("click", function (e) {
+  const profile = document.querySelector(".user-profile");
+  if (profile && !profile.contains(e.target)) {
+    document.getElementById("userMenu")?.classList.remove("active");
+    document.querySelector(".user-profile .arrow")?.classList.remove("active");
+  }
 });
 
 // MỞ MODAL ĐỔI MẬT KHẨU
 function openChangePasswordModal() {
-    Swal.fire({
-        title: 'Đổi mật khẩu',
-        html: `
+  Swal.fire({
+    title: "Đổi mật khẩu",
+    html: `
             <div style="text-align:left;">
                 <div class="form-group" style="margin-bottom:15px;">
                     <label>Mật khẩu hiện tại</label>
@@ -209,194 +39,216 @@ function openChangePasswordModal() {
                 </div>
             </div>
         `,
-        showCancelButton: true,
-        confirmButtonText: 'Cập nhật',
-        cancelButtonText: 'Hủy',
-        preConfirm: () => {
-            const oldPass = document.getElementById('oldPass').value;
-            const newPass = document.getElementById('newPass').value;
-            const confirmPass = document.getElementById('confirmPass').value;
+    showCancelButton: true,
+    confirmButtonText: "Cập nhật",
+    cancelButtonText: "Hủy",
+    preConfirm: () => {
+      const oldPass = document.getElementById("oldPass").value;
+      const newPass = document.getElementById("newPass").value;
+      const confirmPass = document.getElementById("confirmPass").value;
 
-            if (newPass !== confirmPass) {
-                Swal.showValidationMessage('Mật khẩu mới không khớp!');
-                return false;
-            }
-            if (newPass.length < 6) {
-                Swal.showValidationMessage('Mật khẩu phải ít nhất 6 ký tự!');
-                return false;
-            }
-            // Gọi AJAX đổi mật khẩu ở đây nếu cần
-            return { oldPass, newPass };
-        }
-    }).then((result) => {
-        if (result.isConfirmed) {
-            Swal.fire('Thành công!', 'Mật khẩu đã được thay đổi.', 'success');
-        }
-    });
+      if (newPass !== confirmPass) {
+        Swal.showValidationMessage("Mật khẩu mới không khớp!");
+        return false;
+      }
+      if (newPass.length < 6) {
+        Swal.showValidationMessage("Mật khẩu phải ít nhất 6 ký tự!");
+        return false;
+      }
+      // Gọi AJAX đổi mật khẩu ở đây nếu cần
+      return { oldPass, newPass };
+    },
+  }).then((result) => {
+    if (result.isConfirmed) {
+      Swal.fire("Thành công!", "Mật khẩu đã được thay đổi.", "success");
+    }
+  });
 }
 
 // TAB NAVIGATION
 function showTab(tabName) {
-    // Hide all tabs
-    document.querySelectorAll('.tab-content').forEach(tab => {
-        tab.classList.remove('active');
-    });
+  // Hide all tabs
+  document.querySelectorAll(".tab-content").forEach((tab) => {
+    tab.classList.remove("active");
+  });
 
-    // Remove active class from all buttons
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.remove('active');
-    });
+  // Remove active class from all buttons
+  document.querySelectorAll(".tab-btn").forEach((btn) => {
+    btn.classList.remove("active");
+  });
 
-    // Show selected tab
-    document.getElementById(tabName + '-tab').classList.add('active');
-    event.target.classList.add('active');
+  // Show selected tab
+  document.getElementById(tabName + "-tab").classList.add("active");
+  event.target.classList.add("active");
 }
 
 // STATS DETAIL FUNCTIONS
 function showRevenueDetails() {
-    document.getElementById('statsModalTitle').textContent = 'Chi tiết tổng doanh thu';
-    document.getElementById('filterSection').style.display = 'block';
-    document.getElementById('printBtn').style.display = 'inline-block';
-    document.getElementById('statsDetailModal').classList.add('active');
-    loadRevenueDetails();
+  document.getElementById("statsModalTitle").textContent =
+    "Chi tiết tổng doanh thu";
+  document.getElementById("filterSection").style.display = "block";
+  document.getElementById("printBtn").style.display = "inline-block";
+  document.getElementById("statsDetailModal").classList.add("active");
+  loadRevenueDetails();
 }
 
 function showInvoiceDetails() {
-    document.getElementById('statsModalTitle').textContent = 'Chi tiết hóa đơn';
-    document.getElementById('filterSection').style.display = 'none';
-    document.getElementById('printBtn').style.display = 'none';
-    document.getElementById('statsDetailModal').classList.add('active');
-    loadInvoiceDetails();
+  document.getElementById("statsModalTitle").textContent = "Chi tiết hóa đơn";
+  document.getElementById("filterSection").style.display = "none";
+  document.getElementById("printBtn").style.display = "none";
+  document.getElementById("statsDetailModal").classList.add("active");
+  loadInvoiceDetails();
 }
 
 function showPaidOrders() {
-    document.getElementById('statsModalTitle').textContent = 'Đơn hàng đã thanh toán';
-    document.getElementById('filterSection').style.display = 'none';
-    document.getElementById('printBtn').style.display = 'none';
-    document.getElementById('statsDetailModal').classList.add('active');
-    loadPaidOrders();
+  document.getElementById("statsModalTitle").textContent =
+    "Đơn hàng đã thanh toán";
+  document.getElementById("filterSection").style.display = "none";
+  document.getElementById("printBtn").style.display = "none";
+  document.getElementById("statsDetailModal").classList.add("active");
+  loadPaidOrders();
 }
 
 function showActiveOrders() {
-    document.getElementById('statsModalTitle').textContent = 'Đơn hàng đang sử dụng';
-    document.getElementById('filterSection').style.display = 'none';
-    document.getElementById('printBtn').style.display = 'none';
-    document.getElementById('statsDetailModal').classList.add('active');
-    loadActiveOrders();
+  document.getElementById("statsModalTitle").textContent =
+    "Đơn hàng đang sử dụng";
+  document.getElementById("filterSection").style.display = "none";
+  document.getElementById("printBtn").style.display = "none";
+  document.getElementById("statsDetailModal").classList.add("active");
+  loadActiveOrders();
 }
 
 function closeStatsModal() {
-    document.getElementById('statsDetailModal').classList.remove('active');
+  document.getElementById("statsDetailModal").classList.remove("active");
 }
 
 function changeTimeFilter() {
-    const filterType = document.getElementById('timeFilter').value;
-    document.getElementById('dateFilter').style.display = filterType === 'day' ? 'block' : 'none';
-    document.getElementById('monthFilter').style.display = filterType === 'month' ? 'block' : 'none';
-    document.getElementById('yearFilter').style.display = filterType === 'year' ? 'block' : 'none';
+  const filterType = document.getElementById("timeFilter").value;
+  document.getElementById("dateFilter").style.display =
+    filterType === "day" ? "block" : "none";
+  document.getElementById("monthFilter").style.display =
+    filterType === "month" ? "block" : "none";
+  document.getElementById("yearFilter").style.display =
+    filterType === "year" ? "block" : "none";
 }
 
 function applyFilter() {
-    loadRevenueDetails();
+  loadRevenueDetails();
 }
 
 function loadRevenueDetails() {
-    const filterType = document.getElementById('timeFilter').value;
-    let date = null, month = null, year = null;
+  const filterType = document.getElementById("timeFilter").value;
+  let date = null,
+    month = null,
+    year = null;
 
-    if (filterType === 'day') {
-        date = document.getElementById('selectedDate').value;
-    } else if (filterType === 'month') {
-        month = document.getElementById('selectedMonth').value;
-    } else if (filterType === 'year') {
-        year = document.getElementById('selectedYear').value;
-    }
+  if (filterType === "day") {
+    date = document.getElementById("selectedDate").value;
+  } else if (filterType === "month") {
+    month = document.getElementById("selectedMonth").value;
+  } else if (filterType === "year") {
+    year = document.getElementById("selectedYear").value;
+  }
 
-    fetch('QLDoanhThu.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: `action=get_revenue_details&filter_type=${filterType}&date=${date}&month=${month}&year=${year}`
+  fetch("QLDoanhThu.php", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: `action=get_revenue_details&filter_type=${filterType}&date=${date}&month=${month}&year=${year}`,
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.success) {
+        renderRevenueDetails(data.data);
+      }
     })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            renderRevenueDetails(data.data);
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        Swal.fire('Lỗi!', 'Không thể tải dữ liệu doanh thu.', 'error');
+    .catch((error) => {
+      console.error("Error:", error);
+      Swal.fire("Lỗi!", "Không thể tải dữ liệu doanh thu.", "error");
     });
 }
 
 function loadInvoiceDetails() {
-    fetch('QLDoanhThu.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: 'action=get_invoice_details'
+  fetch("QLDoanhThu.php", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: "action=get_invoice_details",
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.success) {
+        renderInvoiceDetails(data.data);
+      }
     })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            renderInvoiceDetails(data.data);
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        Swal.fire('Lỗi!', 'Không thể tải dữ liệu hóa đơn.', 'error');
+    .catch((error) => {
+      console.error("Error:", error);
+      Swal.fire("Lỗi!", "Không thể tải dữ liệu hóa đơn.", "error");
     });
 }
 
 function loadPaidOrders() {
-    fetch('QLDoanhThu.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: 'action=get_paid_orders'
+  fetch("QLDoanhThu.php", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: "action=get_paid_orders",
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.success) {
+        renderOrderDetails(data.data, "paid");
+      }
     })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            renderOrderDetails(data.data, 'paid');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        Swal.fire('Lỗi!', 'Không thể tải dữ liệu đơn hàng đã thanh toán.', 'error');
+    .catch((error) => {
+      console.error("Error:", error);
+      Swal.fire(
+        "Lỗi!",
+        "Không thể tải dữ liệu đơn hàng đã thanh toán.",
+        "error"
+      );
     });
 }
 
 function loadActiveOrders() {
-    fetch('QLDoanhThu.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: 'action=get_active_orders'
+  fetch("QLDoanhThu.php", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: "action=get_active_orders",
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.success) {
+        renderOrderDetails(data.data, "active");
+      }
     })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            renderOrderDetails(data.data, 'active');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        Swal.fire('Lỗi!', 'Không thể tải dữ liệu đơn hàng đang sử dụng.', 'error');
+    .catch((error) => {
+      console.error("Error:", error);
+      Swal.fire(
+        "Lỗi!",
+        "Không thể tải dữ liệu đơn hàng đang sử dụng.",
+        "error"
+      );
     });
 }
 
 function renderRevenueDetails(data) {
-    // Calculate summary
-    const totalRevenue = data.reduce((sum, item) => sum + parseFloat(item.tong_doanh_thu || 0), 0);
-    const totalInvoices = data.reduce((sum, item) => sum + parseInt(item.so_hoa_don || 0), 0);
+  // Calculate summary
+  const totalRevenue = data.reduce(
+    (sum, item) => sum + parseFloat(item.tong_doanh_thu || 0),
+    0
+  );
+  const totalInvoices = data.reduce(
+    (sum, item) => sum + parseInt(item.so_hoa_don || 0),
+    0
+  );
 
-    document.getElementById('statsSummary').innerHTML = `
+  document.getElementById("statsSummary").innerHTML = `
         <div class="stats-summary-item">
             <span class="stats-summary-value">${totalInvoices}</span>
             <span class="stats-summary-label">Tổng hóa đơn</span>
@@ -407,10 +259,10 @@ function renderRevenueDetails(data) {
         </div>
     `;
 
-    const tableHead = document.getElementById('detailTableHead');
-    const tableBody = document.getElementById('detailTableBody');
+  const tableHead = document.getElementById("detailTableHead");
+  const tableBody = document.getElementById("detailTableBody");
 
-    tableHead.innerHTML = `
+  tableHead.innerHTML = `
         <tr>
             <th>Ngày</th>
             <th>Tổng doanh thu</th>
@@ -418,26 +270,35 @@ function renderRevenueDetails(data) {
         </tr>
     `;
 
-    tableBody.innerHTML = data.map(item => `
+  tableBody.innerHTML = data
+    .map(
+      (item) => `
         <tr>
-            <td>${new Date(item.ngay).toLocaleDateString('vi-VN')}</td>
-            <td><span class="amount">${parseFloat(item.tong_doanh_thu).toLocaleString()}₫</span></td>
+            <td>${new Date(item.ngay).toLocaleDateString("vi-VN")}</td>
+            <td><span class="amount">${parseFloat(
+              item.tong_doanh_thu
+            ).toLocaleString()}₫</span></td>
             <td>${item.so_hoa_don}</td>
         </tr>
-    `).join('');
+    `
+    )
+    .join("");
 
-    // Hiển thị button in nếu có dữ liệu
-    if (data.length > 0) {
-        document.getElementById('printBtn').style.display = 'inline-block';
-    }
+  // Hiển thị button in nếu có dữ liệu
+  if (data.length > 0) {
+    document.getElementById("printBtn").style.display = "inline-block";
+  }
 }
 
 function renderInvoiceDetails(data) {
-    // Calculate summary
-    const totalRevenue = data.reduce((sum, item) => sum + parseFloat(item.tong_tien), 0);
-    const totalInvoices = data.length;
+  // Calculate summary
+  const totalRevenue = data.reduce(
+    (sum, item) => sum + parseFloat(item.tong_tien),
+    0
+  );
+  const totalInvoices = data.length;
 
-    document.getElementById('statsSummary').innerHTML = `
+  document.getElementById("statsSummary").innerHTML = `
         <div class="stats-summary-item">
             <span class="stats-summary-value">${totalInvoices}</span>
             <span class="stats-summary-label">Tổng hóa đơn</span>
@@ -448,10 +309,10 @@ function renderInvoiceDetails(data) {
         </div>
     `;
 
-    const tableHead = document.getElementById('detailTableHead');
-    const tableBody = document.getElementById('detailTableBody');
+  const tableHead = document.getElementById("detailTableHead");
+  const tableBody = document.getElementById("detailTableBody");
 
-    tableHead.innerHTML = `
+  tableHead.innerHTML = `
         <tr>
             <th>ID</th>
             <th>Hóa đơn</th>
@@ -461,32 +322,38 @@ function renderInvoiceDetails(data) {
         </tr>
     `;
 
-    tableBody.innerHTML = data.map(item => `
+  tableBody.innerHTML = data
+    .map(
+      (item) => `
         <tr>
             <td><strong>#${item.id_doanh_thu}</strong></td>
-            <td>HD${String(item.id_hoa_don).padStart(3, '0')}</td>
-            <td><span class="amount">${parseFloat(item.tong_tien).toLocaleString()}₫</span></td>
-            <td>${new Date(item.ngay_tinh).toLocaleDateString('vi-VN')}</td>
-            <td>${item.ghi_chu || 'Không có ghi chú'}</td>
+            <td>HD${String(item.id_hoa_don).padStart(3, "0")}</td>
+            <td><span class="amount">${parseFloat(
+              item.tong_tien
+            ).toLocaleString()}₫</span></td>
+            <td>${new Date(item.ngay_tinh).toLocaleDateString("vi-VN")}</td>
+            <td>${item.ghi_chu || "Không có ghi chú"}</td>
         </tr>
-    `).join('');
+    `
+    )
+    .join("");
 }
 
 function renderOrderDetails(data, type) {
-    // Calculate summary
-    const totalOrders = data.length;
+  // Calculate summary
+  const totalOrders = data.length;
 
-    document.getElementById('statsSummary').innerHTML = `
+  document.getElementById("statsSummary").innerHTML = `
         <div class="stats-summary-item">
             <span class="stats-summary-value">${totalOrders}</span>
             <span class="stats-summary-label">Tổng đơn hàng</span>
         </div>
     `;
 
-    const tableHead = document.getElementById('detailTableHead');
-    const tableBody = document.getElementById('detailTableBody');
+  const tableHead = document.getElementById("detailTableHead");
+  const tableBody = document.getElementById("detailTableBody");
 
-    tableHead.innerHTML = `
+  tableHead.innerHTML = `
         <tr>
             <th>ID Đơn</th>
             <th>Bàn</th>
@@ -497,56 +364,71 @@ function renderOrderDetails(data, type) {
         </tr>
     `;
 
-    tableBody.innerHTML = data.map(item => `
+  tableBody.innerHTML = data
+    .map(
+      (item) => `
         <tr>
             <td><strong>#${item.id_order}</strong></td>
             <td>Bàn ${item.id_ban}</td>
-            <td>${item.ten || 'Chưa phân công'}</td>
-            <td>${new Date(item.thoi_gian).toLocaleString('vi-VN')}</td>
-            <td><span class="amount">${item.tong_tien ? parseFloat(item.tong_tien).toLocaleString() + '₫' : 'Chưa tính'}</span></td>
+            <td>${item.ten || "Chưa phân công"}</td>
+            <td>${new Date(item.thoi_gian).toLocaleString("vi-VN")}</td>
+            <td><span class="amount">${
+              item.tong_tien
+                ? parseFloat(item.tong_tien).toLocaleString() + "₫"
+                : "Chưa tính"
+            }</span></td>
             <td>
-                <span class="status-badge status-${type === 'paid' ? 'paid' : 'using'}">
-                    <i class="fa-solid fa-${type === 'paid' ? 'check-circle' : 'clock'}"></i>
-                    ${type === 'paid' ? 'Đã thanh toán' : 'Đang sử dụng'}
+                <span class="status-badge status-${
+                  type === "paid" ? "paid" : "using"
+                }">
+                    <i class="fa-solid fa-${
+                      type === "paid" ? "check-circle" : "clock"
+                    }"></i>
+                    ${type === "paid" ? "Đã thanh toán" : "Đang sử dụng"}
                 </span>
             </td>
         </tr>
-    `).join('');
+    `
+    )
+    .join("");
 }
 
 // PRINT REVENUE FUNCTION
 function printRevenue() {
-    const modalTitle = document.getElementById('statsModalTitle').textContent;
-    const filterType = document.getElementById('timeFilter').value;
-    const statsSummary = document.getElementById('statsSummary').innerHTML;
-    const tableHead = document.getElementById('detailTableHead').innerHTML;
-    const tableBody = document.getElementById('detailTableBody').innerHTML;
-    
-    // Lấy thông tin filter
-    let filterText = '';
-    if (filterType === 'day') {
-        const date = document.getElementById('selectedDate').value;
-        if (date) {
-            const dateObj = new Date(date);
-            filterText = `Ngày: ${dateObj.toLocaleDateString('vi-VN')}`;
-        }
-    } else if (filterType === 'month') {
-        const month = document.getElementById('selectedMonth').value;
-        if (month) {
-            const dateObj = new Date(month + '-01');
-            filterText = `Tháng: ${dateObj.toLocaleDateString('vi-VN', { month: 'long', year: 'numeric' })}`;
-        }
-    } else if (filterType === 'year') {
-        const year = document.getElementById('selectedYear').value;
-        if (year) {
-            filterText = `Năm: ${year}`;
-        }
-    } else {
-        filterText = 'Tất cả thời gian';
-    }
+  const modalTitle = document.getElementById("statsModalTitle").textContent;
+  const filterType = document.getElementById("timeFilter").value;
+  const statsSummary = document.getElementById("statsSummary").innerHTML;
+  const tableHead = document.getElementById("detailTableHead").innerHTML;
+  const tableBody = document.getElementById("detailTableBody").innerHTML;
 
-    // Tạo nội dung in
-    const printContent = `
+  // Lấy thông tin filter
+  let filterText = "";
+  if (filterType === "day") {
+    const date = document.getElementById("selectedDate").value;
+    if (date) {
+      const dateObj = new Date(date);
+      filterText = `Ngày: ${dateObj.toLocaleDateString("vi-VN")}`;
+    }
+  } else if (filterType === "month") {
+    const month = document.getElementById("selectedMonth").value;
+    if (month) {
+      const dateObj = new Date(month + "-01");
+      filterText = `Tháng: ${dateObj.toLocaleDateString("vi-VN", {
+        month: "long",
+        year: "numeric",
+      })}`;
+    }
+  } else if (filterType === "year") {
+    const year = document.getElementById("selectedYear").value;
+    if (year) {
+      filterText = `Năm: ${year}`;
+    }
+  } else {
+    filterText = "Tất cả thời gian";
+  }
+
+  // Tạo nội dung in
+  const printContent = `
         <!DOCTYPE html>
         <html lang="vi">
         <head>
@@ -666,152 +548,163 @@ function printRevenue() {
                 ${tableBody}
             </table>
             <div class="print-footer">
-                <p>Báo cáo được in vào: ${new Date().toLocaleString('vi-VN')}</p>
+                <p>Báo cáo được in vào: ${new Date().toLocaleString(
+                  "vi-VN"
+                )}</p>
                 <p>FQCloud - Hệ thống quản lý nhà hàng</p>
             </div>
         </body>
         </html>
     `;
 
-    // Mở cửa sổ in
-    const printWindow = window.open('', '_blank');
-    printWindow.document.write(printContent);
-    printWindow.document.close();
-    
-    // Đợi nội dung load xong rồi in
-    printWindow.onload = function() {
-        setTimeout(() => {
-            printWindow.print();
-        }, 250);
-    };
+  // Mở cửa sổ in
+  const printWindow = window.open("", "_blank");
+  printWindow.document.write(printContent);
+  printWindow.document.close();
+
+  // Đợi nội dung load xong rồi in
+  printWindow.onload = function () {
+    setTimeout(() => {
+      printWindow.print();
+    }, 250);
+  };
 }
 
 // TẠO DOANH THU TỰ ĐỘNG TỪ HÓA ĐƠN
 function taoDoanhThuTuTatCaHoaDon() {
-    Swal.fire({
-        title: 'Tạo doanh thu tự động?',
-        html: `
+  Swal.fire({
+    title: "Tạo doanh thu tự động?",
+    html: `
             <div style="text-align:left; padding:10px 20px; font-size:16px;">
                 <p>Bạn có muốn tự động tạo doanh thu từ tất cả các hóa đơn đã thanh toán nhưng chưa có doanh thu không?</p>
                 <br>
                 <small style="color:#888;">Hệ thống sẽ tự động tính tổng tiền và tạo doanh thu cho các hóa đơn này.</small>
             </div>
         `,
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#f59e0b',
-        cancelButtonColor: '#6c757d',
-        confirmButtonText: 'Tạo ngay',
-        cancelButtonText: 'Hủy bỏ',
-        reverseButtons: true,
-        buttonsStyling: true,
-        padding: '2rem',
-        width: '500px'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // Hiển thị loading
-            Swal.fire({
-                title: 'Đang xử lý...',
-                text: 'Vui lòng chờ trong giây lát',
-                allowOutsideClick: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                }
-            });
+    icon: "question",
+    showCancelButton: true,
+    confirmButtonColor: "#f59e0b",
+    cancelButtonColor: "#6c757d",
+    confirmButtonText: "Tạo ngay",
+    cancelButtonText: "Hủy bỏ",
+    reverseButtons: true,
+    buttonsStyling: true,
+    padding: "2rem",
+    width: "500px",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      // Hiển thị loading
+      Swal.fire({
+        title: "Đang xử lý...",
+        text: "Vui lòng chờ trong giây lát",
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
 
-            // Gửi yêu cầu tạo doanh thu
-            fetch('QLDoanhThu.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: 'action=tao_doanh_thu_tu_hoa_don'
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Thành công!',
-                        html: `
+      // Gửi yêu cầu tạo doanh thu
+      fetch("QLDoanhThu.php", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: "action=tao_doanh_thu_tu_hoa_don",
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.success) {
+            Swal.fire({
+              icon: "success",
+              title: "Thành công!",
+              html: `
                             <div style="text-align:left; padding:10px;">
                                 <p><strong>${data.message}</strong></p>
-                                ${data.count > 0 ? `<p>Đã tạo doanh thu cho <strong>${data.count}</strong> hóa đơn</p>` : ''}
-                                ${data.fail_count > 0 ? `<p style="color:#dc2626;">Có ${data.fail_count} hóa đơn không thể tạo doanh thu</p>` : ''}
+                                ${
+                                  data.count > 0
+                                    ? `<p>Đã tạo doanh thu cho <strong>${data.count}</strong> hóa đơn</p>`
+                                    : ""
+                                }
+                                ${
+                                  data.fail_count > 0
+                                    ? `<p style="color:#dc2626;">Có ${data.fail_count} hóa đơn không thể tạo doanh thu</p>`
+                                    : ""
+                                }
                             </div>
                         `,
-                        confirmButtonText: 'OK',
-                        timer: 3000
-                    }).then(() => {
-                        location.reload();
-                    });
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Thất bại!',
-                        text: data.message || 'Không thể tạo doanh thu. Vui lòng thử lại.'
-                    });
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                Swal.fire('Lỗi!', 'Không thể kết nối đến server.', 'error');
+              confirmButtonText: "OK",
+              timer: 3000,
+            }).then(() => {
+              location.reload();
             });
-        }
-    });
+          } else {
+            Swal.fire({
+              icon: "error",
+              title: "Thất bại!",
+              text:
+                data.message || "Không thể tạo doanh thu. Vui lòng thử lại.",
+            });
+          }
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+          Swal.fire("Lỗi!", "Không thể kết nối đến server.", "error");
+        });
+    }
+  });
 }
 
 // IN BÁO CÁO DOANH THU TỪ TRANG CHÍNH
 function printRevenueReport() {
-    // Lấy dữ liệu từ bảng doanh thu hiện tại
-    const revenueTable = document.querySelector('.revenue-table tbody');
-    if (!revenueTable) {
-        Swal.fire('Thông báo', 'Không có dữ liệu để in!', 'info');
-        return;
-    }
+  // Lấy dữ liệu từ bảng doanh thu hiện tại
+  const revenueTable = document.querySelector(".revenue-table tbody");
+  if (!revenueTable) {
+    Swal.fire("Thông báo", "Không có dữ liệu để in!", "info");
+    return;
+  }
 
-    const rows = revenueTable.querySelectorAll('tr');
-    if (rows.length === 0 || rows[0].querySelector('.empty-state')) {
-        Swal.fire('Thông báo', 'Chưa có dữ liệu doanh thu để in!', 'info');
-        return;
-    }
+  const rows = revenueTable.querySelectorAll("tr");
+  if (rows.length === 0 || rows[0].querySelector(".empty-state")) {
+    Swal.fire("Thông báo", "Chưa có dữ liệu doanh thu để in!", "info");
+    return;
+  }
 
-    // Lấy thông tin thống kê
-    const statsCards = document.querySelectorAll('.stat-card');
-    let totalRevenue = '0₫';
-    let totalInvoices = '0';
-    let paidOrders = '0';
-    let activeOrders = '0';
+  // Lấy thông tin thống kê
+  const statsCards = document.querySelectorAll(".stat-card");
+  let totalRevenue = "0₫";
+  let totalInvoices = "0";
+  let paidOrders = "0";
+  let activeOrders = "0";
 
-    if (statsCards.length >= 4) {
-        totalRevenue = statsCards[0].querySelector('.stat-value').textContent;
-        totalInvoices = statsCards[1].querySelector('.stat-value').textContent;
-        paidOrders = statsCards[2].querySelector('.stat-value').textContent;
-        activeOrders = statsCards[3].querySelector('.stat-value').textContent;
-    }
+  if (statsCards.length >= 4) {
+    totalRevenue = statsCards[0].querySelector(".stat-value").textContent;
+    totalInvoices = statsCards[1].querySelector(".stat-value").textContent;
+    paidOrders = statsCards[2].querySelector(".stat-value").textContent;
+    activeOrders = statsCards[3].querySelector(".stat-value").textContent;
+  }
 
-    // Tạo bảng dữ liệu và tính tổng
-    let tableRows = '';
-    let totalAmount = 0;
-    let validRows = 0;
-    
-    rows.forEach((row, index) => {
-        const cells = row.querySelectorAll('td');
-        if (cells.length >= 5) {
-            const id = cells[0].textContent.trim();
-            const invoice = cells[1].textContent.trim();
-            const amountText = cells[2].textContent.trim();
-            const date = cells[3].textContent.trim();
-            const note = cells[4].textContent.trim();
-            
-            // Tính tổng tiền
-            const amountValue = amountText.replace(/[^\d]/g, '');
-            if (amountValue) {
-                totalAmount += parseFloat(amountValue);
-            }
-            validRows++;
-            
-            tableRows += `
+  // Tạo bảng dữ liệu và tính tổng
+  let tableRows = "";
+  let totalAmount = 0;
+  let validRows = 0;
+
+  rows.forEach((row, index) => {
+    const cells = row.querySelectorAll("td");
+    if (cells.length >= 5) {
+      const id = cells[0].textContent.trim();
+      const invoice = cells[1].textContent.trim();
+      const amountText = cells[2].textContent.trim();
+      const date = cells[3].textContent.trim();
+      const note = cells[4].textContent.trim();
+
+      // Tính tổng tiền
+      const amountValue = amountText.replace(/[^\d]/g, "");
+      if (amountValue) {
+        totalAmount += parseFloat(amountValue);
+      }
+      validRows++;
+
+      tableRows += `
                 <tr>
                     <td>${validRows}</td>
                     <td>${id}</td>
@@ -821,12 +714,12 @@ function printRevenueReport() {
                     <td>${note}</td>
                 </tr>
             `;
-        }
-    });
-    
-    // Thêm dòng tổng kết
-    const totalFormatted = totalAmount.toLocaleString('vi-VN') + '₫';
-    tableRows += `
+    }
+  });
+
+  // Thêm dòng tổng kết
+  const totalFormatted = totalAmount.toLocaleString("vi-VN") + "₫";
+  tableRows += `
         <tr style="background: #e0f2fe; font-weight: 700;">
             <td colspan="3" class="text-right" style="padding: 15px 8px; font-size: 14px;">TỔNG CỘNG:</td>
             <td class="text-right amount" style="padding: 15px 8px; font-size: 14px; color: #059669;">${totalFormatted}</td>
@@ -834,8 +727,8 @@ function printRevenueReport() {
         </tr>
     `;
 
-    // Tạo nội dung in
-    const printContent = `
+  // Tạo nội dung in
+  const printContent = `
         <!DOCTYPE html>
         <html lang="vi">
         <head>
@@ -1031,7 +924,9 @@ function printRevenueReport() {
 
                 <div class="print-footer">
                     <div>
-                        <strong>Ngày in:</strong> ${new Date().toLocaleString('vi-VN')}
+                        <strong>Ngày in:</strong> ${new Date().toLocaleString(
+                          "vi-VN"
+                        )}
                     </div>
                     <div>
                         <strong>Tổng số bản ghi:</strong> ${validRows}
@@ -1054,15 +949,15 @@ function printRevenueReport() {
         </html>
     `;
 
-    // Mở cửa sổ in
-    const printWindow = window.open('', '_blank');
-    printWindow.document.write(printContent);
-    printWindow.document.close();
-    
-    // Đợi nội dung load xong rồi in
-    printWindow.onload = function() {
-        setTimeout(() => {
-            printWindow.print();
-        }, 300);
-    };
+  // Mở cửa sổ in
+  const printWindow = window.open("", "_blank");
+  printWindow.document.write(printContent);
+  printWindow.document.close();
+
+  // Đợi nội dung load xong rồi in
+  printWindow.onload = function () {
+    setTimeout(() => {
+      printWindow.print();
+    }, 300);
+  };
 }

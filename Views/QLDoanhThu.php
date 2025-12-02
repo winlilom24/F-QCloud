@@ -120,9 +120,6 @@ if (isset($_GET['delete'])) {
                 <button class="btn btn-print-page" onclick="printRevenueReport()" title="In báo cáo doanh thu">
                     <i class="fa-solid fa-print"></i> In báo cáo
                 </button>
-                <button class="btn btn-primary" onclick="openAddModal()">
-                    <i class="fa-solid fa-plus"></i> Thêm doanh thu
-                </button>
                 <div class="user-profile" onclick="toggleUserMenu(event)">
                     <div class="user-avatar-circle">
                         <i class="fa-solid fa-user"></i>
@@ -151,43 +148,7 @@ if (isset($_GET['delete'])) {
     </main>
 </div>
 
-<!-- MODAL THÊM & SỬA DOANH THU -->
-<div id="revenueModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3 id="modalTitle">Thêm doanh thu mới</h3>
-            <span class="close" onclick="closeModal()">×</span>
-        </div>
-        <div class="modal-body">
-            <form id="revenueForm">
-                <input type="hidden" name="action" id="formAction" value="add">
-                <input type="hidden" name="id_doanh_thu" id="revenueId">
 
-                <div class="form-group">
-                    <label>ID Hóa đơn *</label>
-                    <input type="number" name="id_hoa_don" id="id_hoa_don" required>
-                </div>
-                <div class="form-group">
-                    <label>Tổng tiền *</label>
-                    <input type="number" name="tong_tien" id="tong_tien" step="0.01" min="0" required>
-                </div>
-                <div class="form-group">
-                    <label>Ngày tính *</label>
-                    <input type="date" name="ngay_tinh" id="ngay_tinh" required>
-                </div>
-                <div class="form-group">
-                    <label>Ghi chú</label>
-                    <input type="text" name="ghi_chu" id="ghi_chu" placeholder="Nhập ghi chú (không bắt buộc)">
-                </div>
-
-                <div style="text-align: center; margin-top: 25px;">
-                    <button type="submit" class="btn btn-primary">Lưu lại</button>
-                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Hủy</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="../Public/js/QLDoanhThu.js"></script>
