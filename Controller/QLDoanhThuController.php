@@ -137,5 +137,30 @@ class QLDoanhThuController {
     public function taoDoanhThuTuTatCaHoaDon() {
         return $this->doanhThuModel->taoDoanhThuTuTatCaHoaDon();
     }
+
+    public function getChiTietDonHangByHoaDon($id_hoa_don) {
+        return $this->doanhThuModel->getChiTietDonHangByHoaDon($id_hoa_don);
+    }
+
+    // Methods cho chi tiết thống kê
+    public function getRevenueDetails($filterType, $date, $month, $year) {
+        return $this->doanhThuModel->getRevenueDetails($filterType, $date, $month, $year);
+    }
+
+    public function getInvoiceDetails() {
+        return $this->hoaDonModel ? $this->hoaDonModel->getInvoiceDetails() : ['success' => false, 'message' => 'Model không khả dụng'];
+    }
+
+    public function getPaidOrders() {
+        return $this->doanhThuModel->getPaidOrders();
+    }
+
+    public function getActiveOrders() {
+        return $this->doanhThuModel->getActiveOrders();
+    }
+
+    public function getRevenueStatsForDate($date) {
+        return $this->doanhThuModel->getRevenueStatsForDate($date);
+    }
 }
 ?>

@@ -9,6 +9,10 @@ class QLNVController {
         $this->userModel = new User();
     }
 
+    public function getUserInfo($user_id) {
+        return $this->userModel->getUserById($user_id);
+    }
+
     public function getNhanVienCuaQuanLy($id_quan_ly) {
         return $this->userModel->getNhanVienByQuanLy($id_quan_ly);
     }
@@ -42,14 +46,23 @@ class QLNVController {
         }
 
         $rs2 = Validator::validateTen($data['ten']);
-    
+
         if (!$rs2['success']) {
             // Trả về lỗi validation
             return ['success' => false, 'message' => $rs2['message']];;
         }
 
-        // Lấy tên quán từ session của quản lý
-        $ten_quan = $_SESSION['ten_quan'] ?? null;
+        // Validate email nếu có nhập
+        if (!empty($data['email'])) {
+            $rs3 = Validator::validateEmail($data['email']);
+
+            if (!$rs3['success']) {
+                return ['success' => false, 'message' => $rs3['message']];
+            }
+        }
+
+        // Sử dụng tên quán từ form data (đã được tự động điền từ quản lý)
+        $ten_quan = $data['ten_quan'] ?? null;
 
         return $this->userModel->createNhanVien(
             $data['id_quan_ly'],

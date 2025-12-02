@@ -275,6 +275,164 @@ class DoanhThu {
             'total_revenue' => $totalRevenue
         ];
     }
+
+    public function getChiTietDonHangByHoaDon($id_hoa_don) {
+        $stmt = $this->conn->prepare("
+            SELECT
+                ctdh.id_mon,
+                ma.ten_mon,
+                ctdh.so_luong,
+                ma.gia_tien,
+                (ctdh.so_luong * ma.gia_tien) as thanh_tien
+            FROM chitietdonhang ctdh
+            JOIN monan ma ON ctdh.id_mon = ma.id_mon
+            WHERE ctdh.id_order = (
+                SELECT hd.id_order
+                FROM hoadon hd
+                WHERE hd.id_hoa_don = ?
+            )
+            ORDER BY ctdh.id_mon
+        ");
+        $stmt->bind_param("i", $id_hoa_don);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    // Methods cho chi tiết thống kê
+    public function getRevenueDetails($filterType, $date, $month, $year) {
+        $whereClause = "";
+        $params = [];
+        $paramTypes = "";
+
+        switch ($filterType) {
+            case 'day':
+                if ($date) {
+                    $whereClause = "WHERE DATE(dt.ngay_tinh) = ?";
+                    $params[] = $date;
+                    $paramTypes .= "s";
+                }
+                break;
+            case 'month':
+                if ($month) {
+                    $whereClause = "WHERE DATE_FORMAT(dt.ngay_tinh, '%Y-%m') = ?";
+                    $params[] = $month;
+                    $paramTypes .= "s";
+                }
+                break;
+            case 'year':
+                if ($year) {
+                    $whereClause = "WHERE YEAR(dt.ngay_tinh) = ?";
+                    $params[] = $year;
+                    $paramTypes .= "i";
+                }
+                break;
+        }
+
+        $stmt = $this->conn->prepare("
+            SELECT dt.*, hd.id_order, hd.thoi_gian, hd.trang_thai as trang_thai_hd
+            FROM doanhthu dt
+            LEFT JOIN hoadon hd ON dt.id_hoa_don = hd.id_hoa_don
+            $whereClause
+            ORDER BY dt.ngay_tinh DESC, dt.id_doanh_thu DESC
+        ");
+
+        if (!empty($params)) {
+            $stmt->bind_param($paramTypes, ...$params);
+        }
+
+        $stmt->execute();
+        $data = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+        return [
+            'success' => true,
+            'data' => $data,
+            'total' => array_sum(array_column($data, 'tong_tien'))
+        ];
+    }
+
+    public function getPaidOrders() {
+        $stmt = $this->conn->prepare("
+            SELECT o.*, u.ten as ten_nhan_vien,
+                   GROUP_CONCAT(CONCAT(ma.ten_mon, ' (', ctdh.so_luong, ')') SEPARATOR ', ') as danh_sach_mon
+            FROM `order` o
+            LEFT JOIN user u ON o.id_nhan_vien = u.user_id
+            LEFT JOIN chitietdonhang ctdh ON o.id_order = ctdh.id_order
+            LEFT JOIN monan ma ON ctdh.id_mon = ma.id_mon
+            WHERE o.trang_thai = 'Đã thanh toán'
+            GROUP BY o.id_order
+            ORDER BY o.thoi_gian_order DESC
+        ");
+        $stmt->execute();
+        $data = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+        return [
+            'success' => true,
+            'data' => $data
+        ];
+    }
+
+    public function getActiveOrders() {
+        $stmt = $this->conn->prepare("
+            SELECT o.*, u.ten as ten_nhan_vien,
+                   GROUP_CONCAT(CONCAT(ma.ten_mon, ' (', ctdh.so_luong, ')') SEPARATOR ', ') as danh_sach_mon
+            FROM `order` o
+            LEFT JOIN user u ON o.id_nhan_vien = u.user_id
+            LEFT JOIN chitietdonhang ctdh ON o.id_order = ctdh.id_order
+            LEFT JOIN monan ma ON ctdh.id_mon = ma.id_mon
+            WHERE o.trang_thai != 'Đã thanh toán'
+            GROUP BY o.id_order
+            ORDER BY o.thoi_gian_order DESC
+        ");
+        $stmt->execute();
+        $data = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+        return [
+            'success' => true,
+            'data' => $data
+        ];
+    }
+
+    public function getRevenueStatsForDate($date) {
+        // Lấy tổng doanh thu trong ngày
+        $stmt = $this->conn->prepare("
+            SELECT COALESCE(SUM(tong_tien), 0) as total_revenue,
+                   COUNT(*) as total_invoices
+            FROM doanhthu
+            WHERE DATE(ngay_tinh) = ?
+        ");
+        $stmt->bind_param("s", $date);
+        $stmt->execute();
+        $revenueData = $stmt->get_result()->fetch_assoc();
+
+        // Lấy số đơn hàng đã thanh toán trong ngày
+        $stmt2 = $this->conn->prepare("
+            SELECT COUNT(*) as paid_orders
+            FROM `order`
+            WHERE DATE(thoi_gian_order) = ?
+            AND trang_thai = 'Đã thanh toán'
+        ");
+        $stmt2->bind_param("s", $date);
+        $stmt2->execute();
+        $paidOrdersData = $stmt2->get_result()->fetch_assoc();
+
+        // Lấy số đơn hàng đang sử dụng (tạo trong ngày và chưa thanh toán)
+        $stmt3 = $this->conn->prepare("
+            SELECT COUNT(*) as active_orders
+            FROM `order`
+            WHERE DATE(thoi_gian_order) = ?
+            AND trang_thai != 'Đã thanh toán'
+        ");
+        $stmt3->bind_param("s", $date);
+        $stmt3->execute();
+        $activeOrdersData = $stmt3->get_result()->fetch_assoc();
+
+        return [
+            'totalRevenue' => (float)$revenueData['total_revenue'],
+            'totalInvoices' => (int)$revenueData['total_invoices'],
+            'paidOrders' => (int)$paidOrdersData['paid_orders'],
+            'activeOrders' => (int)$activeOrdersData['active_orders']
+        ];
+    }
 }
 ?>
 

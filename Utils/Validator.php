@@ -1,18 +1,19 @@
 <?php
 class Validator
 {
-    //  Kiểm tra số điện thoại có hợp lệ không
-    //  Số điện thoại phải có đúng 10 chữ số và bắt đầu bằng số 0
+    //  Kiểm tra số điện thoại có hợp lệ không (không bắt buộc)
+    //  Nếu có nhập thì phải có đúng 10 chữ số và bắt đầu bằng số 0
     public static function validateSoDienThoai($sdt)
     {
+        // Nếu không nhập thì bỏ qua validation
         if (empty($sdt)) {
-            return ['success' => false, 'message' => 'Số điện thoại không được để trống'];
+            return ['success' => true, 'message' => 'Số điện thoại không bắt buộc'];
         }
 
         // Kiểm tra xem có đúng 10 chữ số và bắt đầu bằng 0 không
         if (!preg_match('/^0[0-9]{9}$/', $sdt)) {
             return [
-                'success' => false, 
+                'success' => false,
                 'message' => 'Số điện thoại phải có đúng 10 chữ số và bắt đầu bằng số 0'
             ];
         }
@@ -39,5 +40,26 @@ class Validator
         }
 
         return ['success' => true, 'message' => 'Tên hợp lệ'];
+    }
+
+    /**
+     * Kiểm tra email có hợp lệ không (không bắt buộc)
+     */
+    public static function validateEmail($email)
+    {
+        // Nếu không nhập thì bỏ qua validation
+        if (empty($email)) {
+            return ['success' => true, 'message' => 'Email không bắt buộc'];
+        }
+
+        // Kiểm tra format email
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return [
+                'success' => false,
+                'message' => 'Email không đúng định dạng'
+            ];
+        }
+
+        return ['success' => true, 'message' => 'Email hợp lệ'];
     }
 }
