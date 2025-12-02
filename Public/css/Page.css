@@ -46,11 +46,25 @@ body {
 .brand {
   display: flex;
   align-items: center;
+  gap: 8px;
 }
 
-.logo {
-  height: 40px;
-  margin-right: 12px;
+.brand .logo {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  line-height: 1;
+}
+
+.brand h1 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+  letter-spacing: 0.5px;
 }
 
 .brand-info .title {
@@ -65,7 +79,103 @@ body {
 
 .header-controls {
   display: flex;
+  align-items: center;
   gap: 12px;
+  position: relative;
+}
+
+.user-info-card {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin-right: 8px;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: fit-content;
+  max-width: 250px;
+  white-space: nowrap;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  width: 100%;
+  overflow: hidden;
+}
+
+.store-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 3px;
+  letter-spacing: 0.3px;
+  line-height: 1.1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+  text-align: center;
+  width: 100%;
+}
+
+.user-details {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  font-size: 11px;
+  margin-top: 1px;
+  flex-wrap: wrap;
+  max-width: 100%;
+}
+
+.user-name {
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 80px;
+}
+
+.user-separator {
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: bold;
+  flex-shrink: 0;
+  font-size: 10px;
+}
+
+.user-role {
+  color: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.2);
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-size: 9px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  flex-shrink: 0;
+}
+
+.user-name {
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+}
+
+.user-role {
+  color: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .icon-btn,
@@ -75,6 +185,72 @@ body {
   font-size: 20px;
   cursor: pointer;
   color: #fff;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.hamburger-menu:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.icon-btn:hover {
+  transform: scale(1.1);
+}
+
+/* Dropdown Menu */
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  min-width: 220px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+  z-index: 1000;
+  margin-top: 8px;
+  border: 1px solid #e1e5e9;
+}
+
+.dropdown-menu.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.dropdown-content {
+  padding: 8px 0;
+}
+
+.dropdown-item {
+  display: block;
+  padding: 12px 20px;
+  color: #374151;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+}
+
+.dropdown-item:hover {
+  background-color: #f3f4f6;
+  color: #1f2937;
+  padding-left: 24px;
+}
+
+.dropdown-divider {
+  height: 1px;
+  background-color: #e5e7eb;
+  margin: 4px 0;
 }
 
 /* ========================= WORKSPACE ========================= */
@@ -237,37 +413,139 @@ body {
   margin-right: 4px;
 }
 
-/* --------- Table Grid ---------- */
+/* ========== FORM HIỂN THỊ BÀN ĂN - ĐƠN GIẢN ========== */
 
+/* Grid layout cho các bàn */
 .table-grid {
-  flex: 1;
   display: grid;
-  gap: 16px;
-  grid-template-columns: repeat(4, 1fr);
-  padding: 10px 0;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 15px;
+  padding: 15px 0;
+  justify-items: center;
 }
 
+/* Item bàn ăn - ô vuông đơn giản */
 .table-item {
-  height: 95px;
-  border-radius: 12px;
+  height: 80px;
   border: 2px solid var(--border);
-  background: #f9fbff;
+  background: var(--bg-card);
   cursor: pointer;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  flex-direction: column;
-  transition: 0.15s;
+  transition: all 0.2s ease;
+  border-radius: 8px;
 }
 
 .table-item:hover {
   border-color: var(--primary);
   background: var(--primary-light);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.table-item .table-name {
+/* Số bàn */
+.table-number {
+  font-size: 18px;
   font-weight: bold;
-  font-size: 15px;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+/* Trạng thái bàn */
+.table-status {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-light);
+  text-align: center;
+}
+
+/* TRẠNG THÁI BÀN - MÀU SẮC ĐƠN GIẢN */
+
+/* Bàn trống */
+.table-item.free {
+  border-color: #28a745;
+  background: #f8fff8;
+}
+
+.table-item.free .table-number {
+  color: #28a745;
+}
+
+.table-item.free .table-status {
+  color: #155724;
+}
+
+/* Bàn đang sử dụng */
+.table-item.busy {
+  border-color: #dc3545;
+  background: #fff5f5;
+}
+
+.table-item.busy .table-number {
+  color: #dc3545;
+}
+
+.table-item.busy .table-status {
+  color: #721c24;
+}
+
+/* Bàn được chọn */
+.table-item.selected {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  box-shadow: 0 0 0 3px rgba(10, 110, 253, 0.25);
+}
+
+.table-item.selected .table-number {
+  color: var(--primary);
+}
+
+/* RESPONSIVE DESIGN */
+@media (max-width: 768px) {
+  .table-grid {
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 12px;
+  }
+
+  .ban {
+    height: 100px;
+    width: 100px;
+    padding: 6px 3px;
+  }
+
+  .table-item {
+    height: 65px;
+  }
+
+  .table-number {
+    font-size: 16px;
+    margin-bottom: 2px;
+  }
+
+  .table-status {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 480px) {
+  .table-grid {
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    gap: 10px;
+  }
+
+  .table-item {
+    height: 55px;
+  }
+
+  .table-number {
+    font-size: 14px;
+  }
+
+  .table-status {
+    font-size: 10px;
+  }
 }
 
 /* --------- Pagination ---------- */
@@ -491,43 +769,77 @@ body {
   display: block;
 }
 
-.ban-chon {
-  border: 3px solid #007bff;
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
-}
+/* ========== COMPATIBILITY CLASSES ========== */
 
+/* Alias cho class cũ để tương thích ngược */
 .ban {
+  height: 120px;
+  width: 120px;
+  border: 2px solid var(--border);
+  background: var(--bg-card);
   cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 4px;
   transition: all 0.2s ease;
-}
-
-.ban:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-}
-.ban {
-  padding: 16px;
-  border: 2px solid #d8e0f0;
   border-radius: 12px;
-  background: #f9fbff;
-  cursor: pointer;
-  text-align: center;
-  transition: all 0.2s ease;
+  position: relative;
 }
 
 .ban:hover {
-  border-color: #0a6efd;
-  background: #eef3ff;
+  border-color: var(--primary);
+  background: var(--primary-light);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.ban.ban-chon {
-  border-color: #0a6efd;
-  box-shadow: 0 0 0 3px rgba(10, 110, 253, 0.2);
+.ban-icon {
+  font-size: 24px;
+  margin-bottom: 4px;
 }
 
+.ban-so {
+  font-size: 16px;
+  font-weight: bold;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+
+.ban-ten {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text);
+  text-align: center;
+  margin-bottom: 2px;
+  line-height: 1.2;
+}
+
+.ban-trang-thai {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-light);
+  text-align: center;
+  margin-bottom: 2px;
+}
+
+.ban-suc-chua {
+  font-size: 9px;
+  font-weight: 500;
+  color: var(--text-light);
+  text-align: center;
+  opacity: 0.8;
+}
+
+/* Trạng thái bàn - tương thích với class cũ */
 .ban.ban-trong {
-  border-color: #19538e;
-  background: #f8faff;
+  border-color: #28a745;
+  background: #f8fff8;
+}
+
+.ban.ban-trong .ban-so {
+  color: #28a745;
 }
 
 .ban.ban-dang-su-dung {
@@ -535,50 +847,87 @@ body {
   background: #fff5f5;
 }
 
-.ban-so {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  font-weight: bold;
-  color: white;
-  margin: 0 auto 8px;
+.ban.ban-dang-su-dung .ban-so {
+  color: #dc3545;
 }
 
-.ban-trong .ban-so {
-  background: #1d0c91;
+/* Bàn mang về */
+.ban.ban-mang-ve {
+  border-color: #fd7e14;
+  background: #fff8f0;
 }
 
-.ban-dang-su-dung .ban-so {
-  background: #dc3545;
-}
-
-.ban-chon .ban-so {
-  background: #0a6efd;
-}
-
-.ban-icon {
-  font-size: 24px;
-  margin-bottom: 6px;
-}
-
-.ban-ten {
-  font-size: 13px;
+.ban.ban-mang-ve .ban-so {
+  color: #fd7e14;
   font-weight: 600;
-  margin-bottom: 4px;
 }
 
-.ban-trang-thai {
-  font-size: 11px;
-  font-weight: 500;
+.ban.ban-chon {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  box-shadow: 0 0 0 3px rgba(10, 110, 253, 0.25);
 }
 
-.ban-suc-chua {
-  font-size: 12px;
-  margin-top: 4px;
+.ban.ban-chon .ban-so {
+  color: var(--primary);
+}
+
+/* Responsive cho class cũ */
+@media (max-width: 768px) {
+  .ban-icon {
+    font-size: 20px;
+  }
+
+  .ban-so {
+    font-size: 14px;
+    margin-bottom: 1px;
+  }
+
+  .ban-ten {
+    font-size: 10px;
+    margin-bottom: 1px;
+  }
+
+  .ban-trang-thai {
+    font-size: 9px;
+    margin-bottom: 1px;
+  }
+
+  .ban-suc-chua {
+    font-size: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .ban {
+    height: 80px;
+    width: 80px;
+    padding: 4px 2px;
+  }
+
+  .ban-icon {
+    font-size: 16px;
+    margin-bottom: 2px;
+  }
+
+  .ban-so {
+    font-size: 12px;
+    margin-bottom: 1px;
+  }
+
+  .ban-ten {
+    font-size: 9px;
+    margin-bottom: 1px;
+  }
+
+  .ban-trang-thai {
+    font-size: 8px;
+    margin-bottom: 1px;
+  }
+
+  .ban-suc-chua {
+    font-size: 7px;
+  }
 }
 .form-them-mon {
   width: 100%;

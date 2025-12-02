@@ -27,7 +27,6 @@ class BanUI {
                     <thead>
                     <tr>
                         <th>Bàn</th>
-                        <th>Sức chứa</th>
                         <th>Trạng thái</th>
                         <th>Thao tác</th>
                     </tr>
@@ -64,7 +63,7 @@ class BanUI {
                                     <a class="btn-action edit" href="javascript:void(0)"
                                        onclick="openTableEditModal(
                                            <?= (int)$ban['id_ban'] ?>,
-                                           <?= (int)$ban['suc_chua'] ?>,
+                                     
                                            '<?= htmlspecialchars($status, ENT_QUOTES) ?>'
                                        )" title="Sửa bàn">
                                         <i class="fa-solid fa-pen"></i>
@@ -162,7 +161,7 @@ class BanUI {
 
         echo '<table class="table table-bordered">
                 <thead class="table-primary"><tr>
-                    <th>Bàn</th><th>Sức chứa</th><th>Trạng thái</th><th>Hành động</th>
+                    <th>Bàn</th>><th>Trạng thái</th><th>Hành động</th>
                 </tr></thead><tbody>';
 
         foreach ($bans as $ban) {
@@ -231,44 +230,59 @@ class BanUI {
     }
 
     public function hienThiDanhSachBanGrid() {
-    $bans = $this->banController->getTable();
-    
-    if (empty($bans)) {
-        return '<div class="table-grid-empty">Chưa có bàn nào được tạo.</div>';
-    }
+        $bans = $this->banController->getTable();
 
-    $html = '';
-    $currentRow = 0;
-    $maxColumns = 10; // Số bàn tối đa trên một hàng
+        // Thêm bàn "Mang về" mặc định
+        $banMangVe = [
+            'id_ban' => 0,
+            'trang_thai' => 'Trống'
+        ];
 
-    foreach ($bans as $ban) {
-        $trangThai = $ban['trang_thai'] ?? 'Trống';
-        $isFree = $trangThai === 'Trống';
-        
-        // Tạo class và màu sắc cho bàn
-        $banClass = $isFree ? 'ban-trong' : 'ban-dang-su-dung';
-        $icon = $isFree ? '🪑' : '👥';
-        
-        $html .= '<div class="ban ' . $banClass . '" data-id="' . (int)$ban['id_ban'] . '">';
-        $html .= '<div class="ban-so">' . (int)$ban['id_ban'] . '</div>';
-        $html .= '<div class="ban-icon">' . $icon . '</div>';
-        $html .= '<div class="ban-ten">Bàn ' . (int)$ban['id_ban'] . '</div>';
-        $html .= '<div class="ban-trang-thai">' . htmlspecialchars($trangThai) . '</div>';
-        $html .= '<div class="ban-suc-chua">' . (int)$ban['suc_chua'] . ' chỗ</div>';
-        $html .= '</div>';
+        // Đưa bàn "Mang về" lên đầu danh sách
+        array_unshift($bans, $banMangVe);
 
-        $currentRow++;
-        if ($currentRow % $maxColumns === 0 && $currentRow < count($bans)) {
-            // Có thể thêm logic để tạo hàng mới nếu cần
+        // Sắp xếp theo ID tăng dần (bàn mang về sẽ ở đầu vì ID = 0)
+        usort($bans, function($a, $b) {
+            return (int)$a['id_ban'] - (int)$b['id_ban'];
+        });
+
+        if (empty($bans)) {
+            return '<div class="table-grid-empty">Chưa có bàn nào được tạo.</div>';
         }
-    }
 
-    return $html;
-}
+        $html = '';
+
+        foreach ($bans as $ban) {
+            $trangThai = $ban['trang_thai'] ?? 'Trống';
+            $isFree = $trangThai === 'Trống';
+
+            // Tạo class và màu sắc cho bàn
+            $banClass = $isFree ? 'ban-trong' : 'ban-dang-su-dung';
+            $icon = $isFree ? '🪑' : '👥';
+
+            // Xử lý đặc biệt cho bàn "Mang về"
+            if ($ban['id_ban'] == 0) {
+                $tenBan = 'Mang về';
+                $icon = '🥡'; // Icon cho mang về
+                $banClass = 'ban-mang-ve'; // Class đặc biệt cho bàn mang về
+            } else {
+                $tenBan = 'Bàn ' . (int)$ban['id_ban'];
+            }
+
+            $html .= '<div class="ban ' . $banClass . '" data-id="' . (int)$ban['id_ban'] . '">';
+            $html .= '<div class="ban-icon">' . $icon . '</div>';
+            $html .= '<div class="ban-so">' . ((int)$ban['id_ban'] == 0 ? 'MV' : (int)$ban['id_ban']) . '</div>';
+            $html .= '<div class="ban-ten">' . $tenBan . '</div>';
+            $html .= '<div class="ban-trang-thai">' . htmlspecialchars($trangThai) . '</div>';
+            $html .= '</div>';
+        }
+
+        return $html;
+    }
 
 public function layThongKeBan() {
     $bans = $this->banController->getTable();
-    
+
     $thongKe = [
         'tong_ban' => 0,
         'ban_dang_su_dung' => 0,
@@ -276,9 +290,14 @@ public function layThongKeBan() {
     ];
 
     if (!empty($bans)) {
-        $thongKe['tong_ban'] = count($bans);
-        
-        foreach ($bans as $ban) {
+        // Không tính bàn "Mang về" (id_ban = 0) vào thống kê
+        $bansThuc = array_filter($bans, function($ban) {
+            return $ban['id_ban'] != 0;
+        });
+
+        $thongKe['tong_ban'] = count($bansThuc);
+
+        foreach ($bansThuc as $ban) {
             $trangThai = $ban['trang_thai'] ?? 'Trống';
             if ($trangThai !== 'Trống') {
                 $thongKe['ban_dang_su_dung']++;

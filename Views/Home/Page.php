@@ -19,8 +19,9 @@ $userName  = $userRecord['ten']      ?? ($_SESSION['ten']      ?? 'Người dùn
 $userRole  = $userRecord['role']     ?? ($_SESSION['role']     ?? 'Quản lý');
 
 $banUI = new BanUI();
-$danhSachBanHtml = $banUI->hienThiDanhSachBanGrid();
 $thongKeBan = $banUI->layThongKeBan();
+$danhSachBanHtml = $banUI->hienThiDanhSachBanGrid();
+
 
 $monAnUI = new MonAnUI();
 $danhSachMon = $monAnUI->themMon();
@@ -34,7 +35,7 @@ $danhSachMon = $monAnUI->themMon();
     <title>F-QCloud - Hệ thống quản lý nhà hàng</title>
 
     <!-- CSS -->
-    <link rel="stylesheet" href="../../Public/css/Page.css?v=<?= time() ?>">
+    <link rel=  "stylesheet" href="../../Public/css/Page.css?v=<?= time() ?>">
 </head>
 
 <body class="theme-blue">
@@ -63,18 +64,42 @@ $danhSachMon = $monAnUI->themMon();
     <!-- ================== HEADER ================== -->
     <header class="top-bar">
         <div class="brand">
-            <img src="../../Public/images/logo.png" class="logo" alt="F-QCloud logo"/>
-
-            <div class="brand-info">
-                <span class="title"><?= htmlspecialchars($storeName) ?></span>
-                <span class="subtitle"><?= htmlspecialchars($userName) ?> • <?= htmlspecialchars($userRole) ?></span>
-            </div>
+            <div class="logo">☁️</div>
+            <h1>F-QCloud</h1>
         </div>
 
         <div class="header-controls">
-            <button class="icon-btn">🔔</button>
-            <button class="icon-btn">❔</button>
+            <div class="user-info-card">
+                <div class="user-info">
+                    <div class="store-name"><?= htmlspecialchars($storeName) ?></div>
+                    <div class="user-details">
+                        <span class="user-name"><?= htmlspecialchars($userName) ?></span>
+                        <span class="user-separator">•</span>
+                        <span class="user-role"><?= htmlspecialchars($userRole) ?></span>
+                    </div>
+                </div>
+            </div>
+            <button id="bellBtn" class="icon-btn">🔔</button>
             <button id="hamburgerMenu" class="hamburger-menu">☰</button>
+
+            <!-- Dropdown Menu -->
+            <div id="dropdownMenu" class="dropdown-menu">
+                <div class="dropdown-content">
+                    <a href="#" class="dropdown-item">Quản lý</a>
+                    <div class="dropdown-divider"></div>
+                    <a href="#" class="dropdown-item">Báo cáo cuối ngày</a>
+                    <a href="#" class="dropdown-item">Phiếu bàn giao ca</a>
+                    <a href="#" class="dropdown-item">Lập phiếu thu</a>
+                    <div class="dropdown-divider"></div>
+                    <a href="#" class="dropdown-item">Cài đặt chung</a>
+                    <div class="dropdown-divider"></div>
+                    <a href="#" class="dropdown-item">Món có sẵn trong đơn</a>
+                    <a href="#" class="dropdown-item">Phím tắt</a>
+                    <div class="dropdown-divider"></div>
+                    <a href="#" class="dropdown-item">Đóng ca làm việc</a>
+                    <a href="#" class="dropdown-item">Đăng xuất</a>
+                </div>
+            </div>
         </div>
     </header>
 
@@ -116,19 +141,6 @@ $danhSachMon = $monAnUI->themMon();
 
                     <div class="panel-card">
 
-                        <!-- Bộ lọc khu vực -->
-                        <div class="filter-strip">
-                            <div class="floor-tabs">
-                                <button class="floor-btn active" data-floor="all">Tất cả</button>
-                                <button class="floor-btn" data-floor="1">Tầng 1</button>
-                                <button class="floor-btn" data-floor="2">Tầng 2</button>
-                            </div>
-
-                            <label class="auto-open">
-                                <input id="autoOpenMenu" type="checkbox">
-                                <span>Mở thực đơn khi chọn bàn</span>
-                            </label>
-                        </div>
 
 <!-- Cập nhật số lượng trong bộ lọc trạng thái -->
 <div class="status-pills">
@@ -146,19 +158,11 @@ $danhSachMon = $monAnUI->themMon();
     </label>
 </div>
 
-                        <!-- Grid bàn -->
-                        <div id="table-grid" class="table-grid">
-                            <?php echo $danhSachBanHtml; ?>
-                        </div>
-
-                        <!-- Phân trang -->
-                        <div class="table-pagination">
-                            <span id="pageInfo">1/1</span>
-                            <button id="prevPage" class="page-btn">←</button>
-                            <button id="nextPage" class="page-btn">→</button>
-                        </div>
-
-                    </div>
+    <!-- Grid bàn -->
+    <div id="table-grid" class="table-grid">
+        <?php echo $danhSachBanHtml; ?>
+    </div>                    
+ </div>
 
 <!-- Cập nhật các số liệu thống kê -->
 <div class="metric-row">
@@ -192,7 +196,6 @@ $danhSachMon = $monAnUI->themMon();
 
                             <div class="order-meta">
                                 <span>Mã hóa đơn: <strong id="order-id">-</strong></span>
-                                <span>Khách: <strong id="order-customer">-</strong></span>
                             </div>
                         </div>
 
