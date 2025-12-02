@@ -27,6 +27,7 @@ class BanUI {
                     <thead>
                     <tr>
                         <th>Bàn</th>
+                                                <th>Sức chứa</th>
                         <th>Trạng thái</th>
                         <th>Thao tác</th>
                     </tr>
