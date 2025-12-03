@@ -64,7 +64,7 @@ class BanUI {
                                     <a class="btn-action edit" href="javascript:void(0)"
                                        onclick="openTableEditModal(
                                            <?= (int)$ban['id_ban'] ?>,
-                                     
+                                           <?= (int)$ban['suc_chua'] ?>,
                                            '<?= htmlspecialchars($status, ENT_QUOTES) ?>'
                                        )" title="Sửa bàn">
                                         <i class="fa-solid fa-pen"></i>
