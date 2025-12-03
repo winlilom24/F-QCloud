@@ -227,6 +227,7 @@ body {
   font-size: 15px;
   color: #1f2a37;
   border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+  vertical-align: middle;
 }
 
 .employee-table tbody tr:hover {
@@ -321,6 +322,11 @@ body {
   cursor: pointer;
   border-radius: 12px;
   transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: inherit;
 }
 
 .btn-action i {
@@ -337,6 +343,15 @@ body {
 
 .btn-action:hover {
   background: rgba(31, 111, 255, 0.08);
+}
+
+.btn-action:focus {
+  outline: none;
+  background: rgba(31, 111, 255, 0.08);
+}
+
+.btn-action:active {
+  transform: scale(0.95);
 }
 
 .empty-state {

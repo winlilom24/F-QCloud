@@ -94,11 +94,11 @@ if (isset($_GET['ajax']) && $_GET['ajax'] === 'pagination') {
     exit;
 }
 
-// XỬ LÝ XÓA (dùng AJAX trong JS)
+// Xử lý xóa
 if (isset($_GET['delete'])) {
-    $ok = $ui->xuLyXoaNhanVien((int)$_GET['delete']);
+    $result = $ui->xuLyXoaNhanVien((int)$_GET['delete']);
     echo "<script>
-        alert('" . ($ok ? 'Xóa thành công!' : 'Xóa thất bại!') . "');
+        alert('" . ($result['success'] ? 'Xóa nhân viên thành công!' : ($result['message'] ?? 'Xóa nhân viên thất bại!')) . "');
         window.location='QLNV.php';
     </script>";
     exit;
@@ -121,7 +121,7 @@ if (isset($_GET['delete'])) {
         }
         @keyframes modalShow { from { transform: scale(0.85); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         .modal-header {
-            padding: 20px 25px; background: #007bff; color: white; border-radius: 16px 16px 0 0;
+            padding: 20px 25px; background: #1f6fff; color: white; border-radius: 16px 16px 0 0;
             display: flex; justify-content: space-between; align-items: center; font-size: 1.4rem;
         }
         .modal-body { padding: 30px; }
@@ -131,9 +131,9 @@ if (isset($_GET['delete'])) {
             width: 100%; padding: 12px 14px; border: 1px solid #ddd; border-radius: 10px; font-size: 15px;
             transition: border 0.3s;
         }
-        .form-group input:focus { border-color: #007bff; outline: none; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: #1f6fff; outline: none; }
         .btn { padding: 12px 28px; border: none; border-radius: 10px; cursor: pointer; font-size: 16px; font-weight: 600; }
-        .btn-primary { background: #007bff; color: white; }
+        .btn-primary { background: #1f6fff; color: white; }
         .btn-secondary { background: #6c757d; color: white; margin-left: 12px; }
         .close { font-size: 32px; cursor: pointer; opacity: 0.8; }
         .close:hover { opacity: 1; }

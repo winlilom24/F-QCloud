@@ -42,14 +42,17 @@ class QLNVController {
     
         if (!$rs1['success']) {
             // Trả về lỗi validation
-            return ['success' => false, 'message' => $rs1['message']];;
+            return ['success' => false, 'message' => $rs1['message']];
         }
 
         $rs2 = Validator::validateTen($data['ten']);
-
+        
+        // Lấy tên quán từ session của quản lý
+        $ten_quan = $_SESSION['ten_quan'] ?? null;
+        
         if (!$rs2['success']) {
             // Trả về lỗi validation
-            return ['success' => false, 'message' => $rs2['message']];;
+            return ['success' => false, 'message' => $rs2['message']];
         }
 
         // Validate email nếu có nhập
@@ -61,8 +64,7 @@ class QLNVController {
             }
         }
 
-        // Sử dụng tên quán từ form data (đã được tự động điền từ quản lý)
-        $ten_quan = $data['ten_quan'] ?? null;
+        // Sử dụng tên quán từ session của quản lý
 
         return $this->userModel->createNhanVien(
             $data['id_quan_ly'],

@@ -15,11 +15,10 @@ function openAddModal() {
   document.getElementById("mat_khau_confirm").required = true;
   document.getElementById("userId").value = "";
 
-  // SĐT và Email không bắt buộc
-  document.getElementById("sdt").required = false;
+  // SĐT bắt buộc, Email không bắt buộc
+  document.getElementById("sdt").required = true;
   document.getElementById("email").required = false;
 
-  // Tên quán đã được tự động điền và readonly, không reset
   document.getElementById("employeeModal").classList.add("active");
 }
 
@@ -43,12 +42,9 @@ function openEditModal(id, ten, sdt, email) {
   document.getElementById("mat_khau_confirm").disabled = true;
   document.getElementById("mat_khau_confirm").required = false;
 
-  // SĐT và Email không bắt buộc khi sửa
-  document.getElementById("sdt").required = false;
+  // SĐT bắt buộc khi sửa, Email không bắt buộc
+  document.getElementById("sdt").required = true;
   document.getElementById("email").required = false;
-
-  // Tên quán cũng không thể thay đổi khi sửa
-  document.getElementById("ten_quan").style.display = "none";
 
   document.getElementById("employeeModal").classList.add("active");
 }
@@ -56,8 +52,6 @@ function openEditModal(id, ten, sdt, email) {
 // Đóng modal
 function closeModal() {
   document.getElementById("employeeModal").classList.remove("active");
-  // Reset hiển thị tên quán
-  document.getElementById("ten_quan").style.display = "block";
 }
 
 // Đóng khi nhấn ngoài modal
@@ -68,49 +62,33 @@ window.addEventListener("click", function (e) {
   }
 });
 
-// Xác nhận xóa bằng SweetAlert2 (đẹp như hệ thống xịn)
-function confirmDelete(userId, tenNhanVien) {
-  Swal.fire({
-    title: "Xóa nhân viên?",
-    html: `
-            <div style="text-align:left; padding:10px 20px; font-size:16px;">
-                <p>Bạn có chắc chắn muốn xóa nhân viên:</p>
-                <strong style="font-size:18px; color:#d33;">${tenNhanVien}</strong>
-                <br><br>
-                <small style="color:#888;">Hành động này <strong>không thể hoàn tác</strong>!</small>
-            </div>
-        `,
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonColor: "#d33",
-    cancelButtonColor: "#6c757d",
-    confirmButtonText: "Xóa ngay",
-    cancelButtonText: "Hủy bỏ",
-    reverseButtons: true,
-    buttonsStyling: true,
-    padding: "2rem",
-    width: "500px",
-  }).then((result) => {
-    if (result.isConfirmed) {
-      // Gửi yêu cầu xóa
-      fetch(`QLNV.php?delete=${userId}`)
-        .then((response) => response.text())
-        .then(() => {
-          Swal.fire({
-            icon: "success",
-            title: "Đã xóa!",
-            text: `${tenNhanVien} đã được xóa thành công.`,
-            timer: 2000,
-            showConfirmButton: false,
-          }).then(() => {
-            location.reload();
-          });
-        })
-        .catch(() => {
-          Swal.fire("Lỗi!", "Không thể xóa nhân viên này.", "error");
-        });
-    }
-  });
+// Xác nhận xóa
+function confirmDelete(id, tenNhanVien) {
+    Swal.fire({
+        title: 'Xóa nhân viên?',
+        html: `<p>Bạn có chắc chắn muốn xóa nhân viên: <strong>${tenNhanVien}</strong>?</p>`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Xóa ngay',
+        cancelButtonText: 'Hủy'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch(`QLNV.php?delete=${id}`)
+                .then(() => {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Đã xóa!',
+                        timer: 1500,
+                        showConfirmButton: false
+                    }).then(() => location.reload());
+                })
+                .catch(() => {
+                    Swal.fire('Lỗi!', 'Không thể xóa nhân viên này.', 'error');
+                });
+        }
+    });
 }
 
 // Xử lý submit form (Thêm & Sửa) bằng AJAX
@@ -140,7 +118,12 @@ document.addEventListener("DOMContentLoaded", function () {
       method: "POST",
       body: formData,
     })
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
       .then((data) => {
         if (data.success) {
           Swal.fire({
@@ -155,7 +138,7 @@ document.addEventListener("DOMContentLoaded", function () {
             showConfirmButton: false,
           }).then(() => {
             closeModal();
-            location.href = "QLNV.php?page=1";
+            location.reload();
           });
         } else {
           Swal.fire({
@@ -272,3 +255,4 @@ function loadPage(page) {
   };
   xhr.send();
 }
+

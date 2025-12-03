@@ -178,11 +178,14 @@ class User {
         if ($check_sdt->get_result()->num_rows > 0)
             return ['success'=>false,'message'=>'Số điện thoại đã được sử dụng!'];
 
-        $check_email = $this->conn->prepare("SELECT user_id FROM user WHERE email = ?");
-        $check_email->bind_param("s", $email);
-        $check_email->execute();
-        if ($check_email->get_result()->num_rows > 0)
-            return ['success'=>false,'message'=>'Email đã được sử dụng!'];
+        // Chỉ kiểm tra email trùng nếu có nhập email
+        if (!empty($email)) {
+            $check_email = $this->conn->prepare("SELECT user_id FROM user WHERE email = ?");
+            $check_email->bind_param("s", $email);
+            $check_email->execute();
+            if ($check_email->get_result()->num_rows > 0)
+                return ['success'=>false,'message'=>'Email đã được sử dụng!'];
+        }
 
         $check_acc = $this->conn->prepare("SELECT user_id FROM taikhoan WHERE tai_khoan = ?");
         $check_acc->bind_param("s", $tai_khoan);
@@ -241,11 +244,13 @@ class User {
             $stmt2->execute();
 
             $this->conn->commit();
-            return $stmt2->affected_rows > 0;
+            return $stmt2->affected_rows > 0
+                ? ['success' => true, 'message' => 'Xóa nhân viên thành công!']
+                : ['success' => false, 'message' => 'Không thể xóa nhân viên này!'];
 
         } catch (Exception $e) {
             $this->conn->rollback();
-            return false;
+            return ['success' => false, 'message' => 'Lỗi hệ thống khi xóa nhân viên!'];
         }
     }
 }
