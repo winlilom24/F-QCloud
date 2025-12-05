@@ -267,8 +267,8 @@ if (isset($_GET['api']) && $_GET['api'] === 'getRevenueDetail') {
 </div>
 
 <!-- MODAL XEM CHI TIẾT DOANH THU -->
-<div id="revenueDetailModal" class="modal">
-    <div class="modal-content" style="max-width: 800px;">
+<div id="revenueDetailModal" class="modal revenue-detail-modal">
+    <div class="modal-content">
         <div class="modal-header">
             <h3>Chi tiết doanh thu</h3>
             <span class="close" onclick="closeRevenueDetailModal()">×</span>
