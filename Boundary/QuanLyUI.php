@@ -183,4 +183,9 @@ class QuanLyUI {
     public function xuLyXoaNhanVien($user_id) {
         return $this->controller->xoaNhanVien($user_id);
     }
+
+    public function getQuanLyInfo() {
+        $user_id = $_SESSION['user_id'] ?? 1;
+        return $this->controller->getUserInfo($user_id);
+    }
 }

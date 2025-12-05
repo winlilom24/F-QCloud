@@ -41,26 +41,6 @@ $danhSachMon = $monAnUI->themMon();
 <body class="theme-blue">
 <div id="app">
 
-    <!-- ================== SIDE MENU ================== -->
-    <div id="sideMenu" class="side-menu">
-        <h3>Chức năng</h3>
-        <a href="#">Quản lý</a>
-        <a href="#">Nhà bếp</a>
-        <a href="#">Lễ tân</a>
-        <a href="#">Màn hình phụ</a>
-        <a href="#">Báo cáo cuối ngày</a>
-        <a href="#">Phiếu bàn giao ca</a>
-        <a href="#">Lập phiếu thu</a>
-        <a href="#">Chọn hóa đơn trả hàng</a>
-        <a href="#">Xem danh sách đặt bàn</a>
-        <a href="#">Cài đặt chung</a>
-        <a href="#">Thiết lập giá</a>
-        <a href="#">Món có sẵn trong đơn</a>
-        <a href="#">Phím tắt</a>
-        <a href="#">Đóng ca làm việc</a>
-    </div>
-    <div id="menuOverlay" class="menu-overlay"></div>
-
     <!-- ================== HEADER ================== -->
     <header class="top-bar">
         <div class="brand">
@@ -82,24 +62,92 @@ $danhSachMon = $monAnUI->themMon();
             <button id="bellBtn" class="icon-btn">🔔</button>
             <button id="hamburgerMenu" class="hamburger-menu">☰</button>
 
-            <!-- Dropdown Menu -->
             <div id="dropdownMenu" class="dropdown-menu">
-                <div class="dropdown-content">
-                    <a href="#" class="dropdown-item">Quản lý</a>
-                    <div class="dropdown-divider"></div>
-                    <a href="#" class="dropdown-item">Báo cáo cuối ngày</a>
-                    <a href="#" class="dropdown-item">Phiếu bàn giao ca</a>
-                    <a href="#" class="dropdown-item">Lập phiếu thu</a>
-                    <div class="dropdown-divider"></div>
-                    <a href="#" class="dropdown-item">Cài đặt chung</a>
-                    <div class="dropdown-divider"></div>
-                    <a href="#" class="dropdown-item">Món có sẵn trong đơn</a>
-                    <a href="#" class="dropdown-item">Phím tắt</a>
-                    <div class="dropdown-divider"></div>
-                    <a href="#" class="dropdown-item">Đóng ca làm việc</a>
-                    <a href="#" class="dropdown-item">Đăng xuất</a>
-                </div>
-            </div>
+    <div class="dropdown-content">
+
+        <a href="../Manager/QLNV.php" class="dropdown-item">
+            <svg width="16" height="16" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="8" cy="4" r="3"></circle>
+                <path d="M2 14c0-3 3-5 6-5s6 2 6 5"></path>
+            </svg>
+            <span>Quản lý</span>
+        </a>
+
+        <div class="dropdown-divider"></div>
+
+        <a href="#" class="dropdown-item">
+            <svg width="16" height="16" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="3" width="12" height="9" rx="2"></rect>
+                <path d="M2 7h12"></path>
+            </svg>
+            <span>Báo cáo cuối ngày</span>
+        </a>
+
+        <a href="#" class="dropdown-item">
+            <svg width="16" height="16" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="2" width="10" height="14" rx="2"></rect>
+                <path d="M3 6h10"></path>
+            </svg>
+            <span>Phiếu bàn giao ca</span>
+        </a>
+
+        <a href="#" class="dropdown-item">
+            <svg width="16" height="16" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 3H5a2 2 0 0 0-2 2v9h11V5a2 2 0 0 0-2-2z"></path>
+                <path d="M9 9H7"></path>
+            </svg>
+            <span>Lập phiếu thu</span>
+        </a>
+
+        <div class="dropdown-divider"></div>
+
+        <a href="#" class="dropdown-item">
+            <svg width="16" height="16" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="5" r="2"></circle>
+                <path d="M3 21v-6a4 4 0 0 1 4-4h4"></path>
+            </svg>
+            <span>Cài đặt chung</span>
+        </a>
+
+        <div class="dropdown-divider"></div>
+
+        <a href="#" class="dropdown-item">
+            <svg width="16" height="16" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 4h12v12H4z"></path>
+                <path d="M4 9h12"></path>
+            </svg>
+            <span>Món có sẵn trong đơn</span>
+        </a>
+
+        <a href="#" class="dropdown-item">
+            <svg width="16" height="16" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 4h12"></path>
+                <path d="M6 9h12"></path>
+                <path d="M6 14h12"></path>
+            </svg>
+            <span>Phím tắt</span>
+        </a>
+
+        <div class="dropdown-divider"></div>
+
+        <a href="#" class="dropdown-item">
+            <svg width="16" height="16" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 2l6 6-6 6"></path>
+            </svg>
+            <span>Đóng ca làm việc</span>
+        </a>
+
+        <a href="#" class="dropdown-item">
+            <svg width="16" height="16" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <path d="M16 17l5-5-5-5"></path>
+                <path d="M21 12H9"></path>
+            </svg>
+            <span>Đăng xuất</span>
+        </a>
+
+    </div>
+</div>
         </div>
     </header>
 
