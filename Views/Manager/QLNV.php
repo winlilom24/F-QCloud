@@ -9,7 +9,7 @@ $ui = new QuanLyUI();
 // Lấy thông tin quản lý hiện tại
 $quanLyInfo = $ui->getQuanLyInfo();
 
-// XỬ LÝ AJAX (Thêm & Sửa & Đổi mật khẩu)
+// XỬ LÝ AJAX (Thêm & Sửa & ResetPass)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     ob_clean();
     header('Content-Type: application/json');
@@ -144,7 +144,7 @@ if (isset($_GET['delete'])) {
         .close { font-size: 32px; cursor: pointer; opacity: 0.8; }
         .close:hover { opacity: 1; }
 
-        /* Styles cho modal đổi mật khẩu */
+        /* Styles cho modal ResetPass */
         .password-modal .modal-content { max-width: 480px; }
         .password-input-container {
             position: relative;
@@ -236,7 +236,7 @@ if (isset($_GET['delete'])) {
                             <i class="fa-solid fa-users"></i> Nhân viên
                         </a>
                         <a href="javascript:void(0)" onclick="openChangePasswordModal()">
-                            <i class="fa-solid fa-key"></i> Đổi mật khẩu
+                            <i class="fa-solid fa-key"></i> ResetPass
                         </a>
                         <a href="logout.php" class="logout-item">
                             <i class="fa-solid fa-arrow-right-from-bracket"></i> Đăng xuất
@@ -307,7 +307,7 @@ if (isset($_GET['delete'])) {
 <div id="passwordModal" class="modal password-modal">
     <div class="modal-content">
         <div class="modal-header">
-            <h3><i class="fa-solid fa-key"></i> Đổi mật khẩu</h3>
+            <h3><i class="fa-solid fa-key"></i> ResetPass</h3>
             <span class="close" onclick="closePasswordModal()">×</span>
         </div>
         <div class="modal-body">

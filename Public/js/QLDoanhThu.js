@@ -20,49 +20,117 @@ document.addEventListener("click", function (e) {
 });
 
 // MỞ MODAL ĐỔI MẬT KHẨU
+// MỞ MODAL ĐỔI MẬT KHẨU
 function openChangePasswordModal() {
-  Swal.fire({
-    title: "Đổi mật khẩu",
-    html: `
-            <div style="text-align:left;">
-                <div class="form-group" style="margin-bottom:15px;">
-                    <label>Mật khẩu hiện tại</label>
-                    <input type="password" id="oldPass" class="swal2-input" required>
-                </div>
-                <div class="form-group" style="margin-bottom:15px;">
-                    <label>Mật khẩu mới</label>
-                    <input type="password" id="newPass" class="swal2-input" minlength="6" required>
-                </div>
-                <div class="form-group">
-                    <label>Nhập lại mật khẩu mới</label>
-                    <input type="password" id="confirmPass" class="swal2-input" required>
-                </div>
-            </div>
-        `,
-    showCancelButton: true,
-    confirmButtonText: "Cập nhật",
-    cancelButtonText: "Hủy",
-    preConfirm: () => {
-      const oldPass = document.getElementById("oldPass").value;
-      const newPass = document.getElementById("newPass").value;
-      const confirmPass = document.getElementById("confirmPass").value;
+    document.getElementById("passwordModal").classList.add("active");
+    document.getElementById("passwordForm").reset();
+    resetPasswordValidation();
+}
 
-      if (newPass !== confirmPass) {
-        Swal.showValidationMessage("Mật khẩu mới không khớp!");
-        return false;
-      }
-      if (newPass.length < 6) {
-        Swal.showValidationMessage("Mật khẩu phải ít nhất 6 ký tự!");
-        return false;
-      }
-      // Gọi AJAX đổi mật khẩu ở đây nếu cần
-      return { oldPass, newPass };
-    },
-  }).then((result) => {
-    if (result.isConfirmed) {
-      Swal.fire("Thành công!", "Mật khẩu đã được thay đổi.", "success");
+// ĐÓNG MODAL ĐỔI MẬT KHẨU
+function closePasswordModal() {
+    document.getElementById("passwordModal").classList.remove("active");
+}
+
+// TOGGLE HIỆN/ẨN MẬT KHẨU
+function togglePassword(inputId) {
+    const input = document.getElementById(inputId);
+    const toggleBtn = input.parentElement.querySelector('.password-toggle i');
+
+    if (input.type === 'password') {
+        input.type = 'text';
+        toggleBtn.className = 'fa-solid fa-eye-slash';
+    } else {
+        input.type = 'password';
+        toggleBtn.className = 'fa-solid fa-eye';
     }
-  });
+}
+
+// CHECK ĐỘ MẠNH MẬT KHẨU
+function checkPasswordStrength(password) {
+    const strengthIndicator = document.getElementById('passwordStrength');
+    const lengthReq = document.getElementById('req-length');
+
+    if (password.length === 0) {
+        strengthIndicator.style.display = 'none';
+        lengthReq.classList.remove('valid');
+        return;
+    }
+
+    strengthIndicator.style.display = 'block';
+    let strength = 0;
+    let feedback = [];
+
+    if (password.length >= 6) {
+        strength += 1;
+        lengthReq.classList.add('valid');
+    } else {
+        lengthReq.classList.remove('valid');
+    }
+
+    if (password.length >= 8) strength += 1;
+    if (/[A-Z]/.test(password)) strength += 1;
+    if (/[a-z]/.test(password)) strength += 1;
+    if (/[0-9]/.test(password)) strength += 1;
+    if (/[^A-Za-z0-9]/.test(password)) strength += 1;
+
+    if (strength <= 2) {
+        strengthIndicator.textContent = 'Mật khẩu yếu';
+        strengthIndicator.className = 'password-strength weak';
+    } else if (strength <= 4) {
+        strengthIndicator.textContent = 'Mật khẩu trung bình';
+        strengthIndicator.className = 'password-strength medium';
+    } else {
+        strengthIndicator.textContent = 'Mật khẩu mạnh';
+        strengthIndicator.className = 'password-strength strong';
+    }
+}
+
+// RESET PASSWORD VALIDATION
+function resetPasswordValidation() {
+    document.getElementById('passwordStrength').style.display = 'none';
+    document.querySelectorAll('.password-requirements li').forEach(li => {
+        li.classList.remove('valid');
+    });
+}
+
+// VALIDATE PASSWORD FORM
+function validatePasswordForm() {
+    const oldPassword = document.getElementById('old_password').value;
+    const newPassword = document.getElementById('new_password').value;
+    const confirmPassword = document.getElementById('confirm_password').value;
+
+    const matchReq = document.getElementById('req-match');
+    const differentReq = document.getElementById('req-different');
+
+    let isValid = true;
+    let errors = [];
+
+    // Check if passwords match
+    if (newPassword !== confirmPassword) {
+        matchReq.classList.remove('valid');
+        errors.push('Mật khẩu xác nhận không khớp!');
+        isValid = false;
+    } else {
+        matchReq.classList.add('valid');
+    }
+
+    // Check minimum length
+    if (newPassword.length < 6) {
+        errors.push('Mật khẩu phải ít nhất 6 ký tự!');
+        isValid = false;
+    }
+
+    // Check if new password is different from old
+    if (oldPassword === newPassword && oldPassword.length > 0) {
+        differentReq.classList.remove('valid');
+        errors.push('Mật khẩu mới không được trùng với mật khẩu cũ!');
+        isValid = false;
+    } else {
+        differentReq.classList.add('valid');
+    }
+
+    return { isValid, errors };
 }
 
 // TAB NAVIGATION
@@ -961,3 +1029,91 @@ function printRevenueReport() {
     }, 300);
   };
 }
+
+// XỬ LÝ FORM ĐỔI MẬT KHẨU
+document.addEventListener("DOMContentLoaded", function () {
+    // Password strength checker
+    const newPasswordInput = document.getElementById('new_password');
+    if (newPasswordInput) {
+        newPasswordInput.addEventListener('input', function() {
+            checkPasswordStrength(this.value);
+        });
+    }
+
+    // Password form submission
+    const passwordForm = document.getElementById('passwordForm');
+    if (passwordForm) {
+        passwordForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const validation = validatePasswordForm();
+            if (!validation.isValid) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi xác thực',
+                    html: validation.errors.join('<br>')
+                });
+                return;
+            }
+
+            const submitBtn = document.getElementById('submitBtn');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang xử lý...';
+            submitBtn.disabled = true;
+
+            const formData = new FormData(this);
+
+            fetch('QLDoanhThu.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Thành công!',
+                        text: data.message,
+                        timer: 2000,
+                        showConfirmButton: false
+                    }).then(() => {
+                        closePasswordModal();
+                        // Có thể logout user sau khi ResetPass thành công
+                        // window.location.href = 'logout.php';
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Thất bại!',
+                        text: data.message
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi!',
+                    text: 'Không thể kết nối đến server. Vui lòng thử lại.'
+                });
+            })
+            .finally(() => {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            });
+        });
+    }
+});
+
+// ĐÓNG MODAL KHI NHẤN NGOÀI
+window.addEventListener("click", function (e) {
+    const passwordModal = document.getElementById("passwordModal");
+    if (e.target === passwordModal) {
+        closePasswordModal();
+    }
+});

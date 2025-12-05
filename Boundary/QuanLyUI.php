@@ -38,7 +38,7 @@ class QuanLyUI {
                     <tbody>
                         <?php if (empty($nhanVien)): ?>
                             <tr>
-                                <td colspan="6" class="empty-state">
+                                <td colspan="5" class="empty-state">
                                     <i class="fa-solid fa-users-slash"></i>
                                     <p>Chưa có nhân viên nào</p>
                                     <small>Nhấn "Thêm nhân viên" để bắt đầu</small>

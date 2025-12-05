@@ -43,6 +43,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $tempController = new QLDoanhThuController();
         $data = $tempController->getAllDoanhThu();
         echo json_encode(['success' => true, 'data' => $data]);
+    } elseif ($_POST['action'] === 'change_password') {
+        // Sử dụng QLNVController để ResetPass
+        $quanLyController = new QLNVController();
+        $result = $quanLyController->doiMatKhau($_SESSION['user_id'] ?? 1, $_POST['old_password'] ?? '', $_POST['new_password'] ?? '');
+        echo json_encode($result);
     } elseif ($_POST['action'] === 'tao_doanh_thu_tu_hoa_don') {
         $id_hoa_don = isset($_POST['id_hoa_don']) ? (int)$_POST['id_hoa_don'] : 0;
         if ($id_hoa_don > 0) {
@@ -152,6 +157,56 @@ if (isset($_GET['api']) && $_GET['api'] === 'getRevenueDetail') {
         .btn-secondary { background: #6c757d; color: white; margin-left: 12px; }
         .close { font-size: 32px; cursor: pointer; opacity: 0.8; }
         .close:hover { opacity: 1; }
+
+        /* Styles cho modal ResetPass */
+        .password-modal .modal-content { max-width: 480px; }
+        .password-input-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .password-input-container input {
+            padding-right: 50px;
+        }
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 5px;
+            transition: color 0.3s;
+        }
+        .password-toggle:hover { color: #007bff; }
+        .password-strength {
+            margin-top: 5px;
+            font-size: 12px;
+            display: none;
+        }
+        .password-strength.weak { color: #dc3545; }
+        .password-strength.medium { color: #ffc107; }
+        .password-strength.strong { color: #28a745; }
+        .password-requirements {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 10px;
+            font-size: 13px;
+        }
+        .password-requirements ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        .password-requirements li {
+            margin-bottom: 3px;
+            color: #666;
+        }
+        .password-requirements li.valid { color: #28a745; }
     </style>
 </head>
 <body>
@@ -195,7 +250,7 @@ if (isset($_GET['api']) && $_GET['api'] === 'getRevenueDetail') {
                             <i class="fa-solid fa-users"></i> Nhân viên
                         </a>
                         <a href="javascript:void(0)" onclick="openChangePasswordModal()">
-                            <i class="fa-solid fa-key"></i> Đổi mật khẩu
+                            <i class="fa-solid fa-key"></i> ResetPass
                         </a>
                         <a href="../index.php?action=logout" class="logout-item">
                             <i class="fa-solid fa-arrow-right-from-bracket"></i> Đăng xuất
@@ -281,6 +336,70 @@ if (isset($_GET['api']) && $_GET['api'] === 'getRevenueDetail') {
                 <i class="fa-solid fa-print"></i> In chi tiết
             </button>
             <button class="btn btn-secondary" onclick="closeStatsModal()">Đóng</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL ĐỔI MẬT KHẨU -->
+<div id="passwordModal" class="modal password-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><i class="fa-solid fa-key"></i> ResetPass</h3>
+            <span class="close" onclick="closePasswordModal()">×</span>
+        </div>
+        <div class="modal-body">
+            <form id="passwordForm">
+                <input type="hidden" name="action" value="change_password">
+
+                <div class="form-group">
+                    <label>Mật khẩu hiện tại *</label>
+                    <div class="password-input-container">
+                        <input type="password" name="old_password" id="old_password" required>
+                        <button type="button" class="password-toggle" onclick="togglePassword('old_password')">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Mật khẩu mới *</label>
+                    <div class="password-input-container">
+                        <input type="password" name="new_password" id="new_password" minlength="6" required>
+                        <button type="button" class="password-toggle" onclick="togglePassword('new_password')">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
+                    </div>
+                    <div id="passwordStrength" class="password-strength"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Nhập lại mật khẩu mới *</label>
+                    <div class="password-input-container">
+                        <input type="password" name="confirm_password" id="confirm_password" required>
+                        <button type="button" class="password-toggle" onclick="togglePassword('confirm_password')">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="password-requirements">
+                    <strong>Yêu cầu mật khẩu:</strong>
+                    <ul>
+                        <li id="req-length">Ít nhất 6 ký tự</li>
+                        <li id="req-match">Mật khẩu xác nhận phải khớp</li>
+                        <li id="req-different">Khác với mật khẩu hiện tại</li>
+                    </ul>
+                </div>
+
+                <div style="text-align: center; margin-top: 25px;">
+                    <button type="submit" class="btn btn-primary" id="submitBtn">
+                        <i class="fa-solid fa-save"></i> Cập nhật mật khẩu
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="closePasswordModal()">
+                        <i class="fa-solid fa-times"></i> Hủy
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

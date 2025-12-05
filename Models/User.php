@@ -285,7 +285,7 @@ class User {
         $update_stmt->bind_param("si", $new_hash, $user_id);
 
         if ($update_stmt->execute()) {
-            return ['success' => true, 'message' => 'Đổi mật khẩu thành công!'];
+            return ['success' => true, 'message' => 'ResetPass thành công!'];
         } else {
             return ['success' => false, 'message' => 'Lỗi hệ thống, vui lòng thử lại!'];
         }

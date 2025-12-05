@@ -376,7 +376,7 @@ document.addEventListener("DOMContentLoaded", function () {
             showConfirmButton: false
           }).then(() => {
             closePasswordModal();
-            // Có thể logout user sau khi đổi mật khẩu thành công
+            // Có thể logout user sau khi ResetPass thành công
             // window.location.href = 'logout.php';
           });
         } else {

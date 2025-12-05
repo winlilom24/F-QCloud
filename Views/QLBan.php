@@ -165,7 +165,7 @@ if (isset($_GET['ajax']) && $_GET['ajax'] === 'pagination') {
 
                     <div class="user-menu" id="userMenu">
                         <a href="javascript:void(0)" onclick="openChangePasswordModal()">
-                            <i class="fa-solid fa-key"></i> Đổi mật khẩu
+                            <i class="fa-solid fa-key"></i> ResetPass
                         </a>
                         <a href="logout.php" class="logout-item">
                             <i class="fa-solid fa-arrow-right-from-bracket"></i> Đăng xuất

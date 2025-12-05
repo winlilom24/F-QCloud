@@ -69,6 +69,52 @@
   background: rgba(31, 111, 255, 0.04);
 }
 
+/* Căn chỉnh cột trong revenue-table */
+.revenue-table th:nth-child(1) {
+  width: 10%;
+  text-align: center;
+}
+
+.revenue-table th:nth-child(2) {
+  width: 20%;
+  text-align: left;
+}
+
+.revenue-table th:nth-child(3) {
+  width: 20%;
+  text-align: center;
+}
+
+.revenue-table th:nth-child(4) {
+  width: 15%;
+  text-align: center;
+}
+
+.revenue-table th:nth-child(5) {
+  width: 35%;
+  text-align: left;
+}
+
+.revenue-table td:nth-child(1) {
+  text-align: center;
+}
+
+.revenue-table td:nth-child(2) {
+  text-align: left;
+}
+
+.revenue-table td:nth-child(3) {
+  text-align: center;
+}
+
+.revenue-table td:nth-child(4) {
+  text-align: center;
+}
+
+.revenue-table td:nth-child(5) {
+  text-align: left;
+}
+
 .amount {
   font-weight: 600;
   color: #0e91fd;
@@ -408,6 +454,52 @@
 
 .detail-table .amount {
   font-size: 14px;
+}
+
+/* Căn chỉnh cột trong detail-table */
+.detail-table th:nth-child(1) {
+  width: 10%;
+  text-align: center;
+}
+
+.detail-table th:nth-child(2) {
+  width: 20%;
+  text-align: left;
+}
+
+.detail-table th:nth-child(3) {
+  width: 20%;
+  text-align: center;
+}
+
+.detail-table th:nth-child(4) {
+  width: 15%;
+  text-align: center;
+}
+
+.detail-table th:nth-child(5) {
+  width: 35%;
+  text-align: left;
+}
+
+.detail-table td:nth-child(1) {
+  text-align: center;
+}
+
+.detail-table td:nth-child(2) {
+  text-align: left;
+}
+
+.detail-table td:nth-child(3) {
+  text-align: center;
+}
+
+.detail-table td:nth-child(4) {
+  text-align: center;
+}
+
+.detail-table td:nth-child(5) {
+  text-align: left;
 }
 
 /* Tab Navigation */
