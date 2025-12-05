@@ -215,9 +215,59 @@ class QuanLyDoanhThuUI {
                 </div>
             </div>
 
-            <!-- MODAL CHI TIẾT THỐNG KÊ (giữ nguyên) -->
+            <!-- MODAL CHI TIẾT THỐNG KÊ -->
             <div id="statsDetailModal" class="modal">
-                <!-- Nội dung modal thống kê giữ nguyên như file gốc của bạn -->
+                <div class="modal-content large-modal">
+                    <div class="modal-header">
+                        <h3 id="statsModalTitle">Chi tiết thống kê</h3>
+                        <div class="modal-header-actions">
+                            <button class="btn btn-print" onclick="printRevenue()" id="printBtn" style="display: none;">
+                                <i class="fa-solid fa-print"></i> In báo cáo
+                            </button>
+                            <span class="close" onclick="closeStatsModal()">×</span>
+                        </div>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Filter controls -->
+                        <div class="filter-section" id="filterSection" style="display: none;">
+                            <div class="filter-controls">
+                                <div class="filter-group">
+                                    <label>Khoảng thời gian:</label>
+                                    <select id="timeFilter" onchange="changeTimeFilter()">
+                                        <option value="all">Tất cả</option>
+                                        <option value="day">Theo ngày</option>
+                                        <option value="month">Theo tháng</option>
+                                        <option value="year">Theo năm</option>
+                                    </select>
+                                </div>
+                                <div class="filter-group" id="dateFilter" style="display: none;">
+                                    <label>Chọn ngày:</label>
+                                    <input type="date" id="selectedDate">
+                                </div>
+                                <div class="filter-group" id="monthFilter" style="display: none;">
+                                    <label>Chọn tháng:</label>
+                                    <input type="month" id="selectedMonth">
+                                </div>
+                                <div class="filter-group" id="yearFilter" style="display: none;">
+                                    <label>Chọn năm:</label>
+                                    <input type="number" id="selectedYear" min="2020" max="2030" value="2025">
+                                </div>
+                                <button class="btn btn-primary" onclick="applyFilter()">Áp dụng</button>
+                            </div>
+                        </div>
+
+                        <!-- Stats summary -->
+                        <div class="stats-summary" id="statsSummary"></div>
+
+                        <!-- Detail table -->
+                        <div class="detail-table-container">
+                            <table class="detail-table" id="detailTable">
+                                <thead id="detailTableHead"></thead>
+                                <tbody id="detailTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div id="printArea" style="display:none;"></div>

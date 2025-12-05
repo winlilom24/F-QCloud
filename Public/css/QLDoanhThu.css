@@ -2,6 +2,19 @@
 
 @import "QLNV.css";
 
+/* ======= MODAL STYLES ======= */
+.modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; }
+.modal.active { display: flex; }
+.modal-content { background: white; border-radius: 16px; width: 90%; max-width: 520px; box-shadow: 0 15px 40px rgba(0,0,0,0.25); animation: modalShow 0.3s ease-out; }
+@keyframes modalShow { from { transform: scale(0.85); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.modal-header { padding: 20px 25px; background: #007bff; color: white; border-radius: 16px 16px 0 0; display: flex; justify-content: space-between; align-items: center; font-size: 1.4rem; }
+.modal-body { padding: 30px; }
+.btn { padding: 12px 28px; border: none; border-radius: 10px; cursor: pointer; font-size: 16px; font-weight: 600; }
+.btn-primary { background: #007bff; color: white; }
+.btn-secondary { background: #6c757d; color: white; margin-left: 12px; }
+.close { font-size: 32px; cursor: pointer; opacity: 0.8; }
+.close:hover { opacity: 1; }
+
 /* Custom styles for QLDoanhThu */
 
 .revenue-panel {
@@ -149,17 +162,22 @@
 }
 
 /* ======= MODAL CHI TIẾT THỐNG KÊ ======= */
-/* Modal rộng hơn - chiều ngang dài ra */
+/* Modal rộng ngang - chiếm hết chiều rộng */
 .large-modal .modal-content {
-  max-width: 4000px;
-  width: 98%;
-  min-height: 500px;
+  max-width: 1800px;
+  width: 99%;
+  min-height: 650px;
+  border-radius: 20px;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.3);
 }
 
-/* Giảm kích thước các thông tin bên trong */
+/* Header modal đẹp hơn */
 .large-modal .modal-header {
-  padding: 20px 30px;
-  font-size: 18px;
+  padding: 28px 40px;
+  font-size: 22px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #1f6fff, #3b82f6);
+  border-radius: 20px 20px 0 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -168,7 +186,7 @@
 .modal-header-actions {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
 }
 
 .btn-print {
@@ -246,28 +264,40 @@
 }
 
 .large-modal .modal-body {
-  padding: 24px 30px;
+  padding: 40px 48px;
 }
 
 .large-modal .close {
-  font-size: 32px;
-  width: 32px;
-  height: 32px;
-  line-height: 32px;
+  font-size: 36px;
+  width: 36px;
+  height: 36px;
+  line-height: 36px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
 }
 
-/* Stats summary - nhỏ lại */
+.large-modal .close:hover {
+  background: rgba(255,255,255,0.3);
+  transform: scale(1.1);
+}
+
+/* Stats summary - cải thiện */
 .stats-summary {
   background: linear-gradient(135deg, #1f6fff, #3b82f6);
   color: white;
-  padding: 20px 24px;
-  border-radius: 12px;
-  margin-bottom: 20px;
+  padding: 32px 40px;
+  border-radius: 16px;
+  margin-bottom: 28px;
   display: flex;
   justify-content: space-around;
   align-items: center;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 32px;
+  box-shadow: 0 8px 25px rgba(31, 111, 255, 0.2);
 }
 
 .stats-summary-item {
@@ -275,25 +305,26 @@
 }
 
 .stats-summary-value {
-  font-size: 32px;
+  font-size: 36px;
   font-weight: 700;
   display: block;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 
 .stats-summary-label {
-  font-size: 13px;
+  font-size: 14px;
   opacity: 0.9;
   font-weight: 500;
 }
 
-/* Filter section - nhỏ lại */
+/* Filter section - cải thiện */
 .filter-section {
   background: #f8fafc;
-  padding: 16px 20px;
-  border-radius: 12px;
-  margin-bottom: 20px;
+  padding: 24px 32px;
+  border-radius: 16px;
+  margin-bottom: 28px;
   border: 1px solid rgba(15, 23, 42, 0.08);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
 }
 
 .filter-controls {
@@ -339,12 +370,13 @@
   border-radius: 8px;
 }
 
-/* Detail table - nhỏ lại */
+/* Detail table - cải thiện */
 .detail-table-container {
   overflow-x: auto;
   background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+  border-radius: 16px;
+  box-shadow: 0 8px 25px rgba(15, 23, 42, 0.1);
+  border: 1px solid rgba(15, 23, 42, 0.06);
 }
 
 .detail-table {
@@ -354,20 +386,20 @@
 
 .detail-table thead th {
   background: #f8fafc;
-  padding: 12px 16px;
+  padding: 16px 20px;
   text-align: left;
   font-weight: 600;
   color: #475569;
-  font-size: 13px;
+  font-size: 14px;
   border-bottom: 1px solid rgba(15, 23, 42, 0.08);
   white-space: nowrap;
 }
 
 .detail-table tbody td {
-  padding: 12px 16px;
+  padding: 16px 20px;
   border-bottom: 1px solid rgba(15, 23, 42, 0.06);
   vertical-align: middle;
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .detail-table tbody tr:hover {
@@ -459,6 +491,14 @@
   opacity: 0.8;
 }
 
+/* Responsive cho tablet */
+@media (max-width: 1200px) {
+  .large-modal .modal-content {
+    max-width: 96%;
+    width: 96%;
+  }
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .stats-grid {
@@ -476,8 +516,33 @@
   }
 
   .large-modal .modal-content {
-    max-width: 95%;
-    width: 95%;
+    max-width: 99%;
+    width: 99%;
+  }
+
+  .large-modal .modal-header {
+    padding: 24px 32px;
+    font-size: 20px;
+  }
+
+  .large-modal .modal-body {
+    padding: 32px 20px;
+  }
+
+  .stats-summary {
+    padding: 24px 32px;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .filter-section {
+    padding: 20px 24px;
+  }
+
+  .detail-table thead th,
+  .detail-table tbody td {
+    padding: 12px 16px;
+    font-size: 13px;
   }
 
 /* ===== STATS SUMMARY ===== */
