@@ -253,5 +253,42 @@ class User {
             return ['success' => false, 'message' => 'Lỗi hệ thống khi xóa nhân viên!'];
         }
     }
+
+    public function changePassword($user_id, $old_password, $new_password) {
+        // Lấy mật khẩu hiện tại từ database
+        $stmt = $this->conn->prepare("SELECT mat_khau FROM taikhoan WHERE user_id = ?");
+        $stmt->bind_param("i", $user_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows === 0) {
+            return ['success' => false, 'message' => 'Tài khoản không tồn tại!'];
+        }
+
+        $current_hash = $result->fetch_assoc()['mat_khau'];
+
+        // Kiểm tra mật khẩu cũ
+        if (!password_verify($old_password, $current_hash)) {
+            return ['success' => false, 'message' => 'Mật khẩu hiện tại không đúng!'];
+        }
+
+        // Kiểm tra mật khẩu mới có khác mật khẩu cũ không
+        if (password_verify($new_password, $current_hash)) {
+            return ['success' => false, 'message' => 'Mật khẩu mới không được trùng với mật khẩu cũ!'];
+        }
+
+        // Hash mật khẩu mới
+        $new_hash = password_hash($new_password, PASSWORD_DEFAULT);
+
+        // Cập nhật mật khẩu mới
+        $update_stmt = $this->conn->prepare("UPDATE taikhoan SET mat_khau = ? WHERE user_id = ?");
+        $update_stmt->bind_param("si", $new_hash, $user_id);
+
+        if ($update_stmt->execute()) {
+            return ['success' => true, 'message' => 'Đổi mật khẩu thành công!'];
+        } else {
+            return ['success' => false, 'message' => 'Lỗi hệ thống, vui lòng thử lại!'];
+        }
+    }
 }
 ?>

@@ -188,4 +188,12 @@ class QuanLyUI {
         $user_id = $_SESSION['user_id'] ?? 1;
         return $this->controller->getUserInfo($user_id);
     }
+
+    public function xuLyDoiMatKhau() {
+        $user_id = $_SESSION['user_id'] ?? 1;
+        $old_password = $_POST['old_password'] ?? '';
+        $new_password = $_POST['new_password'] ?? '';
+
+        return $this->controller->doiMatKhau($user_id, $old_password, $new_password);
+    }
 }

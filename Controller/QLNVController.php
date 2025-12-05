@@ -88,5 +88,9 @@ class QLNVController {
     public function getById($user_id) {
         return $this->userModel->getUserById($user_id);
     }
+
+    public function doiMatKhau($user_id, $old_password, $new_password) {
+        return $this->userModel->changePassword($user_id, $old_password, $new_password);
+    }
 }
 ?>
