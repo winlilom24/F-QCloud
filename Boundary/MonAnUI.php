@@ -185,8 +185,9 @@ class MonAnUI {
         foreach ($danhSachMonAn as $mon) {
             $idMon = $mon['id_mon'] ?? 0;
             $tenMon = htmlspecialchars($mon['ten_mon'] ?? '');
+            $giaTien = $mon['gia_tien'] ?? 0;
             
-            $html .= '<tr class="mon-item" data-id="' . $idMon . '" data-gia="' . ($mon['gia_ban'] ?? 0) . '">';
+            $html .= '<tr class="mon-item" data-id="' . $idMon . '" data-gia="' . $giaTien . '">';
             $html .= '<td>' . $stt++ . '</td>';
             $html .= '<td>' . $tenMon . '</td>';
             $html .= '<td>';

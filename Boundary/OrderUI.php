@@ -1,6 +1,7 @@
 <?php
 // ui/OrderUI.php
-require_once "Controller/OrderController.php";
+require_once __DIR__ . "/../Controller/OrderController.php";
+require_once __DIR__ . "/../Controller/BanController.php";
 
 class OrderUI {
     private $orderController;
@@ -9,6 +10,86 @@ class OrderUI {
     public function __construct() {
         $this->orderController = new OrderController();
         $this->banController = new BanController();
+    }
+
+    // Lấy order theo bàn
+    public function getOrderByBan($id_ban) {
+        return $this->orderController->getOrderByBan($id_ban);
+    }
+
+    // Tạo order mới
+    public function taoOrder($id_ban, $id_nhan_vien) {
+        return $this->orderController->taoOrder($id_ban, $id_nhan_vien);
+    }
+
+    // Thêm món vào order
+    public function themMon($id_order, $id_mon, $so_luong) {
+        return $this->orderController->themMon($id_order, $id_mon, $so_luong);
+    }
+
+    // Cập nhật order (thêm nhiều món)
+    public function capNhatOrder($id_order, $danh_sach_mon) {
+        return $this->orderController->capNhatOrder($id_order, $danh_sach_mon);
+    }
+
+    // Cập nhật số lượng món (có thể xóa món nếu số lượng = 0)
+    public function capNhatSoLuongMon($id_order, $id_mon, $so_luong) {
+        return $this->orderController->capNhatSoLuongMon($id_order, $id_mon, $so_luong);
+    }
+
+    // Xóa order
+    public function xoaOrder($id_order) {
+        return $this->orderController->xoaOrder($id_order);
+    }
+
+    // Lấy chi tiết order (public method để API có thể dùng)
+    public function getChiTietOrder($id_order) {
+        return $this->orderController->getChiTiet($id_order);
+    }
+
+    // Hiển thị chi tiết order trong panel
+    public function hienThiChiTietOrder($id_order) {
+        $data = $this->orderController->getChiTiet($id_order);
+
+        if (!$data || empty($data['chitiet'])) {
+            return [
+                'html' => '<div class="order-empty">Không có món trong đơn!</div>',
+                'tong_tien' => 0,
+                'order_id' => $id_order
+            ];
+        }
+
+        $o = $data['order'];
+        $ct = $data['chitiet'];
+
+        $html = '<div class="order-items-list">';
+        foreach ($ct as $item) {
+            $don_gia = number_format($item['gia'], 0, ',', '.') . '₫';
+            $thanh_tien = number_format($item['thanh_tien'], 0, ',', '.') . '₫';
+            $html .= '<div class="order-item" data-id-mon="' . $item['id_mon'] . '">';
+            $html .= '<div class="item-info">';
+            $html .= '<strong>' . htmlspecialchars($item['ten_mon']) . '</strong>';
+            $html .= '<span class="item-price">' . $don_gia . '</span>';
+            $html .= '</div>';
+            $html .= '<div class="item-controls">';
+            $html .= '<button class="btn-qty minus" data-id-mon="' . $item['id_mon'] . '">-</button>';
+            $html .= '<input type="number" class="qty-input" value="' . $item['so_luong'] . '" min="0" data-id-mon="' . $item['id_mon'] . '">';
+            $html .= '<button class="btn-qty plus" data-id-mon="' . $item['id_mon'] . '">+</button>';
+            $html .= '<span class="item-total">' . $thanh_tien . '</span>';
+            $html .= '</div>';
+            $html .= '</div>';
+        }
+        // Thêm nút "Thêm món" vào cuối danh sách
+        $html .= '<div class="order-add-item">';
+        $html .= '<button class="btn-add-mon" id="btnThemMonTrongOrder">+ Thêm món</button>';
+        $html .= '</div>';
+        $html .= '</div>';
+
+        return [
+            'html' => $html,
+            'tong_tien' => $data['tong_tien'],
+            'order_id' => $o['id_order']
+        ];
     }
 
     public function hienThiChiTiet() {

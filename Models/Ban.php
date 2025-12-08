@@ -121,4 +121,16 @@ class Ban {
         }
         return ['success' => false, 'message' => 'Lỗi xóa bàn!'];
     }
+
+    public function isBanTrong($id_ban) {
+        if ($id_ban == 0) return true; // Bàn "Mang về" luôn trống
+        $id_ban = (int)$id_ban;
+        $query = "SELECT trang_thai FROM ban WHERE id_ban = ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bind_param("i", $id_ban);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $ban = $result->fetch_assoc();
+        return $ban && $ban['trang_thai'] === 'Trống';
+    }
 }

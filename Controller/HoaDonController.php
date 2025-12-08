@@ -1,7 +1,7 @@
 <?php
 // controllers/HoaDonController.php
-require_once "Models/HoaDon.php";
-require_once "Controller/OrderController.php";
+require_once __DIR__ . "/../Models/HoaDon.php";
+require_once __DIR__ . "/OrderController.php";
 
 class HoaDonController {
     private $model;

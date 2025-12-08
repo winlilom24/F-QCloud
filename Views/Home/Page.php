@@ -307,9 +307,10 @@ $danhSachMon = $monAnUI->themMon();
 
                         <!-- Nút -->
                         <div class="action-bar">
+                            <button class="btn ghost" id="btnXoaOrder" style="display: none;">Xóa đơn</button>
                             <button class="btn ghost" id="btnNotify">Thông báo (F10)</button>
-                            <button class="btn outline" id="btnPrint">In tạm tính</button>
-                            <button class="btn primary" id="btnPay">Thanh toán (F9)</button>
+                            <button class="btn outline" id="btnPrint" style="display: none;">In tạm tính</button>
+                            <button class="btn primary" id="btnPay" style="display: none;">Thanh toán (F9)</button>
                         </div>
 
                     </div>
@@ -337,6 +338,12 @@ $danhSachMon = $monAnUI->themMon();
 </div>
 
 <!-- JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+// Đường dẫn API được truyền từ PHP để đảm bảo chính xác
+// Từ Views/Home/Page.php -> ../../api/order_api.php
+window.API_BASE_URL = '../../api/order_api.php';
+</script>
 <script src="../../Public/js/Page.js?v=<?= time() ?>"></script>
 
 </body>
