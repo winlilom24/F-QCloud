@@ -71,6 +71,67 @@ async function callAPI(action, data = {}) {
 }
 
 // ==================== ORDER FUNCTIONS ====================
+function updateBanStatusOnUI(banId, newStatus) {
+  // Tìm element bàn trên grid
+  const banElement = document.querySelector(`.ban[data-id="${banId}"]`);
+  if (!banElement) {
+    console.warn(`Không tìm thấy element bàn ${banId} để cập nhật trạng thái`);
+    return;
+  }
+
+  // Xóa các class trạng thái cũ
+  banElement.classList.remove('ban-trong', 'ban-dang-su-dung', 'ban-mang-ve', 'ban-chon');
+
+  // Thêm class trạng thái mới (theo format CSS)
+  let statusClass = '';
+  if (newStatus === 'Trống') {
+    statusClass = 'ban-trong';
+  } else if (newStatus === 'Đang phục vụ' || newStatus === 'Đang sử dụng') {
+    statusClass = 'ban-dang-su-dung';
+  } else if (newStatus === 'Mang về') {
+    statusClass = 'ban-mang-ve';
+  }
+
+  if (statusClass) {
+    banElement.classList.add(statusClass);
+  }
+
+  // Cập nhật text trạng thái nếu có
+  const statusElement = banElement.querySelector('.ban-trang-thai');
+  if (statusElement) {
+    statusElement.textContent = newStatus;
+  }
+
+  // Cập nhật số liệu thống kê
+  updateBanStatistics();
+
+  console.log(`Đã cập nhật trạng thái bàn ${banId} thành: ${newStatus} (class: ${statusClass})`);
+}
+
+function updateBanStatistics() {
+  // Đếm số bàn theo trạng thái (theo class CSS)
+  const allBans = document.querySelectorAll('.ban');
+  const usedBans = document.querySelectorAll('.ban.ban-dang-su-dung');
+  const freeBans = document.querySelectorAll('.ban.ban-trong');
+
+  // Cập nhật UI thống kê
+  const statAll = document.getElementById('stat-all');
+  const statUsed = document.getElementById('stat-used');
+  const statFree = document.getElementById('stat-free');
+
+  if (statAll) statAll.textContent = allBans.length;
+  if (statUsed) statUsed.textContent = usedBans.length;
+  if (statFree) statFree.textContent = freeBans.length;
+
+  // Cập nhật filter pills
+  const countAll = document.getElementById('count-all');
+  const countUsed = document.getElementById('count-used');
+  const countFree = document.getElementById('count-free');
+
+  if (countAll) countAll.textContent = `(${allBans.length})`;
+  if (countUsed) countUsed.textContent = `(${usedBans.length})`;
+  if (countFree) countFree.textContent = `(${freeBans.length})`;
+}
 async function loadOrderByBan(id_ban) {
   const result = await callAPI('get_order_by_ban', { id_ban });
   const formThemMon = document.getElementById('formThemMon');
@@ -131,13 +192,17 @@ async function loadOrderByBan(id_ban) {
 
 async function createOrder(id_ban) {
   const result = await callAPI('tao_order', { id_ban });
-  
+
   if (result.success) {
     window.currentOrderId = result.id_order;
     document.getElementById('order-id').textContent = result.id_order;
     document.getElementById('order-status').textContent = 'Đang xử lý';
     renderOrderItems(result.order_detail);
     updateTotal(result.order_detail.tong_tien);
+
+    // Cập nhật trạng thái bàn trên UI
+    updateBanStatusOnUI(id_ban, 'Đang phục vụ');
+
     return true;
   } else {
     alert(result.message || 'Lỗi tạo order!');
@@ -163,11 +228,22 @@ async function updateMonQuantity(id_order, id_mon, so_luong) {
   
   if (result.success) {
     if (result.deleted_order) {
-      // Order đã bị xóa vì không còn món
+      // Order đã bị xóa vì không còn món - cập nhật trạng thái bàn
+      if (window.banHienTai && window.banHienTai.id > 0) {
+        updateBanStatusOnUI(window.banHienTai.id, 'Trống');
+      }
+
       window.currentOrderId = null;
       document.getElementById('order-id').textContent = '-';
       document.getElementById('order-status').textContent = 'Chưa có đơn hàng';
       clearOrderItems();
+
+      // Hiện form thực đơn
+      const formThemMon = document.getElementById('formThemMon');
+      if (formThemMon && window.banHienTai) {
+        formThemMon.classList.remove('hidden');
+      }
+
       alert(result.message || 'Đã xóa order vì không còn món');
     } else {
       renderOrderItems(result.order_detail);
@@ -202,11 +278,16 @@ async function deleteOrder(id_order) {
   const apiResult = await callAPI('xoa_order', { id_order });
   
   if (apiResult.success) {
+    // Cập nhật trạng thái bàn trên UI (thành "Trống" nếu không phải bàn mang về)
+    if (window.banHienTai && window.banHienTai.id > 0) {
+      updateBanStatusOnUI(window.banHienTai.id, 'Trống');
+    }
+
     window.currentOrderId = null;
     document.getElementById('order-id').textContent = '-';
     document.getElementById('order-status').textContent = 'Chưa có đơn hàng';
     clearOrderItems();
-    
+
     // Ẩn nút xóa, in, thanh toán
     const btnXoaOrder = document.getElementById('btnXoaOrder');
     const btnPrint = document.getElementById('btnPrint');
@@ -214,13 +295,13 @@ async function deleteOrder(id_order) {
     if (btnXoaOrder) btnXoaOrder.style.display = 'none';
     if (btnPrint) btnPrint.style.display = 'none';
     if (btnPay) btnPay.style.display = 'none';
-    
+
     // Hiện form thực đơn
     const formThemMon = document.getElementById('formThemMon');
     if (formThemMon && window.banHienTai) {
       formThemMon.classList.remove('hidden');
     }
-    
+
     if (window.Swal) {
       Swal.fire({
         icon: 'success',
@@ -228,13 +309,9 @@ async function deleteOrder(id_order) {
         text: apiResult.message || 'Đã xóa đơn hàng thành công!',
         timer: 1600,
         showConfirmButton: false
-      }).then(() => {
-        // Reload trang để cập nhật trạng thái bàn
-        location.reload();
       });
     } else {
       alert(apiResult.message || 'Đã xóa order thành công!');
-      location.reload();
     }
   } else {
     if (window.Swal) {
@@ -277,6 +354,11 @@ async function thanhToan(id_order) {
   const result = await callAPI('tao_hoa_don', { id_order });
   
   if (result.success) {
+    // Cập nhật trạng thái bàn trên UI (thành "Trống" nếu không phải bàn mang về)
+    if (window.banHienTai && window.banHienTai.id > 0) {
+      updateBanStatusOnUI(window.banHienTai.id, 'Trống');
+    }
+
     // Hiển thị hóa đơn để in
     showInvoiceModal(result.invoice_html);
     // Reset order
@@ -284,8 +366,6 @@ async function thanhToan(id_order) {
     document.getElementById('order-id').textContent = '-';
     document.getElementById('order-status').textContent = 'Đã thanh toán';
     clearOrderItems();
-    // Reload trang để cập nhật trạng thái bàn
-    setTimeout(() => location.reload(), 2000);
   } else {
     alert(result.message || 'Lỗi thanh toán!');
   }
@@ -326,8 +406,8 @@ function renderOrderItems(orderDetail) {
       const newQty = Math.max(0, parseInt(input.value) - 1);
       input.value = newQty;
       await updateMonQuantity(window.currentOrderId, idMon, newQty);
+      });
     });
-  });
   
   itemsList.querySelectorAll('.btn-qty.plus').forEach(btn => {
     btn.addEventListener('click', async function() {
@@ -459,19 +539,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Xử lý click bàn - dùng event delegation để đảm bảo hoạt động với bàn được render động
   const tableGrid = document.getElementById("table-grid");
-  
+
   async function handleBanClick(banElement) {
-    // Xóa chọn cũ
+        // Xóa chọn cũ
     document.querySelectorAll(".ban").forEach((b) => b.classList.remove("ban-chon"));
 
-    // Chọn bàn hiện tại
+        // Chọn bàn hiện tại
     banElement.classList.add("ban-chon");
 
     const banId = parseInt(banElement.getAttribute("data-id"));
     const banSo = banElement.querySelector(".ban-so")?.textContent || '';
 
-    // Cập nhật panel bên phải
-    const tenHienThi = banId == 0 ? "Mang về" : "Bàn " + banSo;
+        // Cập nhật panel bên phải
+        const tenHienThi = banId == 0 ? "Mang về" : "Bàn " + banSo;
     const orderTableName = document.getElementById("order-table-name");
     if (orderTableName) {
       orderTableName.textContent = tenHienThi;
@@ -511,22 +591,22 @@ document.addEventListener("DOMContentLoaded", function () {
   const workspaceTabs = document.querySelectorAll(".workspace-tab");
 
   if (tabMenu) {
-    tabMenu.addEventListener("click", function () {
-      if (!window.banHienTai) {
-        alert("Vui lòng chọn bàn trước khi thêm món!");
-        return;
-      }
+  tabMenu.addEventListener("click", function () {
+    if (!window.banHienTai) {
+      alert("Vui lòng chọn bàn trước khi thêm món!");
+      return;
+    }
       if (formThemMon) formThemMon.classList.remove("hidden");
 
-      workspaceTabs.forEach((t) => t.classList.remove("active"));
-      this.classList.add("active");
-    });
+    workspaceTabs.forEach((t) => t.classList.remove("active"));
+    this.classList.add("active");
+  });
   }
 
   if (tabBan) {
-    tabBan.addEventListener("click", function () {
-      workspaceTabs.forEach((t) => t.classList.remove("active"));
-      this.classList.add("active");
+  tabBan.addEventListener("click", function () {
+    workspaceTabs.forEach((t) => t.classList.remove("active"));
+    this.classList.add("active");
 
       if (formThemMon) formThemMon.classList.add("hidden");
     });
