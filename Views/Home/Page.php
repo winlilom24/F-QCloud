@@ -10,6 +10,19 @@ if (!isset($_SESSION['user_id'])) {
     exit; 
 }
 
+require_once __DIR__ . '/../../Controller/HeThongController.php';
+$controller = new HeThongController();
+
+// Xử lý logout
+if (isset($_GET['action']) && $_GET['action'] === 'logout') {
+    $controller->dangXuat($_SESSION['user_id'] ?? 0);
+    $controller->loadPage();
+    exit;
+}
+
+// // Load page mặc định
+// $controller->loadPage();
+
 $userModel = new User();
 $userRecord = $userModel->getUserById($_SESSION['user_id']);
 
@@ -64,14 +77,20 @@ $danhSachMon = $monAnUI->themMon();
 
             <div id="dropdownMenu" class="dropdown-menu">
     <div class="dropdown-content">
-
-        <a href="../Manager/QLNV.php" class="dropdown-item">
-            <svg width="16" height="16" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        
+        <?php
+        if ($userRole == "Quản lý"){
+            echo '
+            <a href="../Manager/QLNV.php" class="dropdown-item">
+                <svg width="16" height="16" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="8" cy="4" r="3"></circle>
                 <path d="M2 14c0-3 3-5 6-5s6 2 6 5"></path>
-            </svg>
-            <span>Quản lý</span>
-        </a>
+                </svg>
+                <span>Quản lý</span>
+            </a>
+            ';
+        }
+        ?>
 
         <div class="dropdown-divider"></div>
 
@@ -137,7 +156,7 @@ $danhSachMon = $monAnUI->themMon();
             <span>Đóng ca làm việc</span>
         </a>
 
-        <a href="#" class="dropdown-item">
+        <a href="?action=logout" class="dropdown-item" onclick="return confirm('Bạn có chắc chắn muốn đăng xuất không?');">
             <svg width="16" height="16" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
                 <path d="M16 17l5-5-5-5"></path>
