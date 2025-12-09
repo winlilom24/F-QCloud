@@ -123,7 +123,6 @@ class Ban {
     }
 
     public function isBanTrong($id_ban) {
-        if ($id_ban == 0) return true; // Bàn "Mang về" luôn trống
         $id_ban = (int)$id_ban;
         $query = "SELECT trang_thai FROM ban WHERE id_ban = ?";
         $stmt = $this->conn->prepare($query);
