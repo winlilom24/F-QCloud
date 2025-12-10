@@ -231,6 +231,8 @@ if (isset($_GET['ajax']) && $_GET['ajax'] === 'pagination') {
             <li><a href="QLNV.php"><i class="fa-solid fa-users"></i> Quản lý nhân viên</a></li>
             <li class="active"><a href="QLBan.php"><i class="fa-solid fa-table"></i> Quản lý bàn</a></li>
             <li><a href="QLMonAn.php"><i class="fa-solid fa-bowl-food"></i> Quản lý món ăn</a></li>
+            <li><a href="PhieuBanGiao.php"><i class="fa-solid fa-handshake"></i> Phiếu bàn giao ca</a></li>
+            <li><a href="BaoCaoCuoiNgay.php"><i class="fa-solid fa-file-lines"></i> Báo cáo cuối ngày</a></li>
             <li><a href="QLDoanhThu.php"><i class="fa-solid fa-chart-line"></i> Doanh thu</a></li>
         </ul>
     </aside>

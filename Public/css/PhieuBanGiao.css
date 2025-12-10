@@ -1,0 +1,317 @@
+/* Phiếu bàn giao ca */
+
+@import "QLNV.css";
+
+body {
+  background: #f4f6fb;
+}
+
+.handover-wrapper {
+  background: #fff;
+  border-radius: 26px;
+  box-shadow: 0 28px 60px rgba(15, 23, 42, 0.08);
+  padding: 28px 30px;
+}
+
+.handover-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 18px;
+}
+
+.handover-card {
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 18px 20px;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.05);
+}
+
+.handover-card h3 {
+  margin: 0 0 12px 0;
+  font-size: 18px;
+  color: #0f172a;
+}
+
+.handover-card p.helper {
+  margin: 0 0 12px 0;
+  color: #64748b;
+  font-size: 13px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-size: 13px;
+  color: #475569;
+  font-weight: 600;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  padding: 11px 12px;
+  border: 1px solid #d4d4d8;
+  border-radius: 10px;
+  font-size: 14px;
+  background: #fff;
+  outline: none;
+  transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.summary-box {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.summary-item {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.summary-item .label {
+  font-size: 12px;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.summary-item .value {
+  font-size: 22px;
+  font-weight: 800;
+  color: #0f172a;
+  margin-top: 6px;
+}
+
+.actions {
+  margin-top: 20px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.actions .btn {
+  padding: 12px 20px;
+  border-radius: 10px;
+  border: none;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-primary {
+  background: #2563eb;
+  color: #fff;
+}
+
+.btn-outline {
+  background: #fff;
+  color: #2563eb;
+  border: 1px solid #2563eb;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 20px rgba(37, 99, 235, 0.15);
+}
+
+.print-hint {
+  color: #64748b;
+  font-size: 13px;
+  margin-left: auto;
+}
+
+/* Responsive design */
+@media (max-width: 1024px) {
+  .handover-grid {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+  }
+
+  .form-grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+  }
+
+  .summary-box {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 10px;
+  }
+
+  .handover-card {
+    padding: 16px 18px;
+  }
+
+  .handover-card h3 {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .handover-wrapper {
+    padding: 20px;
+    border-radius: 16px;
+  }
+
+  .handover-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .summary-box {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .handover-card {
+    padding: 14px 16px;
+    border-radius: 12px;
+  }
+
+  .handover-card h3 {
+    font-size: 15px;
+    margin-bottom: 10px;
+  }
+
+  .handover-card p.helper {
+    font-size: 12px;
+    margin-bottom: 10px;
+  }
+
+  .form-group label {
+    font-size: 12px;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    font-size: 13px;
+    padding: 8px 10px;
+  }
+
+  .summary-item {
+    padding: 10px;
+  }
+
+  .summary-item .label {
+    font-size: 11px;
+  }
+
+  .summary-item .value {
+    font-size: 20px;
+  }
+
+  .actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .actions .btn {
+    width: 100%;
+    padding: 14px 16px;
+    font-size: 15px;
+  }
+
+  .print-hint {
+    margin-left: 0;
+    margin-top: 8px;
+    text-align: center;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .handover-wrapper {
+    padding: 16px;
+    border-radius: 12px;
+  }
+
+  .handover-card {
+    padding: 12px 14px;
+  }
+
+  .form-group {
+    gap: 4px;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    padding: 10px 12px;
+    font-size: 14px; /* Larger for mobile touch */
+    border-radius: 8px;
+  }
+
+  .summary-box {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  .summary-item {
+    padding: 12px;
+    text-align: center;
+  }
+
+  .summary-item .value {
+    font-size: 24px;
+    margin-top: 8px;
+  }
+
+  .actions .btn {
+    padding: 16px 18px;
+    font-size: 16px;
+    border-radius: 8px;
+  }
+}
+
+@media print {
+  body {
+    background: #fff !important;
+    padding: 0 !important;
+  }
+  .sidebar,
+  .page-header__actions,
+  .actions {
+    display: none !important;
+  }
+  .handover-wrapper {
+    box-shadow: none !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+  }
+  .handover-card {
+    page-break-inside: avoid;
+    margin-bottom: 20px;
+  }
+}

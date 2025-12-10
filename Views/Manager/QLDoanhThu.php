@@ -133,6 +133,90 @@ if (isset($_GET['api']) && $_GET['api'] === 'getRevenueDetail') {
     <link rel="stylesheet" href="../../Public/css/QLDoanhThu.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
+        /* OVERRIDE CSS để đảm bảo stat-card nhỏ gọn */
+        .stats-grid {
+            display: grid !important;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) !important;
+            gap: 12px !important;
+            margin-bottom: 20px !important;
+        }
+
+        .stat-card {
+            background: white !important;
+            border-radius: 10px !important;
+            padding: 12px !important;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06) !important;
+            border: 1px solid rgba(15, 23, 42, 0.06) !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 10px !important;
+            transition: all 0.3s ease !important;
+            position: relative !important;
+            overflow: hidden !important;
+            cursor: pointer !important;
+        }
+
+        .stat-card .stat-icon {
+            width: 36px !important;
+            height: 36px !important;
+            border-radius: 6px !important;
+            background: linear-gradient(135deg, #1f6fff, #3b82f6) !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            color: white !important;
+            font-size: 14px !important;
+            flex-shrink: 0 !important;
+        }
+
+        .stat-card .stat-content {
+            flex: 1 !important;
+        }
+
+        .stat-card .stat-value {
+            font-size: 16px !important;
+            font-weight: 600 !important;
+            color: #1f2a37 !important;
+            margin-bottom: 2px !important;
+            line-height: 1.2 !important;
+            letter-spacing: -0.2px !important;
+            text-align: left !important;
+        }
+
+        .stat-card .stat-label {
+            font-size: 10px !important;
+            color: #64748b !important;
+            font-weight: 400 !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.1px !important;
+        }
+
+        /* Responsive override */
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)) !important;
+                gap: 8px !important;
+            }
+
+            .stat-card {
+                padding: 8px !important;
+            }
+
+            .stat-card .stat-icon {
+                width: 28px !important;
+                height: 28px !important;
+                font-size: 12px !important;
+            }
+
+            .stat-card .stat-value {
+                font-size: 14px !important;
+            }
+
+            .stat-card .stat-label {
+                font-size: 9px !important;
+            }
+        }
+
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; }
         .modal.active { display: flex; }
         .modal-content {
@@ -217,6 +301,8 @@ if (isset($_GET['api']) && $_GET['api'] === 'getRevenueDetail') {
             <li><a href="QLNV.php"><i class="fa-solid fa-users"></i> Quản lý nhân viên</a></li>
             <li><a href="QLBan.php"><i class="fa-solid fa-table"></i> Quản lý bàn</a></li>
             <li><a href="QLMonAn.php"><i class="fa-solid fa-bowl-food"></i> Quản lý món ăn</a></li>
+            <li><a href="PhieuBanGiao.php"><i class="fa-solid fa-handshake"></i> Phiếu bàn giao ca</a></li>
+            <li><a href="BaoCaoCuoiNgay.php"><i class="fa-solid fa-file-lines"></i> Báo cáo cuối ngày</a></li>
             <li class="active"><a href="QLDoanhThu.php"><i class="fa-solid fa-chart-line"></i> Doanh thu</a></li>
         </ul>
     </aside>

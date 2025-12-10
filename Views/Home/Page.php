@@ -94,7 +94,7 @@ $danhSachMon = $monAnUI->themMon();
 
         <div class="dropdown-divider"></div>
 
-        <a href="#" class="dropdown-item">
+        <a href="../Manager/BaoCaoCuoiNgay.php" class="dropdown-item">
             <svg width="16" height="16" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="2" y="3" width="12" height="9" rx="2"></rect>
                 <path d="M2 7h12"></path>
@@ -102,7 +102,7 @@ $danhSachMon = $monAnUI->themMon();
             <span>Báo cáo cuối ngày</span>
         </a>
 
-        <a href="#" class="dropdown-item">
+        <a href="../Manager/PhieuBanGiao.php" class="dropdown-item">
             <svg width="16" height="16" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="3" y="2" width="10" height="14" rx="2"></rect>
                 <path d="M3 6h10"></path>
